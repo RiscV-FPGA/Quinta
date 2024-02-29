@@ -1,0 +1,8 @@
+venv
+waveform.vcd
+.vscode
+doc/.obsidian/app.json
+doc/.obsidian/appearance.json
+doc/.obsidian/core-plugins-migration.json
+doc/.obsidian/core-plugins.json
+doc/.obsidian/workspace.json

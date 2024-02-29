@@ -1,0 +1,3 @@
+# add IVerilog
+GTKWave
+Vivado>=2017.4
