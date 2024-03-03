@@ -6,3 +6,5 @@ doc/.obsidian/appearance.json
 doc/.obsidian/core-plugins-migration.json
 doc/.obsidian/core-plugins.json
 doc/.obsidian/workspace.json
+doc/.obsidian/community-plugins.json
+doc/.obsidian/plugins/*
