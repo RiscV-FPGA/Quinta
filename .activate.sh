@@ -72,11 +72,13 @@ echo "Vivado $VIVADO_VERSION"
 #
 # Useful aliases
 #
-alias clean="git clean -xdie $VENV_NAME"
-alias vunit='python3 $(git rev-parse --show-toplevel)/run.py -v '
+#alias clean="git clean -xdie $VENV_NAME"
+#alias vunit='python3 $(git rev-parse --show-toplevel)/run.py -v '
 alias build='vivado -notrace -mode batch -source $(git rev-parse --show-toplevel)/script/build.tcl'
+alias clean_vivado='sh script/clean_vivado_files.sh'
 #alias gtkwave_vhdl='python3 $(git rev-parse --show-toplevel)/run.py --gtkwave-fmt vcd --gui'
 alias gtkwave_sv='sh script/gtkwave_sv.sh'
+
 
 echo -e '
 Welcome to RiscV Quinta project!

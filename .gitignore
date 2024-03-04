@@ -8,3 +8,5 @@ doc/.obsidian/core-plugins.json
 doc/.obsidian/workspace.json
 doc/.obsidian/community-plugins.json
 doc/.obsidian/plugins/*
+vivado*
+hs_err_*
