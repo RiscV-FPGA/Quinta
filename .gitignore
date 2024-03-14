@@ -10,3 +10,7 @@ doc/.obsidian/community-plugins.json
 doc/.obsidian/plugins/*
 vivado*
 hs_err_*
+doc/Computer Organization and Design RISC-V edition.pdf
+Masimulator-master
+riscv_sv-main
+mux_IVAR.xml
