@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="IsBIFVABIErd_i6B1lqH" name="Page-1">
-        <mxGraphModel dx="3994" dy="1633" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="4858" dy="2078" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#18141D" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -307,7 +307,7 @@
                 <mxCell id="173" value="mux" style="shape=stencil(rZRdD4IgFIZ/DbcNoZpdNqqt2y66bWSULAWH9vXvQ462zHQL27zgvC88Bw5HEGV5zDOBCFY8FYguECHp5b5bb+cbO7R6DCLBGOIbxGEV8jwTUQHalRvJ94kAJy+MPoubPBQVQqpYGFmULl0iPLdzyo+ySCtlIVKrvOG8+RbGpbJr8R1gVfpHFY0IxIisvBHh74jgAzHx2EW96AWZ/QMSfIdQZpWuelO259H5ZPRFHb6mznh5ly2jtlN9FZ3l7TtUDUikegOETcJ4OCKYejCaiNd/4I8IfIrxyRi+jXAwoRfgOq3VME7t6DLKjtqInvY7yiSBV6Una+cEl7qVwanwBjrhCQ==);whiteSpace=wrap;html=1;" vertex="1" parent="1">
                     <mxGeometry x="1241.5" y="720" width="80" height="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="174" value="" style="shape=stencil(rZRdD4IgFIZ/DbcNoZpdNqqt2y66bWSULAWH9vXvQ462zHQL27zgvC88Bw5HEGV5zDOBCFY8FYguECHp5b5bb+cbO7R6DCLBGOIbxGEV8jwTUQHalRvJ94kAJy+MPoubPBQVQqpYGFmULl0iPLdzyo+ySCtlIVKrvOG8+RbGpbJr8R1gVfpHFY0IxIisvBHh74jgAzHx2EW96AWZ/QMSfIdQZpWuelO259H5ZPRFHb6mznh5ly2jtlN9FZ3l7TtUDUikegOETcJ4OCKYejCaiNd/4I8IfIrxyRi+jXAwoRfgOq3VME7t6DLKjtqInvY7yiSBV6Una+cEl7qVwanwBjrhCQ==);whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="174" value="ALU" style="shape=stencil(rZRdD4IgFIZ/DbcNoZpdNqqt2y66bWSULAWH9vXvQ462zHQL27zgvC88Bw5HEGV5zDOBCFY8FYguECHp5b5bb+cbO7R6DCLBGOIbxGEV8jwTUQHalRvJ94kAJy+MPoubPBQVQqpYGFmULl0iPLdzyo+ySCtlIVKrvOG8+RbGpbJr8R1gVfpHFY0IxIisvBHh74jgAzHx2EW96AWZ/QMSfIdQZpWuelO259H5ZPRFHb6mznh5ly2jtlN9FZ3l7TtUDUikegOETcJ4OCKYejCaiNd/4I8IfIrxyRi+jXAwoRfgOq3VME7t6DLKjtqInvY7yiSBV6Una+cEl7qVwanwBjrhCQ==);whiteSpace=wrap;html=1;" vertex="1" parent="1">
                     <mxGeometry x="1400" y="520" width="120" height="360" as="geometry"/>
                 </mxCell>
                 <mxCell id="176" value="data_mem" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
