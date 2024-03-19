@@ -11,12 +11,8 @@ proc addSignal {signal} {
 
 # List of signals to add
 set signals {
-	tb_first_test.clk -
-	tb_first_test.rst -
-	tb_first_test.a_in -
-	tb_first_test.b_in -
-	tb_first_test.c_out -
-	tb_first_test.counter -
+	tb_top.clk -
+	tb_top.rst -
 
 }
 
