@@ -6,6 +6,11 @@ module top (
 
 );
 
+  logic [31:0] pc;
+  instruction_t instruction;
+  control_t control;
+  logic [31:0] immediate_data;
+
   always_ff @(posedge clk) begin
     if (rst == 1) begin
 
@@ -25,7 +30,7 @@ module top (
       .instruction(instruction),
       .pc(pc),
       .immediate_data(immediate_data),
-      .control_signals(control_signals)
+      .control(control)
   );
 
   execute_stage execute_stage_inst ();
