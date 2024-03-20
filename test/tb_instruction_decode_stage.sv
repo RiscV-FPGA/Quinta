@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 
 import common_pkg::*;
+import common_instructions_pkg::*;
 
 module tb_instruction_decode_stage;
 
@@ -8,7 +9,7 @@ module tb_instruction_decode_stage;
   logic rst = 1;
 
   integer cycle = 0;
-  int test_length = 100;
+  int test_length = 200;
   int clk_period = 10;
 
   instruction_t instruction = '0;
@@ -29,17 +30,29 @@ module tb_instruction_decode_stage;
   always #(clk_period / 2) clk = ~clk;
   always #clk_period cycle++;
 
+  always_comb begin : set_instructions_comb
+    case (cycle)
+      4: begin
+        instruction = INSTR_LUI;
+      end
+      5: begin
+        instruction = INSTR_ADD;
+      end
+      6: begin
+        instruction = INSTR_ADDI;
+      end
+      7: begin
+        instruction = INSTR_BEQ;
+      end
+      default: begin
+        instruction = '0;
+      end
+    endcase
+  end
+
   initial begin
-
-    #(clk_period * 2);
+    #(clk_period * 2);  //rst signal
     rst <= 0;
-
-    #40;
-    instruction.opcode <= 7'b1100011;  // branch instruction
-    #20;
-    instruction.opcode <= 7'b0100011;  // store instruction
-    instruction.block1 <= 5'b00001;  // set im to 1
-
   end
 
   initial begin

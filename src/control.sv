@@ -1,4 +1,5 @@
 import common_pkg::*;
+import common_instructions_pkg::*;
 
 module control (
     input instruction_t instruction,
@@ -8,367 +9,204 @@ module control (
   always_comb begin : control_main_comb
     control = '0;
 
+    // CHECK OP CODE
     case (instruction.opcode)
-      7'b0110111: begin  //LUI = Load Upper Imm
-        control.encoding = U_TYPE;
-
-      end
-
-      7'b0010111: begin  // AUIPC = Add Upper Imm to PC
-        control.encoding = U_TYPE;
-
-      end
-
-      7'b1101111: begin  // JAL = Jump & Link
-        control.encoding = J_TYPE;
-
-      end
-
-      7'b1100111: begin  // JALR
-        case (instruction.block2)
-          3'b000: begin  // JALR = Jump & Link Regiser
-            control.encoding = I_TYPE;
-
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
-      end
-
-      7'b1100011: begin  // Branch
-        control.encoding = B_TYPE;
-
-        case (instruction.block2)
-          3'b000: begin  // BEQ, Branch =
-
-          end
-          3'b001: begin  // BNE, Branch ≠
-
-          end
-          3'b100: begin  // BLT, Branch <
-
-          end
-          3'b101: begin  // BGE, Branch ≥
-
-          end
-          3'b110: begin  // BLTU, Branch < Unsigned
-
-          end
-          3'b111: begin  // BGEU, Branch ≥ Unsigned
-
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
-      end
-
-      7'b0000011: begin
-        control.encoding = I_TYPE;
-
-        case (instruction.block2)
-          3'b000: begin  // LB = Load Byte
-
-          end
-          3'b001: begin  // LH = Load Halfword
-
-          end
-          3'b010: begin  // LW = Load Word
-
-          end
-          3'b100: begin  // LBU = Load Byte Unsigned
-
-          end
-          3'b101: begin  // LHU = Load Half Unsigned
-
-          end
-
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
-      end
-
-      7'b0100011: begin
-        control.encoding = S_TYPE;
-
-        case (instruction.block2)
-          3'b000: begin  // SB = Store Byte
-
-          end
-          3'b001: begin  // SH = Store Halfword
-
-          end
-          3'b010: begin  // SW = Store Word
-
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
-      end
-
-      7'b0010011: begin
-        control.encoding = I_TYPE;
-
-        case (instruction.block2)
-          3'b000: begin  // ADDI = ADD Immediate
-
-          end
-          3'b010: begin  // SLTI = Set < Immediate
-
-          end
-          3'b011: begin  // SLTIU = Set < Imm Unsigned
-
-          end
-          3'b100: begin  // XORI = XOR Immediate
-
-          end
-          3'b110: begin  // ORI = OR Immediate
-
-          end
-          3'b111: begin  // ANDI = AND Immediate
-
-          end
-          3'b001: begin
-            case (instruction.block5)
-              7'b0000000: begin  // SLLI = Shift Left Log. Imm.
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b101: begin
-            case (instruction.block5)
-              7'b0000000: begin  // SRLI = Shift Right Log. Imm.
-
-              end
-              7'b0100000: begin  // SRAI = Shift Right Arith. Imm.
-                // FIX IMM
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
-      end
-
       7'b0110011: begin
         control.encoding = R_TYPE;
-
-        case (instruction.block2)
-          3'b000: begin
-            case (instruction.block5)
-              7'b0000000: begin  // ADD
-
-              end
-              7'b0100000: begin  // SUB
-
-              end
-              7'b0000001: begin  // MUL = MULtiply
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b001: begin
-            case (instruction.block5)
-              7'b0000000: begin  // SLL = Shift Left Logical
-
-              end
-              7'b0000001: begin  // MULH = MULtiply High
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b010: begin
-            case (instruction.block5)
-              7'b0000000: begin  // SLT = Set <
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b011: begin
-            case (instruction.block5)
-              7'b0000000: begin  // SLTU = Set < Unsigned
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b100: begin
-            case (instruction.block5)
-              7'b0000000: begin  // XOR
-
-              end
-              7'b0000001: begin  // DIV = DIVide
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b101: begin
-            case (instruction.block5)
-              7'b0000000: begin  // SRL = Shift Right Logical
-
-              end
-              7'b0100000: begin  // SRA = Shift Right Arithmetic
-
-              end
-              7'b0000001: begin  // DIVU = DIVide Unsigned
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b110: begin
-            case (instruction.block5)
-              7'b0000000: begin  // OR
-
-              end
-              7'b0000001: begin  // REM = REMainder
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          3'b111: begin
-            case (instruction.block5)
-              7'b0000000: begin  // AND
-
-              end
-              7'b0000001: begin  // REMU = REMainder Unsigned
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
       end
-
-      // floating point
-      7'b0000111: begin  // FLW
-        case (instruction.block2)
-          3'b010: begin  // FLW = fp Load
-            control.encoding = I_TYPE;
-
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
+      7'b0010011: begin
+        control.encoding = I_TYPE;
       end
-
-      7'b0100111: begin  // FSW
-        case (instruction.block2)
-          3'b010: begin  // FSW = fp Store
-            control.encoding = S_TYPE;
-
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
+      7'b0100011: begin
+        control.encoding = S_TYPE;
       end
-
-      7'b1010011: begin  // floating point operations
+      7'b1100011: begin
+        control.encoding = B_TYPE;
+      end
+      7'b0110111: begin
+        control.encoding = U_TYPE;
+      end
+      7'b1101111: begin
+        control.encoding = J_TYPE;
+      end
+      default: begin
+        // NOP (ADDI x0 x0 0)
         control.encoding = R_TYPE;
-
-        case (instruction.block5)
-          7'b0000000: begin  // FADD.S
-
-          end
-          7'b0000100: begin  // FSUB.S
-
-          end
-          7'b0001000: begin  // FMUL.S
-
-          end
-          7'b0001100: begin  // FDIV.S
-
-          end
-          7'b0101100: begin  // FSQRT.S
-            case (instruction.block4)
-              5'b00000: begin  // FSQRT.S
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-
-          7'b1110000: begin  // FMX.X.W
-            if (instruction.block4 == 5'b00000 & instruction.block2 == 3'b000) begin  // FMX.X.W
-
-            end else begin
-              $display("wrong instruction:%b", instruction);
-            end
-          end
-
-          7'b1010000: begin
-            case (instruction.block2)
-              3'b010: begin  // FRQ.S
-
-              end
-              3'b001: begin  // FLT.S
-
-              end
-              3'b000: begin  // FLE.S
-
-              end
-              default: begin
-                $display("wrong instruction:%b", instruction);
-              end
-            endcase
-          end
-
-          7'b1111000: begin  // FMV.W.X
-            if (instruction.block4 == 5'b00000 & instruction.block2 == 3'b000) begin  // FMX.X.W
-
-            end else begin
-              $display("wrong instruction:%b", instruction);
-            end
-          end
-          default: begin
-            $display("wrong instruction:%b", instruction);
-          end
-        endcase
-      end
-
-      default: begin  // default for big case statment
-        $display("wrong instruction:%b", instruction);
       end
     endcase
-  end  // en always comb
+
+    // CHECK INSTR
+    case (instruction)
+      INSTR_LUI: begin
+
+      end
+      INSTR_AUIPC: begin
+
+      end
+      INSTR_JAL: begin
+
+      end
+      INSTR_JALR: begin
+
+      end
+      INSTR_BEQ: begin
+
+      end
+      INSTR_BNE: begin
+
+      end
+      INSTR_BLT: begin
+
+      end
+      INSTR_BGE: begin
+
+      end
+      INSTR_BLTU: begin
+
+      end
+      INSTR_BGEU: begin
+
+      end
+      INSTR_LB: begin
+
+      end
+      INSTR_LH: begin
+
+      end
+      INSTR_LW: begin
+
+      end
+      INSTR_LBU: begin
+
+      end
+      INSTR_LHU: begin
+
+      end
+      INSTR_SB: begin
+
+      end
+      INSTR_SH: begin
+
+      end
+      INSTR_SW: begin
+
+      end
+      INSTR_ADDI: begin
+
+      end
+      INSTR_SLTI: begin
+
+      end
+      INSTR_SLTIU: begin
+
+      end
+      INSTR_XORI: begin
+
+      end
+      INSTR_ORI: begin
+
+      end
+      INSTR_ANDI: begin
+
+      end
+      INSTR_SLLI: begin
+
+      end
+      INSTR_SRLI: begin
+
+      end
+      INSTR_SRAI: begin
+
+      end
+      INSTR_ADD: begin
+
+      end
+      INSTR_SUB: begin
+
+      end
+      INSTR_SLL: begin
+
+      end
+      INSTR_SLT: begin
+
+      end
+      INSTR_SLTU: begin
+
+      end
+      INSTR_XOR: begin
+
+      end
+      INSTR_SRL: begin
+
+      end
+      INSTR_SRA: begin
+
+      end
+      INSTR_OR: begin
+
+      end
+      INSTR_AND: begin
+
+      end
+      INSTR_MUL: begin
+
+      end
+      INSTR_MULH: begin
+
+      end
+      INSTR_DIV: begin
+
+      end
+      INSTR_DIVU: begin
+
+      end
+      INSTR_REM: begin
+
+      end
+      INSTR_REMU: begin
+
+      end
+      INSTR_FLW: begin
+
+      end
+      INSTR_FSW: begin
+
+      end
+      INSTR_FADD_S: begin
+
+      end
+      INSTR_FSUB_S: begin
+
+      end
+      INSTR_FMUL_S: begin
+
+      end
+      INSTR_FDIV_S: begin
+
+      end
+      INSTR_FSQRT_S: begin
+
+      end
+      INSTR_FMV_X_W: begin
+
+      end
+      INSTR_FEQ_S: begin
+
+      end
+      INSTR_FLT_S: begin
+
+      end
+      INSTR_FLE_S: begin
+
+      end
+      INSTR_FMV_W_X: begin
+
+      end
+      default: begin
+        // NOP (ADDI x0 x0 0)
+      end
+    endcase
+
+  end
 
 endmodule

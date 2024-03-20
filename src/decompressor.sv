@@ -1,10 +1,10 @@
 import common_pkg::*;
 
 module decompressor (
-	input logic[33:0] instruction_in;
-	output instruction_t instruction_out;
+    input logic [33:0] instruction_in,
+    output instruction_t instruction_out
 );
-
+  /*
 logic temp [31:0];
 always_comb begin : decompressor_main_comb
   instruction_out = '0;
@@ -209,4 +209,5 @@ always_comb begin : decompressor_main_comb
 			instruction_out = instruction_in;
 		end;
 	endcase
-end
+    */
+endmodule
