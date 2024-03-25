@@ -14,6 +14,7 @@ set top_module [file join "$ROOT" src top.sv]
 
 # HDL files
 add_files [file join "$ROOT" src top.sv]
+add_files [file join "$ROOT" src common_instructions_pkg.sv]
 add_files [file join "$ROOT" src common_pkg.sv]
 add_files [file join "$ROOT" src control.sv]
 add_files [file join "$ROOT" src execute_stage.sv]
@@ -26,9 +27,12 @@ add_files [file join "$ROOT" src writeback_stage.sv]
 add_files -fileset constrs_1 [file join "$ROOT" src constraint.xdc]
 
 import_files -force
-import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_top.sv]
+import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_execute_stage.sv]
 import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_instruction_decode_stage.sv]
-
+import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_instruction_fetch_stage.sv]
+import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_memory_stage.sv]
+import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_writeback_stage.sv]
+import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_top.sv]
 
 set_property top tb_top [get_filesets sim_1]
 set_property top_lib xil_defaultlib [get_filesets sim_1]

@@ -28,7 +28,8 @@ done
 
 echo "$BOLD Running $UNDERLINE_1 and $UNDERLINE_tb_1 $RESET"
 
-iverilog -g2012 -o $1 src/*.sv test/tb_$1.sv
+#        --sv--       ------libs----- ---src-- ------tb-----        
+iverilog -g2012 -o $1 -l src/lib/*.sv src/*.sv test/tb_$1.sv 
 
 if [ $? -eq 0 ]; then #check if compiled correct
     vvp $1

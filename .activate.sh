@@ -76,6 +76,7 @@ echo "Vivado $VIVADO_VERSION"
 #alias vunit='python3 $(git rev-parse --show-toplevel)/run.py -v '
 alias build='vivado -notrace -mode batch -source $(git rev-parse --show-toplevel)/script/build.tcl'
 alias clean_vivado='sh script/clean_vivado_files.sh'
+alias sim_vivado='sh script/sim_vivado.sh'
 #alias gtkwave_vhdl='python3 $(git rev-parse --show-toplevel)/run.py --gtkwave-fmt vcd --gui'
 alias gtkwave_sv='sh script/gtkwave_sv.sh'
 
