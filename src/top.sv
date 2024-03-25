@@ -3,7 +3,6 @@ import common_pkg::*;
 module top (
     input logic clk,
     input logic rst
-
 );
 
   logic [31:0] pc;
@@ -16,9 +15,17 @@ module top (
 
     end else begin
       //id_reg <= if_reg
+
+
       //ex_reg <= id_reg
+
+
       //mem_reg <= ex_reg
+
+
       //wb_reg <= mem_reg
+
+
     end
   end
 

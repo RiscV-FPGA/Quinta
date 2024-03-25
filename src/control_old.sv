@@ -29,7 +29,7 @@ module control_old (
           control.encoding = I_TYPE;
 
         end else begin
-          $display("wrong instruction:%b", instruction);
+          //$display("wrong instruction:%b", instruction);
 
         end
       end
@@ -57,7 +57,7 @@ module control_old (
 
           end
           default: begin
-            $display("wrong instruction:%b", instruction);
+            //$display("wrong instruction:%b", instruction);
           end
         endcase
       end
@@ -83,7 +83,7 @@ module control_old (
           end
 
           default: begin
-            $display("wrong instruction:%b", instruction);
+            //$display("wrong instruction:%b", instruction);
           end
         endcase
       end
@@ -102,7 +102,7 @@ module control_old (
 
           end
           default: begin
-            $display("wrong instruction:%b", instruction);
+            //$display("wrong instruction:%b", instruction);
           end
         endcase
       end
@@ -135,7 +135,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -149,12 +149,12 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
           default: begin
-            $display("wrong instruction:%b", instruction);
+            //$display("wrong instruction:%b", instruction);
           end
         endcase
       end
@@ -175,7 +175,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -188,7 +188,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -198,7 +198,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -208,7 +208,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -221,7 +221,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -237,7 +237,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -250,7 +250,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -263,12 +263,12 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
           default: begin
-            $display("wrong instruction:%b", instruction);
+            //$display("wrong instruction:%b", instruction);
           end
         endcase
       end
@@ -279,7 +279,7 @@ module control_old (
           control.encoding = I_TYPE;
 
         end else begin
-          $display("wrong instruction:%b", instruction);
+          //$display("wrong instruction:%b", instruction);
         end
       end
 
@@ -288,7 +288,7 @@ module control_old (
           control.encoding = S_TYPE;
 
         end else begin
-          $display("wrong instruction:%b", instruction);
+          //$display("wrong instruction:%b", instruction);
         end
       end
 
@@ -312,7 +312,7 @@ module control_old (
             if (instruction.block4 == 5'b00000) begin  // FSQRT.S
 
             end else begin
-              $display("wrong instruction:%b", instruction);
+              //$display("wrong instruction:%b", instruction);
             end
           end
 
@@ -320,7 +320,7 @@ module control_old (
             if (instruction.block4 == 5'b00000 & instruction.block2 == 3'b000) begin  // FMX.X.W
 
             end else begin
-              $display("wrong instruction:%b", instruction);
+              //$display("wrong instruction:%b", instruction);
             end
           end
 
@@ -336,7 +336,7 @@ module control_old (
 
               end
               default: begin
-                $display("wrong instruction:%b", instruction);
+                //$display("wrong instruction:%b", instruction);
               end
             endcase
           end
@@ -345,17 +345,17 @@ module control_old (
             if (instruction.block4 == 5'b00000 & instruction.block2 == 3'b000) begin  // FMX.X.W
 
             end else begin
-              $display("wrong instruction:%b", instruction);
+              //$display("wrong instruction:%b", instruction);
             end
           end
           default: begin
-            $display("wrong instruction:%b", instruction);
+            //$display("wrong instruction:%b", instruction);
           end
         endcase
       end
 
       default: begin  // default for big case statment
-        $display("wrong instruction:%b", instruction);
+        //$display("wrong instruction:%b", instruction);
       end
     endcase
   end  // en always comb
