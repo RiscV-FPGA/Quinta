@@ -5,7 +5,7 @@ module instruction_decode_stage (
     input logic rst,
     input instruction_t instruction,
     input logic [31:0] pc,
-    input logic write_en,
+    input logic reg_write,
     input logic [4:0] write_id,
     input logic [31:0] write_data,
     output logic [31:0] immediate_data,
@@ -27,7 +27,7 @@ module instruction_decode_stage (
       .rst(rst),
       .read1_id(instruction.block3),
       .read2_id(instruction.block4),
-      .write_en(write_en),
+      .write_en(reg_write),  // reg_write
       .write_id(write_id),
       .write_data(write_data),
       .read1_data(read1_data),

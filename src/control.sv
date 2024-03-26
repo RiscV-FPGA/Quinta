@@ -92,6 +92,26 @@ module control (
 
       end
       INSTR_ADDI: begin
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;  // imm to alu
+        control.mem_read = 0;
+        control.mem_write = 0;
+        control.reg_write = 1;
+        control.is_branch = 0;
+
+
+
+        /*
+
+alu_op_t alu_op
+logic alu_src
+logic mem_read
+logic mem_write
+logic reg_write
+logic mem_to_reg // not in use yet
+logic is_branch  // not in use yet
+
+        */
 
       end
       INSTR_SLTI: begin
