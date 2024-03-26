@@ -1,38 +1,38 @@
 import common_pkg::*;
 
 module decompressor (
-	input logic clk,
-	input logic rst,
-	input logic[31:0] instruction_in,
-	output instruction_t instruction_out
+    input logic clk,
+    input logic rst,
+    input logic [31:0] instruction_in,
+    output instruction_t instruction_out
 );
 
-logic [31:0] temp;
-always_comb begin : decompressor_main_comb
-  instruction_out = '0;
-	temp = '0;
-  case (instruction_in[1:0])
-		2'b00: begin
-			case (instruction_in[15:13])
-				3'b010: begin //LW
-					instruction_out.opcode = 7'b0000011;
-					instruction_out.block1 = {5'b00, instruction_in[4:2]};
-					instruction_out.block2 = 3'b010;
-					instruction_out.block3 = {5'b00, instruction_in[9:7]};
-					temp = {instruction_in[5], instruction_in[12:10], instruction_in[6]}*4;
-					instruction_out.block4 = temp[4:0];
-					instruction_out.block5 = {{5{temp[6]}}, temp[6:5]};
-				end
-				3'b110: begin //SW
-					temp = {instruction_in[5], instruction_in[12:10], instruction_in[6]}*4;
-					instruction_out.opcode = 7'b0100011;
-					instruction_out.block1 = temp[4:0];
-					instruction_out.block2 = 3'b010;
-					instruction_out.block3 = instruction_in[9:7];
-					instruction_out.block4 = instruction_in[4:2];
-					instruction_out.block5 = {{5{temp[6]}}, temp[6:5]};
-				end
-				default: begin
+  logic [31:0] temp;
+  always_comb begin : decompressor_main_comb
+    instruction_out = '0;
+    temp = '0;
+    case (instruction_in[1:0])
+      2'b00: begin
+        case (instruction_in[15:13])
+          3'b010: begin  //LW
+            instruction_out.opcode = 7'b0000011;
+            instruction_out.block1 = {5'b00, instruction_in[4:2]};
+            instruction_out.block2 = 3'b010;
+            instruction_out.block3 = {5'b00, instruction_in[9:7]};
+            temp = {instruction_in[5], instruction_in[12:10], instruction_in[6]} * 4;
+            instruction_out.block4 = temp[4:0];
+            instruction_out.block5 = {{5{temp[6]}}, temp[6:5]};
+          end
+          3'b110: begin  //SW
+            temp = {instruction_in[5], instruction_in[12:10], instruction_in[6]} * 4;
+            instruction_out.opcode = 7'b0100011;
+            instruction_out.block1 = temp[4:0];
+            instruction_out.block2 = 3'b010;
+            instruction_out.block3 = instruction_in[9:7];
+            instruction_out.block4 = instruction_in[4:2];
+            instruction_out.block5 = {{5{temp[6]}}, temp[6:5]};
+          end
+          default: begin
 
 				end
 			endcase
@@ -207,11 +207,13 @@ always_comb begin : decompressor_main_comb
 				end
 				default: begin
 
-				end
-			endcase
-		end
-		2'b11: begin
-			instruction_out = instruction_in;
-		end;
-	endcase
-end
+          end
+        endcase
+      end
+      2'b11: begin
+        instruction_out = instruction_in;
+      end
+    endcase
+  end
+
+endmodule
