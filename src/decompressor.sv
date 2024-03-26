@@ -48,7 +48,7 @@ always_comb begin : decompressor_main_comb
 					instruction_out.block5 = {7{instruction_in[12]}};
 				end
 				3'b001: begin //JAL - as of right now no difference between this and c.J, dont know how to get the value for ra
-					instruction_out = {input_in[12], input_in[8], input_in[10:9], input_in[6],input_in[7],input_in[2], input_in[11],input_in[6:3],input_in[12], {8{input_in[12]}}, 5'b00000, 7'b7'b1101111};
+					instruction_out = {instruction_in[12], instruction_in[8], instruction_in[10:9], instruction_in[6],instruction_in[7],instruction_in[2], instruction_in[11],instruction_in[6:3],{8{instruction_in[12]}}, 5'b00001, 7'b7'b1101111};
 					/*instruction_out.opcode = 7'b1101111;
 					instruction_out.block1 = 
 					instruction_out.block2 = 
@@ -137,7 +137,7 @@ always_comb begin : decompressor_main_comb
 					endcase
 				end
 				3'b101: begin //J -> JAL
-					instruction_out = {input_in[12], input_in[8], input_in[10:9], input_in[6],input_in[7],input_in[2], input_in[11],input_in[6:3],input_in[12], {8{input_in[12]}}, 5'b00000, 7'b7'b1101111};
+					instruction_out = {instruction_in[12], instruction_in[8], instruction_in[10:9], instruction_in[6],instruction_in[7],instruction_in[2], instruction_in[11], instruction_in[6:3], {8{instruction_in[12]}}, 5'b00000, 7'b7'b1101111};
 					/*instruction_out.opcode = 7'b1101111;
 					instruction_out.block1 =
 					instruction_out.block2 = 
@@ -190,7 +190,7 @@ always_comb begin : decompressor_main_comb
 						instruction_out.block5 = 7'b0000000;
 					end else if(instruction_in[12] == 1'b1 && instruction_in[6:2] == 5'b00000) begin //JALR
 						instruction_out.opcode = 7'b1100111;
-						instruction_out.block1 = '0;
+						instruction_out.block1 = 5'b00001;
 						instruction_out.block2 = 3'b000;
 						instruction_out.block3 = instruction_in[11:7];
 						instruction_out.block4 = '0;
