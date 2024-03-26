@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 import common_pkg::*;
 
 module execute_stage (
@@ -17,11 +19,11 @@ module execute_stage (
   // forwarding unit
 
 
-  always_comb begin
+  always_comb begin : alu_mux
     left_operand = data1;
     right_operand = data2;
     mem_data = data2;  // probebly not compleatly correct
-    if (control.alu_src) begin
+    if (control.alu_src == 1) begin
       right_operand = immediate_data;
       mem_data = immediate_data;  // probebly not compleatly correct
     end

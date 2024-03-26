@@ -11,7 +11,7 @@ module memory_stage (
 
   data_memory data_memory_inst (
       .clk(clk),
-      .byte_address(alu_res),
+      .byte_address(alu_res_in),
       .write_enable(control.mem_write),
       .write_data(mem_data_in),
       .read_data(mem_data_out)

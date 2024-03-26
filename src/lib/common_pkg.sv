@@ -40,12 +40,14 @@ package common_pkg;
   typedef struct packed {
     alu_op_t alu_op;
     encoding_t encoding;
-    logic alu_src;
-    logic mem_read;
-    logic mem_write;
-    logic reg_write;
-    logic mem_to_reg;
-    logic is_branch;
+    logic alu_src;  // alu mux control
+    logic mem_read;  // mem read
+    logic mem_write;  // mem write
+    logic is_branch;  // is branch
+    logic reg_write;  // write back to reg
+
+    logic [4:0] write_back_id;
+    //logic mem_to_reg;
   } control_t;
 
   /*

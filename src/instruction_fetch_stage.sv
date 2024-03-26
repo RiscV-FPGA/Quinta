@@ -38,6 +38,8 @@ module instruction_fetch_stage (
       .read_data(instruction_raw)
   );
 
+  // include decompressor
+
   assign instruction = instruction_raw;
 
 endmodule

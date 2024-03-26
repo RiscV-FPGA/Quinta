@@ -6,7 +6,7 @@ module tb_top;
   logic rst = 1;
 
   integer cycle = 0;
-  int test_length = 100;
+  int test_length = 500;
   int clk_period = 10;
 
   top top_uut (
