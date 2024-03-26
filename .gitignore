@@ -14,3 +14,4 @@ doc/Computer Organization and Design RISC-V edition.pdf
 Masimulator-master
 riscv_sv-main
 mux_IVAR.xml
+doc/.DS_Store
