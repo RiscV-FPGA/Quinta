@@ -14,6 +14,8 @@ module alu (
 
       ALU_OR: alu_res = left_operand | right_operand;
 
+      ALU_XOR: alu_res = left_operand ^ right_operand;
+
       ALU_ADD: alu_res = left_operand + right_operand;
 
       ALU_SUB: alu_res = left_operand - right_operand;

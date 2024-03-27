@@ -1,3 +1,6 @@
 # add IVerilog
 GTKWave
 Vivado>=2017.4
+ply
+numpy
+pillow

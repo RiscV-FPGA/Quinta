@@ -9,7 +9,8 @@ module registers (
     input logic [4:0] write_id,
     input logic [31:0] write_data,
     output logic [31:0] read1_data,
-    output logic [31:0] read2_data
+    output logic [31:0] read2_data,
+    input logic finish
 );
 
   logic [31:0] register[32];
@@ -39,6 +40,18 @@ module registers (
       read2_data = 0;
     end else begin
       read2_data = register[read2_id];
+    end
+  end
+
+  always_comb begin
+    if (finish == 1) begin
+      for (int i = 0; i < 32; i++) begin
+        if (i < 10) begin
+          $display("register_addr__%0d: %d", i, $signed(register[i]));
+        end else begin
+          $display("register_addr_%0d: %d", i, $signed(register[i]));
+        end
+      end
     end
   end
 

@@ -9,9 +9,12 @@ module tb_top;
   int test_length = 500;
   int clk_period = 10;
 
+  logic finish = 0;
+
   top top_uut (
       .clk(clk),
-      .rst(rst)
+      .rst(rst),
+      .finish(finish)
   );
 
   always #(clk_period / 2) clk = ~clk;
@@ -30,7 +33,8 @@ module tb_top;
     $display("Done!");
 
     #test_length;  //test length
-
+    finish = 1;
+    #10;
     $finish();
   end
 

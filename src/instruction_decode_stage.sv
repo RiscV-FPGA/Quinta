@@ -11,7 +11,8 @@ module instruction_decode_stage (
     output logic [31:0] immediate_data,
     output control_t control,
     output logic [31:0] read1_data,
-    output logic [31:0] read2_data
+    output logic [31:0] read2_data,
+    input logic finish
 );
 
   //  control_t control_internal;
@@ -31,7 +32,8 @@ module instruction_decode_stage (
       .write_id(write_id),
       .write_data(write_data),
       .read1_data(read1_data),
-      .read2_data(read2_data)
+      .read2_data(read2_data),
+      .finish(finish)
   );
 
   imm_gen imm_gen_inst (

@@ -3,8 +3,9 @@ package common_pkg;
   typedef enum logic [2:0] {
     ALU_AND = 3'b000,
     ALU_OR  = 3'b001,
-    ALU_ADD = 3'b010,
-    ALU_SUB = 3'b011
+    ALU_XOR = 3'b010,
+    ALU_ADD = 3'b011,
+    ALU_SUB = 3'b110
   } alu_op_t;
 
 
@@ -43,44 +44,12 @@ package common_pkg;
     logic alu_src;  // alu mux control
     logic mem_read;  // mem read
     logic mem_write;  // mem write
+    logic mem_to_reg;  // not in use yet dont know exatly what to do with
     logic is_branch;  // is branch
     logic reg_write;  // write back to reg
 
     logic [4:0] write_back_id;
     //logic mem_to_reg;
   } control_t;
-
-  /*
-  typedef struct packed {
-    logic [31:0]  pc;
-    instruction_t instruction;
-  } if_id_t;
-
-
-  typedef struct packed {
-    logic [5:0] reg_rd_id;
-    logic [31:0] data1;
-    logic [31:0] data2;
-    logic [31:0] immediate_data;
-    control_t control;
-  } id_ex_t;
-
-
-  typedef struct packed {
-    logic [5:0] reg_rd_id;
-    control_t control;
-    logic [31:0] alu_data;
-    logic [31:0] memory_data;
-  } ex_mem_t;
-
-
-  typedef struct packed {
-    logic [5:0] reg_rd_id;
-    logic [31:0] memory_data;
-    logic [31:0] alu_data;
-    control_t control;
-  } mem_wb_t;
-*/
-
 
 endpackage

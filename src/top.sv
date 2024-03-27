@@ -4,7 +4,8 @@ import common_pkg::*;
 
 module top (
     input logic clk,
-    input logic rst
+    input logic rst,
+    input logic finish  // for tb (read registers at end)
 );
 
   instruction_t        instruction_fetch;
@@ -77,13 +78,14 @@ module top (
       .rst(rst),
       .instruction(instruction_decode),
       .pc(pc_decode),
-      .reg_write(control_wb.reg_write),  // fix
-      .write_id(control_wb.write_back_id),  // fix
-      .write_data(wb_data_wb),  // fix
+      .reg_write(control_wb.reg_write),
+      .write_id(control_wb.write_back_id),
+      .write_data(wb_data_wb),
       .immediate_data(immediate_data_decode),
       .control(control_decode),
       .read1_data(read1_data_decode),
-      .read2_data(read2_data_decode)
+      .read2_data(read2_data_decode),
+      .finish(finish) // for tb print
   );
 
   execute_stage execute_stage_inst (

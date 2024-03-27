@@ -8,6 +8,8 @@ module control (
 
   always_comb begin : control_main_comb
     control = '0;
+    control.write_back_id = instruction.block1;
+
 
     // CHECK OP CODE
     case (instruction.opcode)
@@ -34,6 +36,17 @@ module control (
         control.encoding = R_TYPE;
       end
     endcase
+
+    /*
+alu_op_t alu_op
+encoding_t encoding
+logic alu_src
+logic mem_read
+logic mem_write
+logic mem_to_reg
+logic is_branch
+logic reg_write
+    */
 
     // CHECK INSTR
     casez (instruction)
@@ -94,21 +107,7 @@ module control (
       INSTR_ADDI: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;  // imm to alu
-        control.mem_read = 0;
-        control.mem_write = 0;
-        control.is_branch = 0;
         control.reg_write = 1;
-        control.write_back_id = instruction.block1;
-
-        /*
-        alu_op_t alu_op
-        logic alu_src
-        logic mem_read
-        logic mem_write
-        logic reg_write
-        logic mem_to_reg // not in use yet
-        logic is_branch  // not in use yet
-        */
 
       end
       INSTR_SLTI: begin
@@ -118,12 +117,21 @@ module control (
 
       end
       INSTR_XORI: begin
+        control.alu_op = ALU_XOR;
+        control.alu_src = 1;  // imm to alu
+        control.reg_write = 1;
 
       end
       INSTR_ORI: begin
+        control.alu_op = ALU_OR;
+        control.alu_src = 1;  // imm to alu
+        control.reg_write = 1;
 
       end
       INSTR_ANDI: begin
+        control.alu_op = ALU_AND;
+        control.alu_src = 1;  // imm to alu
+        control.reg_write = 1;
 
       end
       INSTR_SLLI: begin
@@ -136,9 +144,13 @@ module control (
 
       end
       INSTR_ADD: begin
+        control.alu_op = ALU_ADD;
+        control.reg_write = 1;
 
       end
       INSTR_SUB: begin
+        control.alu_op = ALU_SUB;
+        control.reg_write = 1;
 
       end
       INSTR_SLL: begin
@@ -151,6 +163,8 @@ module control (
 
       end
       INSTR_XOR: begin
+        control.alu_op = ALU_XOR;
+        control.reg_write = 1;
 
       end
       INSTR_SRL: begin
@@ -160,63 +174,67 @@ module control (
 
       end
       INSTR_OR: begin
+        control.alu_op = ALU_OR;
+        control.reg_write = 1;
 
       end
       INSTR_AND: begin
+        control.alu_op = ALU_AND;
+        control.reg_write = 1;
 
       end
-      INSTR_MUL: begin
+      INSTR_MUL: begin  //4
 
       end
-      INSTR_MULH: begin
+      INSTR_MULH: begin  //4
 
       end
-      INSTR_DIV: begin
+      INSTR_DIV: begin  //4
 
       end
-      INSTR_DIVU: begin
+      INSTR_DIVU: begin  //4
 
       end
-      INSTR_REM: begin
+      INSTR_REM: begin  //4
 
       end
-      INSTR_REMU: begin
+      INSTR_REMU: begin  //4
 
       end
-      INSTR_FLW: begin
+      INSTR_FLW: begin  //5
 
       end
-      INSTR_FSW: begin
+      INSTR_FSW: begin  //5
 
       end
-      INSTR_FADD_S: begin
+      INSTR_FADD_S: begin  //5
 
       end
-      INSTR_FSUB_S: begin
+      INSTR_FSUB_S: begin  //5
 
       end
-      INSTR_FMUL_S: begin
+      INSTR_FMUL_S: begin  //5
 
       end
-      INSTR_FDIV_S: begin
+      INSTR_FDIV_S: begin  //5
 
       end
-      INSTR_FSQRT_S: begin
+      INSTR_FSQRT_S: begin  //5
 
       end
-      INSTR_FMV_X_W: begin
+      INSTR_FMV_X_W: begin  //5
 
       end
-      INSTR_FEQ_S: begin
+      INSTR_FEQ_S: begin  //5
 
       end
-      INSTR_FLT_S: begin
+      INSTR_FLT_S: begin  //5
 
       end
-      INSTR_FLE_S: begin
+      INSTR_FLE_S: begin  //5
 
       end
-      INSTR_FMV_W_X: begin
+      INSTR_FMV_W_X: begin  //5
 
       end
       default: begin

@@ -33,7 +33,6 @@ module decompressor (
             instruction_out.block5 = {{5{temp[6]}}, temp[6:5]};
           end
           default: begin
-
           end
         endcase
       end
@@ -47,7 +46,9 @@ module decompressor (
             instruction_out.block4 = instruction_in[6:2];
             instruction_out.block5 = {7{instruction_in[12]}};
           end
-          3'b001: begin  //JAL - as of right now no difference between this and c.J, dont know how to get the value for ra
+
+          //JAL - as of right now no difference between this and c.J, dont know how to get the value for ra
+          3'b001: begin
             instruction_out = {
               instruction_in[12],
               instruction_in[8],
@@ -73,7 +74,7 @@ module decompressor (
             instruction_out.block1 = instruction_in[11:7];
             instruction_out.block2 = 3'b000;
             instruction_out.block3 = 5'b00000;
-            ;
+
             instruction_out.block4 = instruction_in[6:2];
             instruction_out.block5 = {7{instruction_in[12]}};
           end
@@ -145,7 +146,11 @@ module decompressor (
                     instruction_out.block4 = instruction_in[4:2];
                     instruction_out.block5 = 7'b0000000;
                   end
+                  default: begin
+                  end
                 endcase
+              end
+              default: begin
               end
             endcase
           end
@@ -172,19 +177,29 @@ module decompressor (
           end
           3'b110: begin  //BEQZ
             instruction_out.opcode = 7'b1100011;
-            instruction_out.block1 = {instruction_in[11:10], instruction_in[4:3], instruction_in[12]};
+            instruction_out.block1 = {
+              instruction_in[11:10], instruction_in[4:3], instruction_in[12]
+            };
             instruction_out.block2 = 3'b000;
             instruction_out.block3 = instruction_in[9:7];
             instruction_out.block4 = 5'b00000;
-            instruction_out.block5 = {{4{instruction_in[12]}}, instruction_in[6:5], instruction_in[2]};
+            instruction_out.block5 = {
+              {4{instruction_in[12]}}, instruction_in[6:5], instruction_in[2]
+            };
           end
           3'b111: begin  //BNEZ
             instruction_out.opcode = 7'b1100011;
-            instruction_out.block1 = {instruction_in[11:10], instruction_in[4:3], instruction_in[12]};
+            instruction_out.block1 = {
+              instruction_in[11:10], instruction_in[4:3], instruction_in[12]
+            };
             instruction_out.block2 = 3'b001;
             instruction_out.block3 = instruction_in[9:7];
             instruction_out.block4 = 5'b00000;
-            instruction_out.block5 = {{4{instruction_in[12]}}, instruction_in[6:5], instruction_in[2]};
+            instruction_out.block5 = {
+              {4{instruction_in[12]}}, instruction_in[6:5], instruction_in[2]
+            };
+          end
+          default: begin
           end
         endcase
       end
@@ -213,7 +228,7 @@ module decompressor (
               instruction_out.block3 = instruction_in[6:2];
               instruction_out.block4 = '0;
               instruction_out.block5 = 7'b0000000;
-            end else if (instruction_in[12] == 1'b1 && instruction_in[6:2] == 5'b00000) begin  //JALR
+            end else if (instruction_in[12] == 1'b1 && instruction_in[6:2] == 5'b00000) begin //JALR
               instruction_out.opcode = 7'b1100111;
               instruction_out.block1 = 5'b00001;
               instruction_out.block2 = 3'b000;
@@ -237,6 +252,8 @@ module decompressor (
       end
       2'b11: begin
         instruction_out = instruction_in;
+      end
+      default: begin
       end
     endcase
   end
