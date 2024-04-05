@@ -1,16 +1,24 @@
 import common_pkg::*;
 
 module decompressor (
-    input logic clk,
-    input logic rst,
-    input logic [31:0] instruction_in,
+    input logic [31:0] instruction_raw,
     output instruction_t instruction_out
 );
 
+  logic [31:0] instruction_in;
   logic [31:0] temp;
   always_comb begin : decompressor_main_comb
     instruction_out = '0;
     temp = '0;
+
+    // BAD FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    if (instruction_raw[1:0] == 2'b11) begin  //NOT GOOD! at a short instruction it pads
+      // 000_0_10000_00001_01 becomes 000_0_10000_00001_01_00000000_00000000
+      instruction_in = instruction_raw;
+    end else begin
+      instruction_in[15:0] = instruction_raw[31:16];
+    end
+
     case (instruction_in[1:0])
       2'b00: begin
         case (instruction_in[15:13])
@@ -39,6 +47,7 @@ module decompressor (
       2'b01: begin
         case (instruction_in[15:13])
           3'b000: begin  //ADDI
+            $display("HEJHEHHEHEHE");
             instruction_out.opcode = 7'b0010011;
             instruction_out.block1 = instruction_in[11:7];
             instruction_out.block2 = 3'b000;

@@ -4,6 +4,19 @@ The project will be built for the Nexys A7-100T FPGA.
 
 ## General
 
+- [x] fetch_stage
+- [x] decode_stage
+- [x] execute_stage
+- [x] mem_stage
+- [x] wb_stage
+
+- [x] decompressor
+- [x] instruction_memory
+- [ ] control
+- [x] data_memory
+- [x] imm_gen
+- [x] registers
+
 - [ ] Branches
 - [ ] Forwarding
 - [ ] Hazard

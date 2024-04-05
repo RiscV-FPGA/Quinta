@@ -18,6 +18,27 @@ module instruction_decode_stage (
   //  control_t control_internal;
   //  logic [31:0] immediate_data_internal;
 
+  logic TB_ALU_AND;
+  logic TB_ALU_OR;
+  logic TB_ALU_XOR;
+  logic TB_ALU_ADD;
+  logic TB_ALU_SUB;
+  logic TB_R_TYPE;
+  logic TB_I_TYPE;
+  logic TB_S_TYPE;
+  logic TB_B_TYPE;
+  logic TB_U_TYPE;
+  logic TB_J_TYPE;
+  logic TB_alu_src;
+  logic TB_mem_read;
+  logic TB_mem_write;
+  logic TB_mem_to_reg;
+  logic TB_is_branch;
+  logic TB_reg_write;
+  logic [4:0] TB_write_back_id;
+
+
+
   control control_inst (
       .instruction(instruction),
       .control(control)
@@ -44,5 +65,48 @@ module instruction_decode_stage (
 
   //assign immediate_data = immediate_data_internal;
   //assign control = control_internal;
+
+
+  // FOR TB
+  always_comb begin
+    TB_R_TYPE = 0;
+    TB_I_TYPE = 0;
+    TB_S_TYPE = 0;
+    TB_B_TYPE = 0;
+    TB_U_TYPE = 0;
+    TB_J_TYPE = 0;
+    case (control.encoding)
+      R_TYPE:  TB_R_TYPE = 1;
+      I_TYPE:  TB_I_TYPE = 1;
+      S_TYPE:  TB_S_TYPE = 1;
+      B_TYPE:  TB_B_TYPE = 1;
+      U_TYPE:  TB_U_TYPE = 1;
+      J_TYPE:  TB_J_TYPE = 1;
+      default: TB_R_TYPE = 1;
+    endcase
+
+    TB_ALU_AND = 0;
+    TB_ALU_OR  = 0;
+    TB_ALU_XOR = 0;
+    TB_ALU_ADD = 0;
+    TB_ALU_SUB = 0;
+    case (control.alu_op)
+      ALU_AND: TB_ALU_AND = 1;
+      ALU_OR:  TB_ALU_OR = 1;
+      ALU_XOR: TB_ALU_XOR = 1;
+      ALU_ADD: TB_ALU_ADD = 1;
+      ALU_SUB: TB_ALU_SUB = 1;
+      default: TB_ALU_ADD = 1;
+    endcase
+
+    TB_alu_src = control.alu_src;
+    TB_mem_read = control.mem_read;
+    TB_mem_write = control.mem_write;
+    TB_mem_to_reg = control.mem_to_reg;
+    TB_is_branch = control.is_branch;
+    TB_reg_write = control.reg_write;
+
+    TB_write_back_id = control.write_back_id;
+  end
 
 endmodule

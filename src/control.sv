@@ -239,6 +239,9 @@ logic reg_write
       end
       default: begin
         // NOP (ADDI x0 x0 0)
+        control.alu_op = ALU_AND;
+        control.alu_src = 1;  // imm to alu
+        control.reg_write = 1;
       end
     endcase
 

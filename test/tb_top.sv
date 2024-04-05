@@ -11,7 +11,7 @@ module tb_top;
 
   logic finish = 0;
 
-  top top_uut (
+  top top_inst (
       .clk(clk),
       .rst(rst),
       .finish(finish)
