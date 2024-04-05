@@ -47,8 +47,8 @@ set_property top_lib xil_defaultlib [get_filesets sim_1]
 update_compile_order -fileset sim_1
 update_compile_order -fileset sources_1
 
+start_gui
+
 ## run impl
 #launch_runs impl_1 -to_step write_bitstream -jobs 4
 #wait_on_run impl_1
-
-start_gui

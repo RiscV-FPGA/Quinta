@@ -33,6 +33,7 @@ module instruction_fetch_stage (
       byte_address = pc;
     end else begin
       //byte_address = uart...
+      byte_address = pc;
     end
   end
 

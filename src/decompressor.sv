@@ -17,6 +17,7 @@ module decompressor (
       instruction_in = instruction_raw;
     end else begin
       instruction_in[15:0] = instruction_raw[31:16];
+      instruction_in[31:16] = instruction_raw[31:16]; // dont care
     end
 
     case (instruction_in[1:0])
