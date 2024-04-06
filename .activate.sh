@@ -82,6 +82,7 @@ alias sim_vivado='sh script/sim_vivado.sh'
 #alias gtkwave_vhdl='python3 $(git rev-parse --show-toplevel)/run.py --gtkwave-fmt vcd --gui'
 alias gtkwave_sv='sh script/gtkwave_sv.sh'
 alias sim_vga='sh script/vga_verilator.sh'
+alias send_uart='sh script/send_over_uart.sh'
 
 
 echo -e '

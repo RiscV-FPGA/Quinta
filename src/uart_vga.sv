@@ -71,9 +71,11 @@ module uart_vga (  // coordinate width
   logic [7:0] zero[16];
 
   initial begin
-    $readmemb("src/uart_vga_one.mem", one);
-    $readmemb("src/uart_vga_zero.mem", zero);
-    //$readmemb("uart_vga_ram.mem", mem);
+    //$readmemb("src/uart_vga_one.mem", one);
+    //$readmemb("src/uart_vga_zero.mem", zero);
+    $readmemb("uart_vga_one.mem", one);
+    $readmemb("uart_vga_zero.mem", zero);
+
   end
 
 

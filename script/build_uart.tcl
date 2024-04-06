@@ -19,6 +19,9 @@ add_files -norecurse [file join "$ROOT" src uart_vga.sv]
 add_files -norecurse [file join "$ROOT" src uart_vga_ram.sv]
 
 add_files -norecurse [file join "$ROOT" src uart_vga_ram.mem]
+add_files -norecurse [file join "$ROOT" src uart_vga_one.mem]
+add_files -norecurse [file join "$ROOT" src uart_vga_zero.mem]
+
 
 add_files -fileset constrs_1 [file join "$ROOT" src constraint.xdc]
 
