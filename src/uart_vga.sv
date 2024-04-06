@@ -60,15 +60,15 @@ module uart_vga (  // coordinate width
   logic [31:0] sx, sy;
   logic de;
 
-  logic [31:0] read_address;
-  logic [31:0] read_address_full;
+  logic [31:0] ram_y_address;
+  logic [31:0] ram_x_address;
   logic [31:0] write_address;
   logic [7:0] ram_in;
-  logic [7:0] ram_out;
+  logic [159:0] ram_out;
   logic we;
 
-  logic [4:0] one[8];
-  logic [4:0] zero[8];
+  logic [7:0] one[16];
+  logic [7:0] zero[16];
 
   initial begin
     $readmemb("src/uart_vga_one.mem", one);
@@ -79,29 +79,55 @@ module uart_vga (  // coordinate width
 
   uart_vga_ram uart_vga_ram_inst (
       .clk(clk),
-      .read_address(read_address),
+      .read_address(ram_y_address),
       .ram_in(ram_in),
       .write_address(write_address),
       .we(we),
       .ram_out(ram_out)
   );
 
-  assign read_address_full = {1'b0, sx[31:1]} + (sy * 320);  // sy*320 = sy/2*640
-  assign read_address = {3'b000, read_address_full[31:3]};  // = (sx/2 + sy/2*320)/8
+
+  assign ram_y_address = {4'b0000, sy[31:4]};  // = sy/16
+  assign ram_x_address = 160 - {3'b000, sx[31:3]};  // = sx/8
 
   // num
-  logic num_on;
+  logic one_in_ram;
   always_comb begin
-    num_on = ram_out[read_address_full[2:0]];
+    one_in_ram = ram_out[ram_x_address];
+  end
+
+  // create one ore zero
+  logic num_on;
+  logic [7:0] temp_row;
+  always_comb begin
+    if (one_in_ram) begin
+      temp_row = one[sy[3:0]];
+      num_on   = temp_row[sx[2:0]];
+    end else begin
+      temp_row = zero[sy[3:0]];
+      num_on   = temp_row[sx[2:0]];
+    end
   end
 
   // grid
   logic grid_on;
   always_comb begin
-    if (sx < 20 || (sx > 420 && sx < 440) || (sx > 840 && sx < 860) || sx > 1260) begin
+    if (sx < 24 || (sx > 423 && sx < 440) || (sx > 839 && sx < 856) || sx > 1255) begin
       grid_on = 1;
     end else begin
       grid_on = 0;
+    end
+  end
+
+  // background
+  logic background_on;
+  always_comb begin
+    if (sx < 96 || (sx > 351 && sx < 424) || (sx > 439 && sx < 512)) begin
+      background_on = 1;  // two else if becose they got so long :)
+    end else if ((sx > 767 && sx < 840) || (sx > 855 && sx < 928) || sx > 1183) begin
+      background_on = 1;  // two else if becose they got so long :)
+    end else begin
+      background_on = 0;
     end
   end
 
@@ -110,6 +136,10 @@ module uart_vga (  // coordinate width
       vga_r = 4'h3;
       vga_g = 4'h3;
       vga_b = 4'h3;
+    end else if (background_on == 1) begin
+      vga_r = 4'h5;
+      vga_g = 4'h3;
+      vga_b = 4'h7;
     end else if (num_on == 1) begin
       vga_r = 4'hF;
       vga_g = 4'hF;

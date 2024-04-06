@@ -4,14 +4,10 @@ module uart_vga_ram (
     input logic [7:0] ram_in,
     input logic [31:0] write_address,
     input logic we,
-    output logic [7:0] ram_out
+    output logic [159:0] ram_out
 );
 
-  localparam integer ResolutionX = 640;
-  localparam integer ResolutionY = 512;
-  localparam integer RAMBits = 640 * 512 / 8;
-
-  reg [7:0] mem[RAMBits];
+  reg [159:0] mem[64]; //1280 = 160*64/8
 
   initial begin
     $readmemb("src/uart_vga_ram.mem", mem);
@@ -20,7 +16,7 @@ module uart_vga_ram (
 
   always @(posedge clk) begin
     if (we) begin
-      mem[write_address] <= ram_in;
+      //mem[write_address] <= ram_in;
     end
     ram_out <= mem[read_address];
   end
