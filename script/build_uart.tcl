@@ -14,7 +14,7 @@ set top_module [file join "$ROOT" src uart_top.sv]
 
 # HDL files
 add_files -norecurse [file join "$ROOT" src uart_top.sv]
-#add_files -norecurse [file join "$ROOT" src uart.sv]
+add_files -norecurse [file join "$ROOT" src uart.sv]
 add_files -norecurse [file join "$ROOT" src uart_vga.sv]
 add_files -norecurse [file join "$ROOT" src uart_vga_ram.sv]
 

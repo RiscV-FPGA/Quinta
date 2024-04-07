@@ -19,7 +19,7 @@ module instruction_memory (
 
   initial begin
     $readmemb("src/instruction_mem_temp.mem", ram);
-    $readmemb("instruction_mem_temp.mem", ram);
+    //$readmemb("instruction_mem_temp.mem", ram);
   end
 
   always @(posedge clk) begin

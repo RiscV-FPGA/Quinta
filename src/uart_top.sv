@@ -1,25 +1,41 @@
 module uart_top (
     input logic clk,
     input logic rst,
+    input logic rx_serial,
 
     output logic vga_vsync,
     output logic vga_hsync,
     output logic [3:0] vga_r,
     output logic [3:0] vga_g,
-    output logic [3:0] vga_b
+    output logic [3:0] vga_b,
+
+    output logic [7:0] led
 );
 
-  wire [ 7:0] sdl_r;
-  wire [ 7:0] sdl_g;
-  wire [ 7:0] sdl_b;
-  wire [31:0] sdl_sx;
-  wire [31:0] sdl_sy;
-  wire        sdl_de;
+  wire  [ 7:0] sdl_r;
+  wire  [ 7:0] sdl_g;
+  wire  [ 7:0] sdl_b;
+  wire  [31:0] sdl_sx;
+  wire  [31:0] sdl_sy;
+  wire         sdl_de;
 
-  //uart uart_inst (
-  //    .clk(clk),
-  //    .rst(rst)
-  //);
+  logic [ 7:0] rx_byte;
+  logic        rx_byte_valid;
+
+  always_ff @(posedge clk) begin
+    if (rst == 1) begin
+      led <= 8'b11111111;
+    end else if (rx_byte_valid == 1) begin
+      led <= rx_byte;
+    end
+  end
+
+  uart uart_inst (
+      .clk(clk),
+      .rx_serial(rx_serial),
+      .rx_byte(rx_byte),
+      .rx_byte_valid(rx_byte_valid)
+  );
 
   uart_vga uart_vga_inst (
       .clk(clk),
