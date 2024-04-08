@@ -1,4 +1,4 @@
-stty -F /dev/ttyUSB0 115200
+#stty -F /dev/ttyUSB1 115200
 
 #stty -F /dev/ttyUSB0 crtscts    # To enable RTS/CTS flow control
 #stty -F /dev/ttyUSB0 -crtscts   # To disable flow control with
@@ -22,7 +22,7 @@ while IFS= read -r line; do
     fi
 
     echo "$hex"
-    echo -n "\x$hex" >/dev/ttyUSB0
+    echo -n "\x$hex" >/dev/ttyUSB1
 done <"$filename"
 
 #echo -n "\xFF" > /dev/ttyUSB0

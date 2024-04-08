@@ -4,11 +4,14 @@ module uart (
     output logic [7:0] rx_byte,
     output logic rx_byte_valid
 );
-  parameter integer CLKS_PER_BIT = 87;
+
+// clk=100 MHz, uart=115200 bits/s
+// clk/uart = 868.0556
+  parameter integer CLKS_PER_BIT = 868;
 
   logic       rx_serial_d;
   logic       rx_serial_dd;
-  logic [7:0] clk_counter;
+  logic [9:0] clk_counter; // 10 bits max count 1023
   logic [2:0] bit_index_counter;  //8 bits total
 
   typedef enum {

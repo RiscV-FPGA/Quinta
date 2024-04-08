@@ -1,12 +1,12 @@
-`timescale 1ns / 10ps
+`timescale 1ns / 1ps
 
 module tb_uart ();
 
-  // Testbench uses a 10 MHz clock
+  // Testbench uses a 100 MHz clock
   // Want to interface to 115200 baud UART
-  // 10000000 / 115200 = 87 Clocks Per Bit.
-  parameter integer CLK_PERIOD = 100;
-  parameter integer CLKS_PER_BIT = 87;
+  // 100000000 / 115200 = 868 Clocks Per Bit.
+  parameter integer CLK_PERIOD = 10;
+  parameter integer CLKS_PER_BIT = 868;
   parameter integer BIT_PERIOD = 8600;
 
   logic clk = 0;

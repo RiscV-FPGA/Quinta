@@ -24,7 +24,7 @@ module uart_top (
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
-      led <= 8'b11111111;
+      led <= 8'b10101010;
     end else if (rx_byte_valid == 1) begin
       led <= rx_byte;
     end
