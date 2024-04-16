@@ -5,7 +5,7 @@ import common_pkg::*;
 module instruction_fetch_stage (
     input logic clk,
     input logic rst,
-    output logic [31:0] pc,  //32 bits??
+    output logic [31:0] pc,
     output instruction_t instruction
 );
 

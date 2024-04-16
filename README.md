@@ -24,22 +24,13 @@ The project will be built for the Nexys A7-100T FPGA.
 ## Phase1 instructions
 
 - [ ] INSTR_LUI
-- [ ] INSTR_AUIPC
-- [ ] INSTR_JAL
-- [ ] INSTR_JALR
 - [ ] INSTR_BEQ
 - [ ] INSTR_BNE
 - [ ] INSTR_BLT
 - [ ] INSTR_BGE
 - [ ] INSTR_BLTU
 - [ ] INSTR_BGEU
-- [ ] INSTR_LB
-- [ ] INSTR_LH
 - [ ] INSTR_LW
-- [ ] INSTR_LBU
-- [ ] INSTR_LHU
-- [ ] INSTR_SB
-- [ ] INSTR_SH
 - [ ] INSTR_SW
 - [x] INSTR_ADDI
 - [ ] INSTR_SLTI
@@ -63,6 +54,15 @@ The project will be built for the Nexys A7-100T FPGA.
 
 ## Phase2 instructions
 
+- [ ] INSTR_JAL
+- [ ] INSTR_JALR
+- [ ] INSTR_LBU
+- [ ] INSTR_LHU
+- [ ] INSTR_SB
+- [ ] INSTR_SH
+- [ ] INSTR_LB
+- [ ] INSTR_LH
+- [ ] INSTR_AUIPC
 - [ ] INSTR_MUL
 - [ ] INSTR_MULH
 - [ ] INSTR_DIV

@@ -48,7 +48,6 @@ module decompressor (
       2'b01: begin
         case (instruction_in[15:13])
           3'b000: begin  //ADDI
-            $display("HEJHEHHEHEHE");
             instruction_out.opcode = 7'b0010011;
             instruction_out.block1 = instruction_in[11:7];
             instruction_out.block2 = 3'b000;

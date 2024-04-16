@@ -34,7 +34,7 @@ module tb_top;
 
     #test_length;  //test length
     finish = 1;
-    #10;
+    #clk_period;
     $finish();
   end
 

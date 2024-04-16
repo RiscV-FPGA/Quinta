@@ -43,7 +43,7 @@ module registers (
     end
   end
 
-  always_comb begin
+  always_ff @(posedge clk) begin
     if (finish == 1) begin
       for (int i = 0; i < 32; i++) begin
         if (i < 10) begin
