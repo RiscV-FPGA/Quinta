@@ -8,8 +8,8 @@
 #include <verilated.h>
 
 // screen dimensions
-const int H_RES = 1280;
-const int V_RES = 1024;
+const int H_RES = 1368;
+const int V_RES = 768;
 
 typedef struct Pixel { // for SDL texture
 	uint8_t a;		   // transparency

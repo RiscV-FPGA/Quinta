@@ -7,7 +7,11 @@ module uart (
 
 // clk=100 MHz, uart=115200 bits/s
 // clk/uart = 868.0556
-  parameter integer CLKS_PER_BIT = 868;
+
+// clk=85.86 MHz uart=115200 bits/s
+// clk/uart = 745
+
+  parameter integer CLKS_PER_BIT = 745;
 
   logic       rx_serial_d;
   logic       rx_serial_dd;

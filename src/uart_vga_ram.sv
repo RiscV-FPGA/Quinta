@@ -7,11 +7,11 @@ module uart_vga_ram (
     output logic [159:0] ram_out
 );
 
-  reg [159:0] mem[64]; //1280 = 160*64/8
+  reg [159:0] mem[48]; //1280 = 160*64/8
 
   initial begin
-    $readmemb("src/uart_vga_ram.mem", mem);
-    //$readmemb("uart_vga_ram.mem", mem);
+    //$readmemb("src/uart_vga_ram.mem", mem);
+    $readmemb("uart_vga_ram.mem", mem);
   end
 
   always @(posedge clk) begin

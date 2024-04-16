@@ -12,7 +12,7 @@ module tb_top;
   logic finish = 0;
 
   top top_inst (
-      .clk(clk),
+      .sys_clk(clk),
       .rst(rst),
       .finish(finish)
   );

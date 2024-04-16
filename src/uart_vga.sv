@@ -20,20 +20,18 @@ module uart_vga (  // coordinate width
 
 );
 
-  // display sync signals and coordinates
-
   // -----------------SYNC------------------------
   // horizontal timings
-  parameter integer HA_END = 1279;  // end of active pixels
-  parameter integer HS_STA = HA_END + 48;  // sync starts after front porch
-  parameter integer HS_END = HS_STA + 112;  // sync ends
-  parameter integer LINE = 1687;  // last pixel on line (after back porch)
+  parameter integer HA_END = 1368 - 1;  // end of active pixels
+  parameter integer HS_STA = HA_END + 72;  // sync starts after front porch
+  parameter integer HS_END = HS_STA + 144;  // sync ends
+  parameter integer LINE = 1800 - 1;  // last pixel on line (after back porch)
 
   // vertical timings
-  parameter integer VA_END = 1023;  // end of active pixels
+  parameter integer VA_END = 768 - 1;  // end of active pixels
   parameter integer VS_STA = VA_END + 1;  // sync starts after front porch
   parameter integer VS_END = VS_STA + 3;  // sync ends
-  parameter integer SCREEN = 1065;  // last line on screen (after back porch)
+  parameter integer SCREEN = 795 - 1;  // last line on screen (after back porch)
 
   always_comb begin
     vga_hsync = ~(sx >= HS_STA && sx < HS_END);  // invert: negative polarity
@@ -61,7 +59,7 @@ module uart_vga (  // coordinate width
   logic de;
 
   logic [31:0] ram_y_address;
-  logic [31:0] ram_x_address;
+  //logic [31:0] ram_x_address;
   logic [31:0] write_address;
   logic [7:0] ram_in;
   logic [159:0] ram_out;
@@ -71,10 +69,10 @@ module uart_vga (  // coordinate width
   logic [7:0] zero[16];
 
   initial begin
-    $readmemb("src/uart_vga_one.mem", one);
-    $readmemb("src/uart_vga_zero.mem", zero);
-    //$readmemb("uart_vga_one.mem", one);
-    //$readmemb("uart_vga_zero.mem", zero);
+    //$readmemb("src/uart_vga_one.mem", one);
+    //$readmemb("src/uart_vga_zero.mem", zero);
+    $readmemb("uart_vga_one.mem", one);
+    $readmemb("uart_vga_zero.mem", zero);
 
   end
 
@@ -88,17 +86,27 @@ module uart_vga (  // coordinate width
       .ram_out(ram_out)
   );
 
-
   assign ram_y_address = {4'b0000, sy[31:4]};  // = sy/16
-  assign ram_x_address = 160 - {3'b000, sx[31:3]};  // = sx/8
 
   // num
   logic one_in_ram;
   always_comb begin
-    one_in_ram = ram_out[ram_x_address];
+    if (sx < 272) begin
+      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+1];  //instr1
+    end else if (sx < 536) begin
+      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+2];  //instr2
+    end else if (sx < 808) begin
+      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+4];  //reg
+    end else if (sx < 1080) begin
+      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+6];  //mem1
+    end else if (sx < 1344) begin
+      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+7];  //mem2
+    end else begin
+      one_in_ram = 0;
+    end
   end
 
-  // create one ore zero
+  // create one or zero
   logic num_on;
   logic [7:0] temp_row;
   always_comb begin
@@ -111,34 +119,24 @@ module uart_vga (  // coordinate width
     end
   end
 
-  // grid
-  logic grid_on;
-  always_comb begin
-    if (sx < 24 || (sx > 423 && sx < 440) || (sx > 839 && sx < 856) || sx > 1255) begin
-      grid_on = 1;
-    end else begin
-      grid_on = 0;
-    end
-  end
-
   // background
   logic background_on;
   always_comb begin
-    if (sx < 96 || (sx > 351 && sx < 424) || (sx > 439 && sx < 512)) begin
-      background_on = 1;  // two else if becose they got so long :)
-    end else if ((sx > 767 && sx < 840) || (sx > 855 && sx < 928) || sx > 1183) begin
-      background_on = 1;  // two else if becose they got so long :)
+    if (sy > 736) begin
+      background_on = 1;
     end else begin
-      background_on = 0;
+      if (sx < 16 || (sx > 271 && sx < 280) || (sx > 535 && sx < 552)) begin
+        background_on = 1;  // two else if becose they got so long :)
+      end else if ((sx > 807 && sx < 824) || (sx > 1079 && sx < 1088) || sx > 1343) begin
+        background_on = 1;  // two else if becose they got so long :)
+      end else begin
+        background_on = 0;
+      end
     end
   end
 
   always_comb begin
-    if (grid_on == 1) begin
-      vga_r = 4'h3;
-      vga_g = 4'h3;
-      vga_b = 4'h3;
-    end else if (background_on == 1) begin
+    if (background_on == 1) begin
       vga_r = 4'h5;
       vga_g = 4'h3;
       vga_b = 4'h7;
@@ -152,11 +150,6 @@ module uart_vga (  // coordinate width
       vga_b = 4'h7;
     end
   end
-
-
-
-
-
 
   // display colour: paint colour but black in blanking interval
   /* always_comb begin

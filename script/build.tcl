@@ -28,6 +28,7 @@ add_files -norecurse [file join "$ROOT" src instruction_memory.sv]
 add_files -norecurse [file join "$ROOT" src memory_stage.sv]
 add_files -norecurse [file join "$ROOT" src registers.sv]
 add_files -norecurse [file join "$ROOT" src writeback_stage.sv]
+add_files -norecurse [file join "$ROOT" src clk_wiz_wrapper.sv]
 
 add_files -norecurse [file join "$ROOT" src instruction_mem.mem]
 

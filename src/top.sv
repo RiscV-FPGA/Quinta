@@ -3,10 +3,12 @@
 import common_pkg::*;
 
 module top (
-    input logic clk,
+    input logic sys_clk,
     input logic rst,
-    input logic finish  // for tb (read registers at end)
+    input logic finish    // for tb (read registers at end)
 );
+
+  logic                clk_85;
 
   instruction_t        instruction_fetch;
   logic         [31:0] pc_fetch;
@@ -39,7 +41,7 @@ module top (
   logic         [31:0] wb_data_wb;  // to decode for saving
 
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk_85) begin
     if (rst == 1) begin
 
     end else begin
@@ -66,15 +68,21 @@ module top (
     end
   end
 
+  clk_wiz_wrapper clk_wiz_wrapper_inst (
+      .clk_100(sys_clk),
+      .rst(rst),
+      .clk_85(clk_85)
+  );
+
   instruction_fetch_stage instruction_fetch_stage_inst (
-      .clk(clk),
+      .clk(clk_85),
       .rst(rst),
       .pc(pc_fetch),
       .instruction(instruction_fetch)
   );
 
   instruction_decode_stage instruction_decode_stage_inst (
-      .clk(clk),
+      .clk(clk_85),
       .rst(rst),
       .instruction(instruction_decode),
       .pc(pc_decode),
@@ -85,11 +93,11 @@ module top (
       .control(control_decode),
       .read1_data(read1_data_decode),
       .read2_data(read2_data_decode),
-      .finish(finish) // for tb print
+      .finish(finish)  // for tb print
   );
 
   execute_stage execute_stage_inst (
-      .clk(clk),
+      .clk(clk_85),
       .rst(rst),
       .data1(data1_execute),
       .data2(data2_execute),
@@ -100,7 +108,7 @@ module top (
   );
 
   memory_stage memory_stage_inst (
-      .clk(clk),
+      .clk(clk_85),
       .rst(rst),
       .alu_res_in(alu_res_in_mem),
       .mem_data_in(mem_data_in_mem),
@@ -109,7 +117,7 @@ module top (
   );
 
   writeback_stage writeback_stage_inst (
-      .clk(clk),
+      .clk(clk_85),
       .rst(rst),
       .control(control_wb),
       .alu_res(alu_res_wb),
