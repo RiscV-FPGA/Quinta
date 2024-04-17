@@ -31,6 +31,9 @@ module control (
       7'b1101111: begin
         control.encoding = J_TYPE;
       end
+      7'b0000011: begin
+        control.encoding = I_TYPE;  //load
+      end
       default: begin
         // NOP (ADDI x0 x0 0)
         control.encoding = R_TYPE;
@@ -43,7 +46,7 @@ encoding_t encoding
 logic alu_src
 logic mem_read
 logic mem_write
-logic mem_to_reg
+logic mem_to_reg // is this needed
 logic is_branch
 logic reg_write
     */
@@ -51,57 +54,72 @@ logic reg_write
     // CHECK INSTR
     casez (instruction)
       INSTR_LUI: begin
+        control.alu_src   = 1;
+        control.reg_write = 1;
 
       end
-      INSTR_AUIPC: begin
+      INSTR_AUIPC: begin  // 4
 
       end
-      INSTR_JAL: begin
+      INSTR_JAL: begin  // 4
 
       end
-      INSTR_JALR: begin
+      INSTR_JALR: begin  // 4
 
       end
       INSTR_BEQ: begin
+        control.is_branch = 1;
 
       end
       INSTR_BNE: begin
+        control.is_branch = 1;
 
       end
       INSTR_BLT: begin
+        control.is_branch = 1;
 
       end
       INSTR_BGE: begin
+        control.is_branch = 1;
 
       end
       INSTR_BLTU: begin
+        control.is_branch = 1;
 
       end
       INSTR_BGEU: begin
+        control.is_branch = 1;
 
       end
-      INSTR_LB: begin
+      INSTR_LB: begin  // 4
 
       end
-      INSTR_LH: begin
+      INSTR_LH: begin  // 4
 
       end
       INSTR_LW: begin
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = 1;
+        control.reg_write = 1;
 
       end
-      INSTR_LBU: begin
+      INSTR_LBU: begin  // 4
 
       end
-      INSTR_LHU: begin
+      INSTR_LHU: begin  // 4
 
       end
-      INSTR_SB: begin
+      INSTR_SB: begin  // 4
 
       end
-      INSTR_SH: begin
+      INSTR_SH: begin  // 4
 
       end
       INSTR_SW: begin
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_write = 1;
 
       end
       INSTR_ADDI: begin
@@ -111,9 +129,15 @@ logic reg_write
 
       end
       INSTR_SLTI: begin
+        control.alu_op = ALU_LESS_THAN_SIGNED;
+        control.alu_src = 1;
+        control.reg_write = 1;
 
       end
       INSTR_SLTIU: begin
+        control.alu_op = ALU_LESS_THAN_UNSIGNED;
+        control.alu_src = 1;
+        control.reg_write = 1;
 
       end
       INSTR_XORI: begin
@@ -135,12 +159,21 @@ logic reg_write
 
       end
       INSTR_SLLI: begin
+        control.alu_op = ALU_SHIFT_LEFT;
+        control.reg_write = 1;
+        control.alu_src = 1;
 
       end
       INSTR_SRLI: begin
+        control.alu_op = ALU_SHIFT_RIGHT;
+        control.reg_write = 1;
+        control.alu_src = 1;
 
       end
       INSTR_SRAI: begin
+        control.alu_op = ALU_SHIFT_RIGHT_AR_IMM;
+        control.reg_write = 1;
+        control.alu_src = 1;
 
       end
       INSTR_ADD: begin
@@ -154,12 +187,18 @@ logic reg_write
 
       end
       INSTR_SLL: begin
+        control.alu_op = ALU_SHIFT_LEFT;
+        control.reg_write = 1;
 
       end
       INSTR_SLT: begin
+        control.alu_op = ALU_LESS_THAN_SIGNED;
+        control.reg_write = 1;
 
       end
       INSTR_SLTU: begin
+        control.alu_op = ALU_LESS_THAN_UNSIGNED;
+        control.reg_write = 1;
 
       end
       INSTR_XOR: begin
@@ -167,10 +206,14 @@ logic reg_write
         control.reg_write = 1;
 
       end
-      INSTR_SRL: begin
+      INSTR_SRL: begin  // shift right
+        control.alu_op = ALU_SHIFT_RIGHT;
+        control.reg_write = 1;
 
       end
       INSTR_SRA: begin
+        control.alu_op = ALU_SHIFT_RIGHT_AR;
+        control.reg_write = 1;
 
       end
       INSTR_OR: begin

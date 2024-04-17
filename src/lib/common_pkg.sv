@@ -1,11 +1,17 @@
 package common_pkg;
 
-  typedef enum logic [2:0] {
-    ALU_AND = 3'b000,
-    ALU_OR  = 3'b001,
-    ALU_XOR = 3'b010,
-    ALU_ADD = 3'b011,
-    ALU_SUB = 3'b110
+  typedef enum logic [3:0] {
+    ALU_AND                = 4'b0000,
+    ALU_OR                 = 4'b0001,
+    ALU_XOR                = 4'b0010,
+    ALU_ADD                = 4'b0011,
+    ALU_SUB                = 4'b0110,
+    ALU_SHIFT_LEFT         = 4'b0111,
+    ALU_SHIFT_RIGHT        = 4'b1000,
+    ALU_SHIFT_RIGHT_AR     = 4'b1001,
+    ALU_SHIFT_RIGHT_AR_IMM = 4'b1010,
+    ALU_LESS_THAN_UNSIGNED = 4'b1011,
+    ALU_LESS_THAN_SIGNED   = 4'b1100
   } alu_op_t;
 
 

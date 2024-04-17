@@ -17,3 +17,5 @@ mux_IVAR.xml
 doc/.DS_Store
 .DS_Store
 obj_dir
+.Xil
+instruction_mem_temp.mem

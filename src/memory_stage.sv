@@ -1,10 +1,10 @@
 import common_pkg::*;
 
 module memory_stage (
-    input clk,
-    input rst,
-    input [31:0] alu_res_in,
-    input [31:0] mem_data_in,
+    input logic clk,
+    input logic rst,
+    input logic [31:0] alu_res_in,
+    input logic [31:0] mem_data_in,
     input control_t control,
     output logic [31:0] mem_data_out
 );

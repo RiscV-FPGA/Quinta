@@ -12,7 +12,7 @@ The project will be built for the Nexys A7-100T FPGA.
 
 - [x] decompressor
 - [x] instruction_memory
-- [ ] control
+- [x] control
 - [x] data_memory
 - [x] imm_gen
 - [x] registers
@@ -23,32 +23,32 @@ The project will be built for the Nexys A7-100T FPGA.
 
 ## Phase1 instructions
 
-- [ ] INSTR_LUI
+- [x] INSTR_LUI
 - [ ] INSTR_BEQ
 - [ ] INSTR_BNE
 - [ ] INSTR_BLT
 - [ ] INSTR_BGE
 - [ ] INSTR_BLTU
 - [ ] INSTR_BGEU
-- [ ] INSTR_LW
-- [ ] INSTR_SW
+- [x] INSTR_LW
+- [x] INSTR_SW
 - [x] INSTR_ADDI
-- [ ] INSTR_SLTI
-- [ ] INSTR_SLTIU
+- [x] INSTR_SLTI
+- [x] INSTR_SLTIU
 - [x] INSTR_XORI
 - [x] INSTR_ORI
 - [x] INSTR_ANDI
-- [ ] INSTR_SLLI
-- [ ] INSTR_SRLI
-- [ ] INSTR_SRAI
+- [x] INSTR_SLLI
+- [x] INSTR_SRLI
+- [x] INSTR_SRAI
 - [x] INSTR_ADD
 - [x] INSTR_SUB
-- [ ] INSTR_SLL
-- [ ] INSTR_SLT
-- [ ] INSTR_SLTU
+- [x] INSTR_SLL
+- [x] INSTR_SLT
+- [x] INSTR_SLTU
 - [x] INSTR_XOR
-- [ ] INSTR_SRL
-- [ ] INSTR_SRA
+- [x] INSTR_SRL
+- [x] INSTR_SRA
 - [x] INSTR_OR
 - [x] INSTR_AND
 

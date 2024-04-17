@@ -23,6 +23,11 @@ module instruction_decode_stage (
   logic TB_ALU_XOR;
   logic TB_ALU_ADD;
   logic TB_ALU_SUB;
+  logic TB_ALU_SHIFT_LEFT;
+  logic TB_ALU_SHIFT_RIGHT;
+  logic TB_ALU_SHIFT_RIGHT_AR;
+  logic TB_ALU_LESS_THAN_UNSIGNED;
+  logic TB_ALU_LESS_THAN_SIGNED;
   logic TB_R_TYPE;
   logic TB_I_TYPE;
   logic TB_S_TYPE;
@@ -86,17 +91,27 @@ module instruction_decode_stage (
     endcase
 
     TB_ALU_AND = 0;
-    TB_ALU_OR  = 0;
+    TB_ALU_OR = 0;
     TB_ALU_XOR = 0;
     TB_ALU_ADD = 0;
     TB_ALU_SUB = 0;
+    TB_ALU_SHIFT_LEFT = 0;
+    TB_ALU_SHIFT_RIGHT = 0;
+    TB_ALU_SHIFT_RIGHT_AR = 0;
+    TB_ALU_LESS_THAN_UNSIGNED = 0;
+    TB_ALU_LESS_THAN_SIGNED = 0;
     case (control.alu_op)
-      ALU_AND: TB_ALU_AND = 1;
-      ALU_OR:  TB_ALU_OR = 1;
-      ALU_XOR: TB_ALU_XOR = 1;
-      ALU_ADD: TB_ALU_ADD = 1;
-      ALU_SUB: TB_ALU_SUB = 1;
-      default: TB_ALU_ADD = 1;
+      ALU_AND:                TB_ALU_AND = 1;
+      ALU_OR:                 TB_ALU_OR = 1;
+      ALU_XOR:                TB_ALU_XOR = 1;
+      ALU_ADD:                TB_ALU_ADD = 1;
+      ALU_SUB:                TB_ALU_SUB = 1;
+      ALU_SHIFT_LEFT:         TB_ALU_SHIFT_LEFT = 1;
+      ALU_SHIFT_RIGHT:        TB_ALU_SHIFT_RIGHT = 1;
+      ALU_SHIFT_RIGHT_AR:     TB_ALU_SHIFT_RIGHT_AR = 1;
+      ALU_LESS_THAN_UNSIGNED: TB_ALU_LESS_THAN_UNSIGNED = 1;
+      ALU_LESS_THAN_SIGNED:   TB_ALU_LESS_THAN_SIGNED = 1;
+      default:                TB_ALU_ADD = 1;
     endcase
 
     TB_alu_src = control.alu_src;

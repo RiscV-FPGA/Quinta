@@ -3,13 +3,13 @@
 // Learn more at https://projectf.io/posts/fpga-graphics/
 
 module uart_vga (  // coordinate width
-    input  wire logic       clk,        // pixel clock
-    input  wire logic       rst,        // sim reset
-    output logic            vga_vsync,
-    output logic            vga_hsync,
-    output logic      [3:0] vga_r,      // 8-bit red
-    output logic      [3:0] vga_g,      // 8-bit green
-    output logic      [3:0] vga_b,      // 8-bit blue
+    input  logic       clk,        // pixel clock
+    input  logic       rst,        // sim reset
+    output logic       vga_vsync,
+    output logic       vga_hsync,
+    output logic [3:0] vga_r,      // 8-bit red
+    output logic [3:0] vga_g,      // 8-bit green
+    output logic [3:0] vga_b,      // 8-bit blue
 
     output logic [ 7:0] sdl_r,   // 8-bit red
     output logic [ 7:0] sdl_g,   // 8-bit green
@@ -69,10 +69,10 @@ module uart_vga (  // coordinate width
   logic [7:0] zero[16];
 
   initial begin
-    //$readmemb("src/uart_vga_one.mem", one);
-    //$readmemb("src/uart_vga_zero.mem", zero);
-    $readmemb("uart_vga_one.mem", one);
-    $readmemb("uart_vga_zero.mem", zero);
+    $readmemb("src/uart_vga_one.mem", one);
+    $readmemb("src/uart_vga_zero.mem", zero);
+    //$readmemb("uart_vga_one.mem", one);
+    //$readmemb("uart_vga_zero.mem", zero);
 
   end
 

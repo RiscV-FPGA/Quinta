@@ -13,7 +13,7 @@ module data_memory (
   assign word_address = byte_address[9:2];
 
   always @(posedge clk) begin
-    if (write_enable) begin
+    if (write_enable == 1) begin
       ram[word_address] <= write_data;
     end
   end

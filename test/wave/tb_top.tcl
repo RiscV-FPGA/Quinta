@@ -22,6 +22,11 @@ set signals {
     tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_XOR -
     tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_ADD -
     tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_SUB -
+    tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_SHIFT_LEFT -
+    tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_SHIFT_RIGHT -
+    tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_SHIFT_RIGHT_AR -
+    tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_LESS_THAN_UNSIGNED -
+    tb_top.top_inst.instruction_decode_stage_inst.TB_ALU_LESS_THAN_SIGNED -
     tb_top.top_inst.instruction_decode_stage_inst.TB_R_TYPE -
     tb_top.top_inst.instruction_decode_stage_inst.TB_I_TYPE -
     tb_top.top_inst.instruction_decode_stage_inst.TB_S_TYPE -
