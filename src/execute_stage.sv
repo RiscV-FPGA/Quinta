@@ -12,8 +12,8 @@ module execute_stage (
     input control_t control,
     input logic fw_data_1_valid,
     input logic fw_data_2_valid,
-    input logic[31:0] fw_data_1,
-    input logic[31:0] fw_data_2,
+    input logic [31:0] fw_data_1,
+    input logic [31:0] fw_data_2,
     output logic [31:0] alu_res,
     output logic [31:0] mem_data,
     output logic is_branch,
@@ -26,6 +26,9 @@ module execute_stage (
 
   logic [31:0] alu_res_internal;
 
+  logic [31:0] data1_internal;
+  logic [31:0] data2_internal;
+
   // forwarding unit
 
 
@@ -34,20 +37,23 @@ module execute_stage (
   assign is_branch = control.is_branch;
   assign pc_branch = immediate_data * 2 + pc_execute;
 
+  //select forwarded value if fw valid
+  assign data1_internal = fw_data_1_valid ? fw_data_1 : data1;
+  assign data2_internal = fw_data_2_valid ? fw_data_2 : data2;
+
   // input mux
   always_comb begin : alu_mux_in
     if (control.encoding == S_TYPE) begin  // only on s type
-      left_operand  = data2;
+      left_operand  = data2_internal;
       right_operand = immediate_data;
     end else begin  // everything else
       if (control.alu_src == 1) begin
-        left_operand  = data1;
+        left_operand  = data1_internal;
         right_operand = immediate_data;
       end else begin
-        left_operand  = data1;
-        right_operand = data2;
+        left_operand  = data1_internal;
+        right_operand = data2_internal;
       end
-
     end
   end
 

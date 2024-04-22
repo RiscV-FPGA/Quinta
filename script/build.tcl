@@ -28,6 +28,7 @@ add_files -norecurse [file join "$ROOT" src instruction_memory.sv]
 add_files -norecurse [file join "$ROOT" src memory_stage.sv]
 add_files -norecurse [file join "$ROOT" src registers.sv]
 add_files -norecurse [file join "$ROOT" src writeback_stage.sv]
+add_files -norecurse [file join "$ROOT" src forwarding_unit.sv]
 #add_files -norecurse [file join "$ROOT" src clk_wiz_wrapper.sv]
 
 add_files -norecurse [file join "$ROOT" src instruction_mem_temp.mem]
@@ -51,5 +52,5 @@ update_compile_order -fileset sources_1
 start_gui
 
 ## run impl
-launch_runs impl_1 -to_step write_bitstream -jobs 4
+launch_runs impl_1 -to_step write_bitstream -jobs 6
 #wait_on_run impl_1

@@ -14,11 +14,15 @@ module instruction_decode_stage (
     output control_t control,
     output logic [31:0] read1_data,
     output logic [31:0] read2_data,
+    output logic [4:0] rs1,
+    output logic [4:0] rs2,
     input logic finish
 );
 
   //  control_t control_internal;
   //  logic [31:0] immediate_data_internal;
+  logic [4:0] rs1_internal;
+  logic [4:0] rs2_internal;
 
   logic TB_ALU_AND;
   logic TB_ALU_OR;
@@ -44,7 +48,10 @@ module instruction_decode_stage (
   logic TB_reg_write;
   logic [4:0] TB_write_back_id;
 
-
+  assign rs1_internal = instruction.block3;
+  assign rs2_internal = instruction.block4;
+  assign rs1 = rs1_internal;
+  assign rs2 = rs2_internal;
 
   control control_inst (
       .instruction(instruction),
@@ -54,8 +61,8 @@ module instruction_decode_stage (
   registers registers_inst (
       .clk(clk),
       .rst(rst),
-      .read1_id(instruction.block3),
-      .read2_id(instruction.block4),
+      .read1_id(rs1),
+      .read2_id(rs2),
       .write_en(reg_write),  // reg_write
       .write_id(write_id),
       .write_data(write_data),

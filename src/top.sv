@@ -20,6 +20,8 @@ module top (
   logic         [31:0] read1_data_decode;
   logic         [31:0] read2_data_decode;
   logic         [31:0] immediate_data_decode;
+  logic         [ 4:0] rs1_decode;
+  logic         [ 4:0] rs2_decode;
 
 
   control_t            control_execute;
@@ -32,12 +34,19 @@ module top (
   logic                is_branch_execute;
   logic                branch_taken_execute;
   logic         [31:0] pc_branch_execute;
+  logic         [ 4:0] rs1_execute;
+  logic         [ 4:0] rs2_execute;
 
 
   control_t            control_mem;
   logic         [31:0] alu_res_in_mem;
   logic         [31:0] mem_data_in_mem;
   logic         [31:0] mem_data_out_mem;
+
+  logic         [31:0] forwarding_data_1;
+  logic         [31:0] forwarding_data_2;
+  logic                forwarding_data_1_valid;
+  logic                forwarding_data_2_valid;
 
 
   control_t            control_wb;
@@ -67,6 +76,8 @@ module top (
       data1_execute <= read1_data_decode;
       data2_execute <= read2_data_decode;
       immediate_data_execute <= immediate_data_decode;
+      rs1_execute <= rs1_decode;
+      rs2_execute <= rs2_decode;
 
       //mem_reg <= ex_reg
       alu_res_in_mem <= alu_res_execute;
@@ -110,6 +121,8 @@ module top (
       .control(control_decode),
       .read1_data(read1_data_decode),
       .read2_data(read2_data_decode),
+      .rs1(rs1_decode),
+      .rs2(rs2_decode),
       .finish(finish)  // for tb print
   );
 
@@ -121,6 +134,10 @@ module top (
       .immediate_data(immediate_data_execute),
       .control(control_execute),
       .pc_execute(pc_execute),
+      .fw_data_1(forwarding_data_1),
+      .fw_data_2(forwarding_data_2),
+      .fw_data_1_valid(forwarding_data_1_valid),
+      .fw_data_2_valid(forwarding_data_2_valid),
       .alu_res(alu_res_execute),
       .mem_data(mem_data_execute),
       .is_branch(is_branch_execute),
@@ -135,6 +152,21 @@ module top (
       .mem_data_in(mem_data_in_mem),
       .control(control_mem),
       .mem_data_out(mem_data_out_mem)
+  );
+
+  forwarding_unit forwarding_unit_inst (
+      .clk(clk),
+      .rst(rst),
+      .control_mem(control_mem),
+      .control_wb(control_wb),
+      .alu_res_mem(alu_res_in_mem),
+      .alu_res_wb(alu_res_wb),
+      .rs_1(rs1_execute),
+      .rs_2(rs2_execute),
+      .data_1(forwarding_data_1),
+      .data_2(forwarding_data_2),
+      .data_1_valid(forwarding_data_1_valid),
+      .data_2_valid(forwarding_data_2_valid)
   );
 
   writeback_stage writeback_stage_inst (
