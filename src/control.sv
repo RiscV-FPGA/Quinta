@@ -67,28 +67,37 @@ logic reg_write
       INSTR_JALR: begin  // 4
 
       end
-      INSTR_BEQ: begin
+      INSTR_BEQ: begin  // branch
         control.is_branch = 1;
+        control.alu_op = ALU_EQUAL;
 
       end
-      INSTR_BNE: begin
+      INSTR_BNE: begin  // branch
         control.is_branch = 1;
+        control.alu_op = ALU_EQUAL;
+        control.alu_inv_res = 1;
 
       end
-      INSTR_BLT: begin
+      INSTR_BLT: begin  // branch
         control.is_branch = 1;
+        control.alu_op = ALU_LESS_THAN_SIGNED;
 
       end
-      INSTR_BGE: begin
+      INSTR_BGE: begin  // branch
         control.is_branch = 1;
+        control.alu_op = ALU_LESS_THAN_SIGNED;
+        control.alu_inv_res = 1;
 
       end
-      INSTR_BLTU: begin
+      INSTR_BLTU: begin  // branch
         control.is_branch = 1;
+        control.alu_op = ALU_LESS_THAN_UNSIGNED;
 
       end
-      INSTR_BGEU: begin
+      INSTR_BGEU: begin  // branch
         control.is_branch = 1;
+        control.alu_op = ALU_LESS_THAN_UNSIGNED;
+        control.alu_inv_res = 1;
 
       end
       INSTR_LB: begin  // 4

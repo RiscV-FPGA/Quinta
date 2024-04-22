@@ -26,6 +26,9 @@ for arg in "$@"; do
     esac
 done
 
+# copy instructions from masimulator output
+cp Masimulator/mem.txt src/instruction_mem.mem
+
 echo "$BOLD Running $UNDERLINE_1 and $UNDERLINE_tb_1 $RESET"
 venv/bin/python src/mem_to_bytes.py
 
@@ -35,7 +38,7 @@ iverilog -g2012 -o $1 -l src/lib/*.sv src/*.sv test/tb_$1.sv
 if [ $? -eq 0 ]; then #check if compiled correct
     vvp $1
     rm $1
-    rm src/instruction_mem_temp.mem
+    #rm src/instruction_mem_temp.mem
 
     gtkwave waveform.vcd --script=test/wave/tb_$1.tcl
     if [ "$remove_vcd" = true ]; then

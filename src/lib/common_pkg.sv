@@ -11,9 +11,9 @@ package common_pkg;
     ALU_SHIFT_RIGHT_AR     = 4'b1001,
     ALU_SHIFT_RIGHT_AR_IMM = 4'b1010,
     ALU_LESS_THAN_UNSIGNED = 4'b1011,
-    ALU_LESS_THAN_SIGNED   = 4'b1100
+    ALU_LESS_THAN_SIGNED   = 4'b1100,
+    ALU_EQUAL              = 4'b1101
   } alu_op_t;
-
 
   typedef struct packed {  //32 bit instruction
     logic [6:0] block5;
@@ -48,6 +48,7 @@ package common_pkg;
     alu_op_t alu_op;
     encoding_t encoding;
     logic alu_src;  // alu mux control
+    logic alu_inv_res;  // invert alu result
     logic mem_read;  // mem read
     logic mem_write;  // mem write
     logic mem_to_reg;  // not in use yet dont know exatly what to do with

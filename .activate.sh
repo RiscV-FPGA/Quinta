@@ -48,7 +48,6 @@ if [ ! -d "$VENV_NAME" ]; then
     python3 -m venv $VENV_NAME
     $VENV_NAME/bin/python -m pip install setuptools wheel
     $VENV_NAME/bin/python -m pip install -r requirements.txt
-    $VENV_NAME/bin/python -m pip install vunit_hdl
 
 fi
 # TODO: Add explicit python min version and check
@@ -61,8 +60,8 @@ python3 --version
 VIVADO_VERSION="2017.4"
 XILINX_PATH="$ "/usr/local/Xilinx/Vivado/$VIVADO_VERSION""
 #echo -e "$\033[1;33m $XILINX_PATH \033[0m" #print path
-[ $? -eq 0 ] && . "/usr/local/Xilinx/Vivado/2017.4/settings64.sh" || echo -e "\033[1;33mWARNING: Could not locate Vivado $VIVADO_VERSION\033[0m"
-echo "Vivado $VIVADO_VERSION"
+#[ $? -eq 0 ] && . "/usr/local/Xilinx/Vivado/2017.4/settings64.sh" || echo -e "\033[1;33mWARNING: Could not locate Vivado $VIVADO_VERSION\033[0m"
+#echo "Vivado $VIVADO_VERSION"
 
 # TODO: set up simlibs and path to them
 # NOTE: xsim will be needed for ip simulations if needed as most are verilog based

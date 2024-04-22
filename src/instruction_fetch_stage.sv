@@ -5,6 +5,9 @@ import common_pkg::*;
 module instruction_fetch_stage (
     input logic clk,
     input logic rst,
+    input logic is_branch,
+    input logic branch_taken,
+    input logic [31:0] pc_branch,
     output logic [31:0] pc,
     output instruction_t instruction
 );
@@ -20,10 +23,14 @@ module instruction_fetch_stage (
       start <= 1;
       pc <= 0;
     end else begin
-      if (instruction_internal[1:0] == 2'b11) begin
-        pc <= pc + 4;  // 32 bit instruction
+      if (is_branch == 1 & branch_taken == 1) begin
+        pc <= pc_branch;
       end else begin
-        pc <= pc + 2;  // 16 bit instruction
+        if (instruction_internal[1:0] == 2'b11) begin
+          pc <= pc + 4;  // 32 bit instruction
+        end else begin
+          pc <= pc + 2;  // 16 bit instruction
+        end
       end
     end
   end
