@@ -24,6 +24,23 @@ module instruction_decode_stage (
   logic [4:0] rs1_internal;
   logic [4:0] rs2_internal;
 
+  logic [31:0] read1_data_regs;
+  logic [31:0] read2_data_regs;
+
+  always_comb begin : register_forwarding
+    if (write_id == rs1) begin
+      read1_data = write_data;
+    end else begin
+      read1_data = read1_data_regs;
+    end
+
+    if (write_id == rs2) begin
+      read2_data = write_data;
+    end else begin
+      read2_data = read2_data_regs;
+    end
+  end
+
   logic TB_ALU_AND;
   logic TB_ALU_OR;
   logic TB_ALU_XOR;
@@ -66,8 +83,8 @@ module instruction_decode_stage (
       .write_en(reg_write),  // reg_write
       .write_id(write_id),
       .write_data(write_data),
-      .read1_data(read1_data),
-      .read2_data(read2_data),
+      .read1_data(read1_data_regs),
+      .read2_data(read2_data_regs),
       .finish(finish)
   );
 
