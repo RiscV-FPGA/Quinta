@@ -2,3 +2,6 @@
 2. C.JAL & c.JALR wants you to add ra when decompressing the instruction, where does one get that? Is that reg x1?
 3. SRLI, SRAI & SLLI seem to misfit between the compacted and non compacted, 5th bit of imm dissapears? 
 4. Difference in how the book and sheet sheet define for c.mv. Found out, no worries.
+5. Forwarding?
+6. Why the jumbling of the imm:bits?
+7. 
