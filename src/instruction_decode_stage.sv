@@ -21,8 +21,8 @@ module instruction_decode_stage (
 
   //  control_t control_internal;
   //  logic [31:0] immediate_data_internal;
-  logic [4:0] rs1_internal;
-  logic [4:0] rs2_internal;
+  logic [ 4:0] rs1_internal;
+  logic [ 4:0] rs2_internal;
 
   logic [31:0] read1_data_regs;
   logic [31:0] read2_data_regs;

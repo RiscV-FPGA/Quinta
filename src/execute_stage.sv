@@ -32,7 +32,7 @@ module execute_stage (
   // forwarding unit
 
 
-  assign mem_data = data1;
+  assign mem_data = data2_internal;
   assign branch_taken = alu_res[0];
   assign is_branch = control.is_branch;
   assign pc_branch = immediate_data * 2 + pc_execute;
@@ -43,17 +43,12 @@ module execute_stage (
 
   // input mux
   always_comb begin : alu_mux_in
-    if (control.encoding == S_TYPE) begin  // only on s type
-      left_operand  = data2_internal;
+    if (control.alu_src == 1) begin
+      left_operand  = data1_internal;
       right_operand = immediate_data;
-    end else begin  // everything else
-      if (control.alu_src == 1) begin
-        left_operand  = data1_internal;
-        right_operand = immediate_data;
-      end else begin
-        left_operand  = data1_internal;
-        right_operand = data2_internal;
-      end
+    end else begin
+      left_operand  = data1_internal;
+      right_operand = data2_internal;
     end
   end
 

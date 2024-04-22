@@ -41,12 +41,12 @@ import_files -force
 #import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_instruction_fetch_stage.sv]
 #import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_memory_stage.sv]
 #import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_writeback_stage.sv]
-import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_top.sv]
+#import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_top.sv]
 
-set_property top tb_top [get_filesets sim_1]
-set_property top_lib xil_defaultlib [get_filesets sim_1]
+#set_property top tb_top [get_filesets sim_1]
+#set_property top_lib xil_defaultlib [get_filesets sim_1]
 
-update_compile_order -fileset sim_1
+#update_compile_order -fileset sim_1
 update_compile_order -fileset sources_1
 
 start_gui

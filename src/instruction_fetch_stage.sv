@@ -8,6 +8,7 @@ module instruction_fetch_stage (
     input logic is_branch,
     input logic branch_taken,
     input logic [31:0] pc_branch,
+    input logic hazard_detected,
     output logic [31:0] pc,
     output instruction_t instruction
 );
@@ -25,6 +26,8 @@ module instruction_fetch_stage (
     end else begin
       if (is_branch == 1 & branch_taken == 1) begin
         pc <= pc_branch;
+      end else if (hazard_detected == 1) begin
+        pc <= pc;
       end else begin
         if (instruction_internal[1:0] == 2'b11) begin
           pc <= pc + 4;  // 32 bit instruction

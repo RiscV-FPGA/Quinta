@@ -22,6 +22,7 @@ module top (
   logic         [31:0] immediate_data_decode;
   logic         [ 4:0] rs1_decode;
   logic         [ 4:0] rs2_decode;
+  logic                hazard_detected_decode;
 
 
   control_t            control_execute;
@@ -60,32 +61,53 @@ module top (
 
     end else begin
       //id_reg <= if_reg
-      instruction_decode <= instruction_fetch;
-      pc_decode <= pc_fetch;
+      if (hazard_detected_decode == 1) begin
+        instruction_decode <= instruction_decode;
+        pc_decode          <= pc_decode;
+      end else begin
+        instruction_decode <= instruction_fetch;
+        pc_decode <= pc_fetch;
+      end
 
-      if (is_branch_execute == 1 & branch_taken_execute == 1) begin
+
+      //ex_reg <= id_reg
+      if (hazard_detected_decode == 1) begin
+        // nop
+        pc_execute <= 0;
+        data1_execute <= 0;
+        data2_execute <= 0;
+        immediate_data_execute <= 0;
+        rs1_execute <= 0;
+        rs2_execute <= 0;
         control_execute <= '0;
+      end else begin
+        pc_execute <= pc_decode;
+        data1_execute <= read1_data_decode;
+        data2_execute <= read2_data_decode;
+        immediate_data_execute <= immediate_data_decode;
+        rs1_execute <= rs1_decode;
+        rs2_execute <= rs2_decode;
+        if (is_branch_execute == 1 & branch_taken_execute == 1) begin
+          control_execute <= '0;
+          rs1_execute <= 0;
+          rs2_execute <= 0;
+        end else begin
+          control_execute <= control_decode;
+        end
+      end
+
+      //mem_reg <= ex_reg
+      alu_res_in_mem  <= alu_res_execute;
+      mem_data_in_mem <= mem_data_execute;
+      if (is_branch_execute == 1 & branch_taken_execute == 1) begin
         control_mem <= '0;
       end else begin
-        control_execute <= control_decode;
         control_mem <= control_execute;
       end
 
-      //ex_reg <= id_reg
-      pc_execute <= pc_decode;
-      data1_execute <= read1_data_decode;
-      data2_execute <= read2_data_decode;
-      immediate_data_execute <= immediate_data_decode;
-      rs1_execute <= rs1_decode;
-      rs2_execute <= rs2_decode;
-
-      //mem_reg <= ex_reg
-      alu_res_in_mem <= alu_res_execute;
-      mem_data_in_mem <= mem_data_execute;
-
       //wb_reg <= mem_reg
-      control_wb <= control_mem;
-      alu_res_wb <= alu_res_in_mem;
+      control_wb  <= control_mem;
+      alu_res_wb  <= alu_res_in_mem;
       mem_data_wb <= mem_data_out_mem;
 
     end
@@ -105,6 +127,7 @@ module top (
       .is_branch(is_branch_execute),
       .branch_taken(branch_taken_execute),
       .pc_branch(pc_branch_execute),
+      .hazard_detected(hazard_detected_decode),
       .pc(pc_fetch),
       .instruction(instruction_fetch)
   );
@@ -124,6 +147,15 @@ module top (
       .rs1(rs1_decode),
       .rs2(rs2_decode),
       .finish(finish)  // for tb print
+  );
+
+  hazard_detection_unit hazard_detection_unit_inst (
+      .clk(clk),
+      .rst(rst),
+      .rs1(rs1_decode),
+      .rs2(rs2_decode),
+      .control_ex(control_execute),
+      .hazard_detected(hazard_detected_decode)
   );
 
   execute_stage execute_stage_inst (
@@ -161,6 +193,7 @@ module top (
       .control_wb(control_wb),
       .alu_res_mem(alu_res_in_mem),
       .alu_res_wb(alu_res_wb),
+      .mem_data_wb(mem_data_wb),
       .rs_1(rs1_execute),
       .rs_2(rs2_execute),
       .data_1(forwarding_data_1),
