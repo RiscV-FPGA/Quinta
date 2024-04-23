@@ -45,7 +45,7 @@ module uart_top (
       .rx_byte_valid(rx_byte_valid)
   );
 
-  uart_vga uart_vga_inst (
+  vga vga_inst (
       .clk(clk_85),
       .rst(rst),
       .vga_vsync(vga_vsync),

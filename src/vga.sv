@@ -1,22 +1,17 @@
-// Project F: FPGA Graphics - Square (Verilator SDL)
-// (C)2023 Will Green, open source hardware released under the MIT License
-// Learn more at https://projectf.io/posts/fpga-graphics/
-
-module uart_vga (  // coordinate width
-    input  logic       clk,        // pixel clock
-    input  logic       rst,        // sim reset
-    output logic       vga_vsync,
-    output logic       vga_hsync,
-    output logic [3:0] vga_r,      // 8-bit red
-    output logic [3:0] vga_g,      // 8-bit green
-    output logic [3:0] vga_b,      // 8-bit blue
-
-    output logic [ 7:0] sdl_r,   // 8-bit red
-    output logic [ 7:0] sdl_g,   // 8-bit green
-    output logic [ 7:0] sdl_b,   // 8-bit blue
-    output logic [31:0] sdl_sx,  // horizontal SDL position
-    output logic [31:0] sdl_sy,  // vertical SDL position
-    output logic        sdl_de   // data enable (low in blanking interval)
+module vga (
+    input  logic        clk,        // pixel clock
+    input  logic        rst,        // sim reset
+    output logic        vga_vsync,
+    output logic        vga_hsync,
+    output logic [ 3:0] vga_r,      // 8-bit red
+    output logic [ 3:0] vga_g,      // 8-bit green
+    output logic [ 3:0] vga_b,      // 8-bit blue
+    output logic [ 7:0] sdl_r,      // 8-bit red // for tb only
+    output logic [ 7:0] sdl_g,      // 8-bit green // for tb only
+    output logic [ 7:0] sdl_b,      // 8-bit blue // for tb only
+    output logic [31:0] sdl_sx,     // horizontal SDL position
+    output logic [31:0] sdl_sy,     // vertical SDL position
+    output logic        sdl_de      // data enable (low in blanking interval)
 
 );
 
@@ -69,20 +64,26 @@ module uart_vga (  // coordinate width
   logic [7:0] zero[16];
 
   initial begin
-    $readmemb("src/uart_vga_one.mem", one);
-    $readmemb("src/uart_vga_zero.mem", zero);
-    //$readmemb("uart_vga_one.mem", one);
-    //$readmemb("uart_vga_zero.mem", zero);
+    //$readmemb("src/vga_one.mem", one);
+    //$readmemb("src/vga_zero.mem", zero);
+    $readmemb("vga_one.mem", one);
+    $readmemb("vga_zero.mem", zero);
 
   end
 
 
-  uart_vga_ram uart_vga_ram_inst (
+  vga_ram vga_ram_inst (
       .clk(clk),
       .read_address(ram_y_address),
-      .ram_in(ram_in),
-      .write_address(write_address),
-      .we(we),
+      .reg_mem_data(reg_mem_data),
+      .reg_mem_addr(reg_mem_addr),
+      .reg_mem_enable(reg_mem_enable),
+      .instr_mem_data(instr_mem_data),
+      .instr_mem_addr(instr_mem_addr),
+      .instr_mem_enable(instr_mem_enable),
+      .data_mem_data(data_mem_data),
+      .data_mem_addr(data_mem_addr),
+      .data_mem_enable(data_mem_enable),
       .ram_out(ram_out)
   );
 
@@ -129,6 +130,10 @@ module uart_vga (  // coordinate width
         background_on = 1;  // two else if becose they got so long :)
       end else if ((sx > 807 && sx < 824) || (sx > 1079 && sx < 1088) || sx > 1343) begin
         background_on = 1;  // two else if becose they got so long :)
+      end else if (sx > 551 && sx < 808 && sy > 511) begin
+        background_on = 1;
+      end else if (sy > 735) begin
+        background_on = 1;
       end else begin
         background_on = 0;
       end
@@ -150,14 +155,6 @@ module uart_vga (  // coordinate width
       vga_b = 4'h7;
     end
   end
-
-  // display colour: paint colour but black in blanking interval
-  /* always_comb begin
-    vga_r = (de) ? paint_r : 4'h0;
-    vga_g = (de) ? paint_g : 4'h0;
-    vga_b = (de) ? paint_b : 4'h0;
-  end
-*/
 
   // SDL output (8 bits per colour channel)
   always_ff @(posedge clk) begin

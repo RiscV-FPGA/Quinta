@@ -16,10 +16,9 @@ module instruction_memory (
   logic [9:0] word_address;
   assign word_address = byte_address[9:0];
 
-
   initial begin
-    $readmemb("src/instruction_mem_temp.mem", ram);
-    //$readmemb("instruction_mem_temp.mem", ram);
+    //$readmemb("src/instruction_mem_temp.mem", ram);
+    $readmemb("instruction_mem_temp.mem", ram);
   end
 
   always @(posedge clk) begin

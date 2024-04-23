@@ -5,7 +5,13 @@ import common_pkg::*;
 module top (
     input logic sys_clk,
     input logic rst,
-    input logic finish    // for tb (read registers at end)
+    input logic finish,  // for tb (read registers at end)
+    input logic rx_serial,
+    output logic [3:0] vga_r,
+    output logic [3:0] vga_g,
+    output logic [3:0] vga_b,
+    output logic vga_hsync,
+    output logic vga_vsync
 );
 
   logic                clk;
@@ -55,6 +61,15 @@ module top (
   logic         [31:0] mem_data_wb;
   logic         [31:0] wb_data_wb;  // to decode for saving
 
+  // ONLY FOR TB
+  logic         [ 7:0] sdl_r;
+  logic         [ 7:0] sdl_g;
+  logic         [ 7:0] sdl_b;
+  logic         [31:0] sdl_sx;
+  logic         [31:0] sdl_sy;
+  logic                sdl_de;
+
+  assign led = pc_fetch[15:0];
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
@@ -211,5 +226,20 @@ module top (
       .wb_data(wb_data_wb)
   );
 
+  vga vga_inst (
+      .clk(clk),
+      .rst(rst),
+      .vga_vsync(vga_vsync),
+      .vga_hsync(vga_hsync),
+      .vga_r(vga_r),
+      .vga_g(vga_g),
+      .vga_b(vga_b),
+      .sdl_r(sdl_r),
+      .sdl_g(sdl_g),
+      .sdl_b(sdl_b),
+      .sdl_sx(sdl_sx),
+      .sdl_sy(sdl_sy),
+      .sdl_de(sdl_de)
+  );
 
 endmodule

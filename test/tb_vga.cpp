@@ -2,7 +2,7 @@
 // (C)2023 Will Green, open source software released under the MIT License
 // Learn more at https://projectf.io/posts/fpga-graphics/
 
-#include "Vuart_vga.h"
+#include "Vvga.h"
 #include <SDL.h>
 #include <stdio.h>
 #include <verilated.h>
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 	printf("Simulation running. Press 'Q' in simulation window to quit.\n\n");
 
 	// initialize Verilog module
-	Vuart_vga *top = new Vuart_vga;
+	Vvga *top = new Vvga;
 
 	// reset
 	top->rst = 1;

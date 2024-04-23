@@ -30,6 +30,7 @@ module forwarding_unit (
         data_1_valid = 1;
       end
     end else begin
+      data_1 = 0;  // otherwise will create latch
       data_1_valid = 0;
     end
 
@@ -45,6 +46,7 @@ module forwarding_unit (
         data_2_valid = 1;
       end
     end else begin
+      data_2 = 0;
       data_2_valid = 0;
     end
 
