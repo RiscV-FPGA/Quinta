@@ -33,8 +33,11 @@ add_files -norecurse [file join "$ROOT" src hazard_detection_unit.sv]
 #add_files -norecurse [file join "$ROOT" src clk_wiz_wrapper.sv]
 add_files -norecurse [file join "$ROOT" src vga.sv]
 add_files -norecurse [file join "$ROOT" src vga_ram.sv]
+add_files -norecurse [file join "$ROOT" src uart_collector.sv]
+add_files -norecurse [file join "$ROOT" src uart.sv]
 
-add_files -norecurse [file join "$ROOT" src instruction_mem_temp.mem]
+
+#add_files -norecurse [file join "$ROOT" src instruction_mem_temp.mem]
 add_files -norecurse [file join "$ROOT" src vga_one.mem]
 add_files -norecurse [file join "$ROOT" src vga_zero.mem]
 
