@@ -1,26 +1,26 @@
 module vga (
-    input logic clk,  // pixel clock
-    input logic rst,  // sim reset
-    input logic [31:0] reg_mem_data,
-    input logic [ 4:0] reg_mem_addr,
-    input logic        reg_mem_enable,
-    input logic [31:0] instr_mem_data,
-    input logic [31:0] instr_mem_addr,
-    input logic        instr_mem_enable,
-    input logic [31:0] data_mem_data,
-    input logic [31:0] data_mem_addr,
-    input logic        data_mem_enable,
+    input  logic        clk,               // pixel clock
+    input  logic        rst,               // sim reset
+    input  logic [31:0] reg_mem_data,
+    input  logic [ 4:0] reg_mem_addr,
+    input  logic        reg_mem_enable,
+    input  logic [31:0] instr_mem_data,
+    input  logic [31:0] instr_mem_addr,
+    input  logic        instr_mem_enable,
+    input  logic [31:0] data_mem_data,
+    input  logic [31:0] data_mem_addr,
+    input  logic        data_mem_enable,
     output logic        vga_vsync,
     output logic        vga_hsync,
-    output logic [ 3:0] vga_r,      // 8-bit red
-    output logic [ 3:0] vga_g,      // 8-bit green
-    output logic [ 3:0] vga_b,      // 8-bit blue
-    output logic [ 7:0] sdl_r,      // 8-bit red // for tb only
-    output logic [ 7:0] sdl_g,      // 8-bit green // for tb only
-    output logic [ 7:0] sdl_b,      // 8-bit blue // for tb only
-    output logic [31:0] sdl_sx,     // horizontal SDL position
-    output logic [31:0] sdl_sy,     // vertical SDL position
-    output logic        sdl_de      // data enable (low in blanking interval)
+    output logic [ 3:0] vga_r,             // 8-bit red
+    output logic [ 3:0] vga_g,             // 8-bit green
+    output logic [ 3:0] vga_b,             // 8-bit blue
+    output logic [ 7:0] sdl_r,             // 8-bit red // for tb only
+    output logic [ 7:0] sdl_g,             // 8-bit green // for tb only
+    output logic [ 7:0] sdl_b,             // 8-bit blue // for tb only
+    output logic [31:0] sdl_sx,            // horizontal SDL position
+    output logic [31:0] sdl_sy,            // vertical SDL position
+    output logic        sdl_de             // data enable (low in blanking interval)
 );
 
   // -----------------SYNC------------------------
@@ -35,6 +35,19 @@ module vga (
   parameter integer VS_STA = VA_END + 1;  // sync starts after front porch
   parameter integer VS_END = VS_STA + 3;  // sync ends
   parameter integer SCREEN = 795 - 1;  // last line on screen (after back porch)
+
+  logic [31:0] sx, sy;
+  logic de;
+
+  logic [31:0] ram_y_address;
+  //logic [31:0] ram_x_address;
+  logic [31:0] write_address;
+  logic [7:0] ram_in;
+  logic [159:0] ram_out;
+  logic we;
+
+  logic [7:0] one[16];
+  logic [7:0] zero[16];
 
   always_comb begin
     vga_hsync = ~(sx >= HS_STA && sx < HS_END);  // invert: negative polarity
@@ -58,19 +71,6 @@ module vga (
   end
   // -----------------SYNC------------------------
 
-  logic [31:0] sx, sy;
-  logic de;
-
-  logic [31:0] ram_y_address;
-  //logic [31:0] ram_x_address;
-  logic [31:0] write_address;
-  logic [7:0] ram_in;
-  logic [159:0] ram_out;
-  logic we;
-
-  logic [7:0] one[16];
-  logic [7:0] zero[16];
-
   initial begin
     //$readmemb("src/vga_one.mem", one);
     //$readmemb("src/vga_zero.mem", zero);
@@ -78,7 +78,6 @@ module vga (
     $readmemb("vga_zero.mem", zero);
 
   end
-
 
   vga_ram vga_ram_inst (
       .clk(clk),

@@ -19,15 +19,14 @@ module vga_ram (
   logic [63:0] data_mem [46];
 
 
-  initial begin
-    //$readmemb("src/vga_ram_reg.mem", reg_mem);
-    //$readmemb("src/vga_ram_instr.mem", instr_mem);
-    //$readmemb("src/vga_ram_data.mem", data_mem);
-    //$readmemb("vga_ram_reg.mem", reg_mem);
-    //$readmemb("vga_ram_instr.mem", instr_mem);
-    //$readmemb("vga_ram_data.mem", data_mem);
-
-  end
+  //initial begin
+  //$readmemb("src/vga_ram_reg.mem", reg_mem);
+  //$readmemb("src/vga_ram_instr.mem", instr_mem);
+  //$readmemb("src/vga_ram_data.mem", data_mem);
+  //$readmemb("vga_ram_reg.mem", reg_mem);
+  //$readmemb("vga_ram_instr.mem", instr_mem);
+  //$readmemb("vga_ram_data.mem", data_mem);
+  //end
 
   always @(posedge clk) begin
     if (reg_mem_enable == 1) begin
@@ -36,17 +35,17 @@ module vga_ram (
 
     if (instr_mem_enable == 1) begin
       if (instr_mem_addr < 46) begin
-        instr_mem[instr_mem_addr][31:0] <= instr_mem_data;
+        instr_mem[instr_mem_addr][63:32] <= instr_mem_data;
       end else begin
-        instr_mem[instr_mem_addr-46][63:32] <= instr_mem_data;
+        instr_mem[instr_mem_addr-46][31:0] <= instr_mem_data;
       end
     end
 
     if (data_mem_enable) begin
       if (data_mem_addr < 46) begin
-        data_mem[data_mem_addr][31:0] <= data_mem_data;
+        data_mem[data_mem_addr][63:32] <= data_mem_data;
       end else begin
-        data_mem[data_mem_addr-46][63:32] <= data_mem_data;
+        data_mem[data_mem_addr-46][31:0] <= data_mem_data;
       end
     end
   end

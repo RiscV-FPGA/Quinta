@@ -21,7 +21,7 @@ while IFS= read -r line; do
         hex="0$hex"
     fi
 
-    echo "$hex"
+    #echo "$hex"
     echo -n "\x$hex" >/dev/ttyUSB1
 done <"$filename"
 

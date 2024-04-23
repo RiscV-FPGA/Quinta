@@ -11,10 +11,16 @@ module top (
     output logic [3:0] vga_g,
     output logic [3:0] vga_b,
     output logic vga_hsync,
-    output logic vga_vsync
+    output logic vga_vsync,
+    output logic [15:0] led
 );
 
   logic                clk;
+  logic                start;
+  logic         [31:0] write_instr_data;
+  logic                write_instr_valid;
+  logic         [31:0] write_byte_address;
+  logic         [31:0] write_word_address;
 
   instruction_t        instruction_fetch;
   logic         [31:0] pc_fetch;
@@ -68,8 +74,6 @@ module top (
   logic         [31:0] sdl_sx;
   logic         [31:0] sdl_sy;
   logic                sdl_de;
-
-  assign led = pc_fetch[15:0];
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
@@ -133,6 +137,10 @@ module top (
   instruction_fetch_stage instruction_fetch_stage_inst (
       .clk(clk),
       .rst(rst),
+      .start(start),
+      .write_byte_address(write_byte_address),
+      .write_instr_data(write_instr_data),
+      .write_instr_valid(write_instr_valid),
       .is_branch(is_branch_execute),
       .branch_taken(branch_taken_execute),
       .pc_branch(pc_branch_execute),
@@ -220,15 +228,29 @@ module top (
       .wb_data(wb_data_wb)
   );
 
+  uart_collector uart_collector_inst (
+      .clk(clk),
+      .rst(rst),
+      .rx_serial(rx_serial),
+      .write_instr_data(write_instr_data),
+      .write_instr_valid(write_instr_valid),
+      .write_byte_address(write_byte_address),
+      .start(start)
+  );
+
+  assign led = write_instr_data[15:0];
+
+  assign write_word_address = {2'b00, write_byte_address[31:2]};
+
   vga vga_inst (
       .clk(clk),
       .rst(rst),
       .reg_mem_data(wb_data_wb),
       .reg_mem_addr(control_wb.write_back_id),
       .reg_mem_enable(control_wb.reg_write),
-      .instr_mem_data(),
-      .instr_mem_addr(),
-      .instr_mem_enable(),
+      .instr_mem_data(write_instr_data),
+      .instr_mem_addr(write_word_address),
+      .instr_mem_enable(write_instr_valid),
       .data_mem_data(mem_data_in_mem),
       .data_mem_addr(alu_res_in_mem),
       .data_mem_enable(control_mem.mem_write),

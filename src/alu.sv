@@ -35,7 +35,7 @@ module alu (
 
       ALU_LESS_THAN_SIGNED: internal_alu_res = $signed(left_operand) < $signed(right_operand);
 
-      ALU_EQUAL: internal_alu_res = left_operand === right_operand;
+      ALU_EQUAL: internal_alu_res = left_operand == right_operand;
 
       default: internal_alu_res = left_operand + right_operand;
     endcase
