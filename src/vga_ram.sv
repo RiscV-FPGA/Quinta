@@ -23,9 +23,9 @@ module vga_ram (
     //$readmemb("src/vga_ram_reg.mem", reg_mem);
     //$readmemb("src/vga_ram_instr.mem", instr_mem);
     //$readmemb("src/vga_ram_data.mem", data_mem);
-    $readmemb("vga_ram_reg.mem", reg_mem);
-    $readmemb("vga_ram_instr.mem", instr_mem);
-    $readmemb("vga_ram_data.mem", data_mem);
+    //$readmemb("vga_ram_reg.mem", reg_mem);
+    //$readmemb("vga_ram_instr.mem", instr_mem);
+    //$readmemb("vga_ram_data.mem", data_mem);
 
   end
 

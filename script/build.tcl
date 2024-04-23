@@ -38,9 +38,9 @@ add_files -norecurse [file join "$ROOT" src instruction_mem_temp.mem]
 add_files -norecurse [file join "$ROOT" src vga_one.mem]
 add_files -norecurse [file join "$ROOT" src vga_zero.mem]
 
-add_files -norecurse [file join "$ROOT" src vga_ram_data.mem]
-add_files -norecurse [file join "$ROOT" src vga_ram_instr.mem]
-add_files -norecurse [file join "$ROOT" src vga_ram_reg.mem]
+#add_files -norecurse [file join "$ROOT" src vga_ram_data.mem]
+#add_files -norecurse [file join "$ROOT" src vga_ram_instr.mem]
+#add_files -norecurse [file join "$ROOT" src vga_ram_reg.mem]
 
 
 
@@ -63,5 +63,5 @@ update_compile_order -fileset sources_1
 start_gui
 
 ## run impl
-launch_runs impl_1 -to_step write_bitstream -jobs 12
+launch_runs impl_1 -to_step write_bitstream -jobs 6
 #wait_on_run impl_1

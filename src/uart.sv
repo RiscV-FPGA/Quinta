@@ -5,17 +5,17 @@ module uart (
     output logic rx_byte_valid
 );
 
-// clk=100 MHz, uart=115200 bits/s
-// clk/uart = 868.0556
+  // clk=100 MHz, uart=115200 bits/s
+  // clk/uart = 868.0556
 
-// clk=85.86 MHz uart=115200 bits/s
-// clk/uart = 745
+  // clk=85.86 MHz uart=115200 bits/s
+  // clk/uart = 745
 
-  parameter integer CLKS_PER_BIT = 745;
+  parameter integer CLKS_PER_BIT = 868;
 
   logic       rx_serial_d;
   logic       rx_serial_dd;
-  logic [9:0] clk_counter; // 10 bits max count 1023
+  logic [9:0] clk_counter;  // 10 bits max count 1023
   logic [2:0] bit_index_counter;  //8 bits total
 
   typedef enum {
@@ -95,7 +95,6 @@ module uart (
       end
 
       default: uart_state <= idle;
-
     endcase
   end
 

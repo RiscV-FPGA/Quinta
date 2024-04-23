@@ -6,10 +6,10 @@ module tb_uart ();
   // Want to interface to 115200 baud UART
   // 100000000 / 115200 = 868 Clocks Per Bit.
 
-  // 11.7ns
-  parameter integer CLK_PERIOD = 11.7;
-  parameter integer CLKS_PER_BIT = 745;
-  parameter integer BIT_PERIOD = 8600;
+  // 10ns
+  parameter integer CLK_PERIOD = 10;
+  parameter integer CLKS_PER_BIT = 868;
+  parameter integer BIT_PERIOD = 8680;
 
   logic clk = 0;
   logic rx_serial = 1;
