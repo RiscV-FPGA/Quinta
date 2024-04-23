@@ -130,12 +130,6 @@ module top (
 
   assign clk = sys_clk;
 
-  //clk_wiz_wrapper clk_wiz_wrapper_inst (
-  //    .clk_100(sys_clk),
-  //    .rst(rst),
-  //    .clk_85(clk)
-  //);
-
   instruction_fetch_stage instruction_fetch_stage_inst (
       .clk(clk),
       .rst(rst),
