@@ -59,8 +59,8 @@ module instruction_fetch_stage (
   instruction_memory instruction_memory_inst (
       .clk(clk),
       .byte_address(write_byte_address),
-      .write_enable(write_enable),
       .write_data(write_instr_data),
+      .write_enable(write_instr_valid),
       .read_data(instruction_internal)
   );
 

@@ -5,7 +5,7 @@ import common_pkg::*;
 module top (
     input logic sys_clk,
     input logic rst,
-    input logic finish,  // for tb (read registers at end)
+   // input logic finish,  // for tb (read registers at end)
     input logic rx_serial,
     output logic [3:0] vga_r,
     output logic [3:0] vga_g,
@@ -162,8 +162,8 @@ module top (
       .read1_data(read1_data_decode),
       .read2_data(read2_data_decode),
       .rs1(rs1_decode),
-      .rs2(rs2_decode),
-      .finish(finish)  // for tb print
+      .rs2(rs2_decode)
+     // .finish(finish)  // for tb print
   );
 
   hazard_detection_unit hazard_detection_unit_inst (

@@ -92,11 +92,11 @@ module uart_collector (
       endcase
 
       if (instr_internal == 32'b11111111_11111111_11111111_11111111 && start_counter == 0) begin
-        if (write_instr_data[15:0] == 16'b11111111_11111111) begin
-          $display("short");
-        end else begin
-          $display("long");
-        end
+        //if (write_instr_data[15:0] == 16'b11111111_11111111) begin
+        //  $display("short");
+        //end else begin
+        //  $display("long");
+        //end
         start_counter <= 1;
       end
 

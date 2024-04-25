@@ -15,8 +15,8 @@ module instruction_decode_stage (
     output logic [31:0] read1_data,
     output logic [31:0] read2_data,
     output logic [4:0] rs1,
-    output logic [4:0] rs2,
-    input logic finish
+    output logic [4:0] rs2
+    //input logic finish
 );
 
   //  control_t control_internal;
@@ -41,7 +41,7 @@ module instruction_decode_stage (
     end
   end
 
-  logic TB_ALU_AND;
+  /*logic TB_ALU_AND;
   logic TB_ALU_OR;
   logic TB_ALU_XOR;
   logic TB_ALU_ADD;
@@ -64,6 +64,7 @@ module instruction_decode_stage (
   logic TB_is_branch;
   logic TB_reg_write;
   logic [4:0] TB_write_back_id;
+*/
 
   assign rs1_internal = instruction.block3;
   assign rs2_internal = instruction.block4;
@@ -84,8 +85,8 @@ module instruction_decode_stage (
       .write_id(write_id),
       .write_data(write_data),
       .read1_data(read1_data_regs),
-      .read2_data(read2_data_regs),
-      .finish(finish)
+      .read2_data(read2_data_regs)
+      //.finish(finish)
   );
 
   imm_gen imm_gen_inst (
@@ -99,7 +100,7 @@ module instruction_decode_stage (
 
 
   // FOR TB
-  always_comb begin
+  /*always_comb begin
     TB_R_TYPE = 0;
     TB_I_TYPE = 0;
     TB_S_TYPE = 0;
@@ -149,5 +150,5 @@ module instruction_decode_stage (
 
     TB_write_back_id = control.write_back_id;
   end
-
+*/
 endmodule
