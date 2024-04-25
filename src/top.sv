@@ -5,17 +5,16 @@ import common_pkg::*;
 module top (
     input logic sys_clk,
     input logic rst,
-   // input logic finish,  // for tb (read registers at end)
     input logic rx_serial,
     output logic [3:0] vga_r,
     output logic [3:0] vga_g,
     output logic [3:0] vga_b,
     output logic vga_hsync,
-    output logic vga_vsync,
-    output logic [15:0] led
+    output logic vga_vsync
+    // input logic finish,  // for tb (read registers at end)
+    //output logic [15:0] led
 );
 
-  logic                clk;
   logic                start;
   logic         [31:0] write_instr_data;
   logic                write_instr_valid;
@@ -75,8 +74,10 @@ module top (
   logic         [31:0] sdl_sy;
   logic                sdl_de;
 
-  always_ff @(posedge clk) begin
-    if (rst == 1) begin
+  //assign clk = sys_clk;
+
+  always_ff @(posedge sys_clk) begin
+    if (rst == 1 || start == 0) begin
 
     end else begin
       //id_reg <= if_reg
@@ -132,10 +133,8 @@ module top (
     end
   end
 
-  assign clk = sys_clk;
-
   instruction_fetch_stage instruction_fetch_stage_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .start(start),
       .write_byte_address(write_byte_address),
@@ -150,7 +149,7 @@ module top (
   );
 
   instruction_decode_stage instruction_decode_stage_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .instruction(instruction_decode),
       .pc(pc_decode),
@@ -163,11 +162,11 @@ module top (
       .read2_data(read2_data_decode),
       .rs1(rs1_decode),
       .rs2(rs2_decode)
-     // .finish(finish)  // for tb print
+      // .finish(finish)  // for tb print
   );
 
   hazard_detection_unit hazard_detection_unit_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .rs1(rs1_decode),
       .rs2(rs2_decode),
@@ -176,7 +175,7 @@ module top (
   );
 
   execute_stage execute_stage_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .data1(data1_execute),
       .data2(data2_execute),
@@ -195,7 +194,7 @@ module top (
   );
 
   memory_stage memory_stage_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .alu_res_in(alu_res_in_mem),
       .mem_data_in(mem_data_in_mem),
@@ -204,7 +203,7 @@ module top (
   );
 
   forwarding_unit forwarding_unit_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .control_mem(control_mem),
       .control_wb(control_wb),
@@ -220,7 +219,7 @@ module top (
   );
 
   writeback_stage writeback_stage_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .control(control_wb),
       .alu_res(alu_res_wb),
@@ -229,7 +228,7 @@ module top (
   );
 
   uart_collector uart_collector_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .rx_serial(rx_serial),
       .write_instr_data(write_instr_data),
@@ -238,12 +237,12 @@ module top (
       .start(start)
   );
 
-  assign led = write_instr_data[15:0];
+  //assign led = write_instr_data[15:0];
 
   assign write_word_address = {2'b00, write_byte_address[31:2]};
 
   vga vga_inst (
-      .clk(clk),
+      .clk(sys_clk),
       .rst(rst),
       .reg_mem_data(wb_data_wb),
       .reg_mem_addr(control_wb.write_back_id),

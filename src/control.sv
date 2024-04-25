@@ -289,6 +289,9 @@ logic reg_write
       INSTR_FMV_W_X: begin  //5
 
       end
+      INSTR_HALT: begin
+        // control == 0 :)
+      end
       default: begin
         // NOP (ADDI x0 x0 0)
         control.alu_op = ALU_AND;

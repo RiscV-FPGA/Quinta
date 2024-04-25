@@ -1,24 +1,14 @@
 import common_pkg::*;
 
 module decompressor (
-    input logic [31:0] instruction_raw,
+    input logic [31:0] instruction_in,
     output instruction_t instruction_out
 );
 
-  logic [31:0] instruction_in;
   logic [31:0] temp;
   always_comb begin : decompressor_main_comb
     instruction_out = '0;
     temp = '0;
-
-    // BAD FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-    if (instruction_raw[1:0] == 2'b11) begin  //NOT GOOD! at a short instruction it pads
-      // 000_0_10000_00001_01 becomes 000_0_10000_00001_01_00000000_00000000
-      instruction_in = instruction_raw;
-    end else begin
-      instruction_in[15:0] = instruction_raw[31:16];
-      instruction_in[31:16] = instruction_raw[31:16]; // dont care
-    end
 
     case (instruction_in[1:0])
       2'b00: begin

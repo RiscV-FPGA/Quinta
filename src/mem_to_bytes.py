@@ -27,7 +27,7 @@ def main():
                 chunks = split_into_chunks(line, 8)
             else:
                 chunks = [line[i:i+8] for i in range(0, len(line), 8)]
-            for chunk in chunks:
+            for chunk in reversed(chunks):  # Reverse the order of chunks
                 outfile.write(chunk + '\n')
 
 
