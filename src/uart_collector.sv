@@ -8,15 +8,24 @@ module uart_collector (
     output logic        start
 );
 
+  typedef enum {
+    idle,
+    byte_1,
+    byte_2,
+    byte_3,
+    byte_4,
+    done
+  } uart_collector_state_t;
+
+  uart_collector_state_t uart_collector_state;
+
   logic [7:0] rx_byte;
   logic rx_byte_valid;
   logic [31:0] byte_counter;
 
-  logic [7:0] instr_fifo[4];
-  logic [31:0] instr;
-  logic [31:0] old_instr;
-
-  logic start_soon;
+  logic [31:0] instr_internal;
+  // logic [31:0] old_instr_internal;
+  logic [2:0] start_counter;
 
   uart uart_inst (
       .clk(clk),
@@ -25,44 +34,83 @@ module uart_collector (
       .rx_byte_valid(rx_byte_valid)
   );
 
-  assign instr = {instr_fifo[0], instr_fifo[1], instr_fifo[2], instr_fifo[3]};
-  assign write_instr_data = instr;
-
   always_ff @(posedge clk) begin
     if (rst == 1) begin
       byte_counter <= 0;
       start <= 0;
+      start_counter <= 0;
+      uart_collector_state <= idle;
+      write_instr_valid <= 0;
     end else begin
-      if (rx_byte_valid == 1) begin
-        instr_fifo[0] <= instr_fifo[1];
-        instr_fifo[1] <= instr_fifo[2];
-        instr_fifo[2] <= instr_fifo[3];
-        instr_fifo[3] <= rx_byte;
-        byte_counter <= byte_counter + 1;
+      write_instr_valid <= 0;
+      //uart_collector_state <= uart_collector_state;
+
+      case (uart_collector_state)
+        idle: begin
+          if (rx_byte_valid == 1) begin
+            byte_counter <= byte_counter + 1;
+            instr_internal[31:24] <= rx_byte;
+            uart_collector_state <= byte_1;
+          end
+        end
+
+        byte_1: begin
+          if (rx_byte_valid == 1) begin
+            byte_counter <= byte_counter + 1;
+            instr_internal[23:16] <= rx_byte;
+            uart_collector_state <= byte_2;
+          end
+        end
+
+        byte_2: begin
+          if (rx_byte_valid == 1) begin
+            byte_counter <= byte_counter + 1;
+            instr_internal[15:8] <= rx_byte;
+            uart_collector_state <= byte_3;
+          end
+        end
+
+        byte_3: begin
+          if (rx_byte_valid == 1) begin
+            byte_counter <= byte_counter + 1;
+            instr_internal[7:0] <= rx_byte;
+            uart_collector_state <= done;
+          end
+        end
+
+        done: begin
+          write_byte_address <= byte_counter - 4;
+          write_instr_valid <= 1;
+          //old_instr_internal <= write_instr_data;
+          write_instr_data <= instr_internal;
+          uart_collector_state <= idle;
+        end
+
+        default: begin
+          uart_collector_state <= idle;
+        end
+      endcase
+
+      if (instr_internal == 32'b11111111_11111111_11111111_11111111 && start_counter == 0) begin
+        if (write_instr_data[15:0] == 16'b11111111_11111111) begin
+          $display("short");
+        end else begin
+          $display("long");
+        end
+        start_counter <= 1;
       end
 
-      if ((byte_counter + 1) % 4 == 0 && byte_counter != 0 && rx_byte_valid == 1 && write_instr_valid == 0) begin
-        write_instr_valid <= 1;
-        write_byte_address <= byte_counter - 4;
-        old_instr <= instr;
-      end else begin
-        write_instr_valid <= 0;
-      end
-
-      if (instr == 32'b11111111_11111111_11111111_11111111) begin
-        start_soon <= 1;
-        //if (byte_counter % 4 == 2) begin
-        //  write_instr_valid  <= 1;
-        //  write_byte_address <= byte_counter - 2;
-        //end
-      end else begin
-        start_soon <= 0;
-      end
-
-      if (start_soon == 1) begin
+      if (start_counter == 3'b111 && start == 0) begin  // delay start abit to have time add nop
         start <= 1;
-      end  // else start<=start
-
+        write_byte_address <= byte_counter - 8 + start_counter * 4;
+        write_instr_valid <= 1;
+        write_instr_data <= 32'b11111111_11111111_11111111_11111111;  // own instr HALT
+      end else if (start_counter > 0 && start == 0) begin
+        start_counter <= start_counter + 1;
+        write_byte_address <= byte_counter - 8 + start_counter * 4;
+        write_instr_valid <= 1;
+        write_instr_data <= 32'b00000000_00000000_00000000_00010011;  // NOP
+      end
     end
   end
 
