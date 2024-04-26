@@ -27,7 +27,7 @@ for arg in "$@"; do
 done
 
 # copy instructions from masimulator output
-cp Masimulator/mem.txt src/instruction_mem.mem
+#cp Masimulator/mem.txt src/instruction_mem.mem
 
 echo "$BOLD Running $UNDERLINE_1 and $UNDERLINE_tb_1 $RESET"
 venv/bin/python src/mem_to_bytes.py

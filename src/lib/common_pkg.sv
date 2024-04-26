@@ -53,7 +53,7 @@ package common_pkg;
     logic alu_inv_res;  // invert alu result
     logic mem_read;  // mem read
     logic mem_write;  // mem write
-    logic mem_to_reg;  // not in use yet dont know exatly what to do with
+    //logic mem_to_reg;  // not in use yet dont know exatly what to do with
     logic is_branch;  // is branch
     logic reg_write;  // write back to reg
 

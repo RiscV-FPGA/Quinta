@@ -24,12 +24,12 @@ The project will be built for the Nexys A7-100T FPGA.
 ## Phase1 instructions
 
 - [x] INSTR_LUI
-- [z] INSTR_BEQ
-- [z] INSTR_BNE
-- [z] INSTR_BLT
-- [z] INSTR_BGE
-- [z] INSTR_BLTU
-- [z] INSTR_BGEU
+- [x] INSTR_BEQ
+- [x] INSTR_BNE
+- [x] INSTR_BLT
+- [x] INSTR_BGE
+- [x] INSTR_BLTU
+- [x] INSTR_BGEU
 - [x] INSTR_LW
 - [x] INSTR_SW
 - [x] INSTR_ADDI

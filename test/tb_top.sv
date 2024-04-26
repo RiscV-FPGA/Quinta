@@ -11,12 +11,38 @@ module tb_top;
   parameter integer BIT_PERIOD = 8680;  // 115200 bist/s @ 100MHz -> 8680ns per bit
 
   logic rx_serial;
-  //logic finish = 0;
+  logic finish = 0;
+
+
+  logic [7:0] tb_instr[1024];
+  string filename = "src/instruction_mem_temp.mem";
+  int row_count = 0;
+  int file_handle;
+  initial begin
+    $readmemb(filename, tb_instr);
+
+    file_handle = $fopen(filename, "r");
+    if (file_handle == 0) begin
+      $display("Error opening file '%s'", filename);
+      $finish;
+    end
+    while (!$feof(
+        file_handle
+    )) begin
+      string line;
+      $fscanf(file_handle, "%s", line);
+      row_count++;
+    end
+    row_count--;
+    $fclose(file_handle);
+    $display("Number of rows in file '%s': %d", filename, row_count);
+  end
 
   top top_inst (
       .sys_clk(clk),
       .rst(rst),
-      .rx_serial(rx_serial)
+      .rx_serial(rx_serial),
+      .finish(finish)
   );
 
   // Takes in input byte and serializes it
@@ -63,12 +89,13 @@ module tb_top;
     // b11110000 b11000101 // ADDI x17 = 31
     // b11001100 b11001101 // ADDI x18 = 31
 
+    for (int i = 0; i < row_count; i++) begin
+      @(posedge clk);
+      UART_WRITE_BYTE(tb_instr[i]);
+      #(clk_period * 2);
+    end
 
-
-
-
-
-
+    /*
     // instr 1
     // b10010011
     // b00000000
@@ -174,10 +201,11 @@ module tb_top;
     UART_WRITE_BYTE(8'b11111111);
     @(posedge clk);
     #(clk_period * 10);
+*/
 
     #(clk_period * 200);
 
-    //  finish = 1;
+    finish = 1;
     #clk_period;
     $finish();
   end

@@ -10,8 +10,8 @@ module top (
     output logic [3:0] vga_g,
     output logic [3:0] vga_b,
     output logic vga_hsync,
-    output logic vga_vsync
-    // input logic finish,  // for tb (read registers at end)
+    output logic vga_vsync,
+    input logic finish  // for tb (read registers at end)
     //output logic [15:0] led
 );
 
@@ -86,8 +86,11 @@ module top (
         instruction_decode <= instruction_decode;
         pc_decode          <= pc_decode;
       end else begin
-        instruction_decode <= instruction_fetch;
         pc_decode <= pc_fetch;
+        instruction_decode <= instruction_fetch;
+        if (branch_taken_mem == 1) begin
+          instruction_decode <= 0;  // nop
+        end
       end
 
       //ex_reg <= id_reg
@@ -104,7 +107,6 @@ module top (
         control_execute.is_branch <= 0;  // nop
         //rs1_execute <= 0; // needed?
         //rs2_execute <= 0;
-      end else begin
       end
 
       //mem_reg <= ex_reg
@@ -112,10 +114,11 @@ module top (
       mem_data_in_mem <= mem_data_execute;  // added this to fix the critical path
       branch_taken_mem <= branch_taken_execute;  // added this to fix the critical path
       pc_branch_mem <= pc_branch_execute;
+      control_mem <= control_execute;
       if (branch_taken_mem == 1) begin
-        control_mem <= '0;  // nop
-      end else begin
-        control_mem <= control_execute;
+        control_mem.reg_write <= 0;  // nop
+        control_mem.mem_write <= 0;  // nop
+        control_mem.is_branch <= 0;  // nop
       end
 
       //wb_reg <= mem_reg
@@ -152,8 +155,8 @@ module top (
       .read1_data(read1_data_decode),
       .read2_data(read2_data_decode),
       .rs1(rs1_decode),
-      .rs2(rs2_decode)
-      // .finish(finish)  // for tb print
+      .rs2(rs2_decode),
+      .finish(finish)  // for tb print
   );
 
   hazard_detection_unit hazard_detection_unit_inst (
