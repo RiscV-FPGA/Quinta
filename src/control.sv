@@ -34,6 +34,9 @@ module control (
       7'b0000011: begin
         control.encoding = I_TYPE;  //load
       end
+      7'b1111111: begin
+        control.encoding = HALT_TYPE;
+      end
       default: begin
         // NOP (ADDI x0 x0 0)
         control.encoding = R_TYPE;

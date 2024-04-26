@@ -43,7 +43,6 @@ module top (
   logic         [31:0] alu_res_execute;
   logic         [31:0] mem_data_execute;
   logic         [31:0] pc_execute;
-  logic                is_branch_execute;
   logic                branch_taken_execute;
   logic         [31:0] pc_branch_execute;
   logic         [ 4:0] rs1_execute;
@@ -54,6 +53,8 @@ module top (
   logic         [31:0] alu_res_in_mem;
   logic         [31:0] mem_data_in_mem;
   logic         [31:0] mem_data_out_mem;
+  logic                branch_taken_mem;
+  logic         [31:0] pc_branch_mem;
 
   logic         [31:0] forwarding_data_1;
   logic         [31:0] forwarding_data_2;
@@ -89,38 +90,30 @@ module top (
         pc_decode <= pc_fetch;
       end
 
-
       //ex_reg <= id_reg
-      if (hazard_detected_decode == 1) begin
-        // nop
-        pc_execute <= 0;
-        data1_execute <= 0;
-        data2_execute <= 0;
-        immediate_data_execute <= 0;
-        rs1_execute <= 0;
-        rs2_execute <= 0;
-        control_execute <= '0;
+      pc_execute <= pc_decode;
+      data1_execute <= read1_data_decode;
+      data2_execute <= read2_data_decode;
+      immediate_data_execute <= immediate_data_decode;
+      rs1_execute <= rs1_decode;
+      rs2_execute <= rs2_decode;
+      control_execute <= control_decode;
+      if (hazard_detected_decode == 1 || branch_taken_mem == 1) begin
+        control_execute.reg_write <= 0;  // nop
+        control_execute.mem_write <= 0;  // nop
+        control_execute.is_branch <= 0;  // nop
+        //rs1_execute <= 0; // needed?
+        //rs2_execute <= 0;
       end else begin
-        pc_execute <= pc_decode;
-        data1_execute <= read1_data_decode;
-        data2_execute <= read2_data_decode;
-        immediate_data_execute <= immediate_data_decode;
-        rs1_execute <= rs1_decode;
-        rs2_execute <= rs2_decode;
-        if (is_branch_execute == 1 & branch_taken_execute == 1) begin
-          control_execute <= '0;
-          rs1_execute <= 0;
-          rs2_execute <= 0;
-        end else begin
-          control_execute <= control_decode;
-        end
       end
 
       //mem_reg <= ex_reg
-      alu_res_in_mem  <= alu_res_execute;
-      mem_data_in_mem <= mem_data_execute;
-      if (is_branch_execute == 1 & branch_taken_execute == 1) begin
-        control_mem <= '0;
+      alu_res_in_mem <= alu_res_execute;
+      mem_data_in_mem <= mem_data_execute;  // added this to fix the critical path
+      branch_taken_mem <= branch_taken_execute;  // added this to fix the critical path
+      pc_branch_mem <= pc_branch_execute;
+      if (branch_taken_mem == 1) begin
+        control_mem <= '0;  // nop
       end else begin
         control_mem <= control_execute;
       end
@@ -129,7 +122,6 @@ module top (
       control_wb  <= control_mem;
       alu_res_wb  <= alu_res_in_mem;
       mem_data_wb <= mem_data_out_mem;
-
     end
   end
 
@@ -140,9 +132,8 @@ module top (
       .write_byte_address(write_byte_address),
       .write_instr_data(write_instr_data),
       .write_instr_valid(write_instr_valid),
-      .is_branch(is_branch_execute),
-      .branch_taken(branch_taken_execute),
-      .pc_branch(pc_branch_execute),
+      .branch_taken(branch_taken_mem),
+      .pc_branch(pc_branch_mem),
       .hazard_detected(hazard_detected_decode),
       .pc(pc_fetch),
       .instruction(instruction_fetch)
@@ -188,7 +179,6 @@ module top (
       .fw_data_2_valid(forwarding_data_2_valid),
       .alu_res(alu_res_execute),
       .mem_data(mem_data_execute),
-      .is_branch(is_branch_execute),
       .branch_taken(branch_taken_execute),
       .pc_branch(pc_branch_execute)
   );

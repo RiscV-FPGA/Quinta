@@ -41,7 +41,9 @@ package common_pkg;
     U_TYPE,
 
     //block5=imm[20|10:5],  block4=imm[5:1|11], block3=imm[19:15], block2=imm[14:12], block1=rd
-    J_TYPE
+    J_TYPE,
+
+    HALT_TYPE
   } encoding_t;
 
   typedef struct packed {

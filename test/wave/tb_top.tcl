@@ -43,6 +43,7 @@ set signals {
 
     tb_top.top_inst.instruction_decode_stage_inst.write_data -
     tb_top.top_inst.instruction_decode_stage_inst.write_id -
+    tb_top.top_inst.instruction_decode_stage_inst.reg_write -
 
 
 }

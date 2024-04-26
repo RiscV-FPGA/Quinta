@@ -26,21 +26,17 @@ module instruction_fetch_stage (
       pc <= 0;
     end else begin
       if (start == 1) begin
-        if (instruction_internal == 32'b11111111_11111111_11111111_11111111) begin
+        if (is_branch == 1 & branch_taken == 1) begin
+          pc <= pc_branch;
+        end else if (hazard_detected == 1 || instruction_internal[6:0] == 7'b1111111) begin
           pc <= pc;
         end else begin
-          if (is_branch == 1 & branch_taken == 1) begin
-            pc <= pc_branch;
-          end else if (hazard_detected == 1) begin
-            pc <= pc;
+          if (instruction_internal[1:0] == 2'b11) begin
+            pc <= pc + 4;  // 32 bit instruction
+            //$display("isntr_32%032b, @%d", instruction_internal, pc);
           end else begin
-            if (instruction_internal[1:0] == 2'b11) begin
-              pc <= pc + 4;  // 32 bit instruction
-              //$display("isntr_32%032b, @%d", instruction_internal, pc);
-            end else begin
-              pc <= pc + 2;  // 16 bit instruction
-              //$display("isntr_16 %032b, @%d", instruction_internal, pc);
-            end
+            pc <= pc + 2;  // 16 bit instruction
+            //$display("isntr_16 %032b, @%d", instruction_internal, pc);
           end
         end
       end else begin

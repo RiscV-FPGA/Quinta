@@ -16,7 +16,6 @@ module execute_stage (
     input logic [31:0] fw_data_2,
     output logic [31:0] alu_res,
     output logic [31:0] mem_data,
-    output logic is_branch,
     output logic branch_taken,
     output logic [31:0] pc_branch
 );
@@ -33,8 +32,7 @@ module execute_stage (
 
 
   assign mem_data = data2_internal;
-  assign branch_taken = alu_res[0];
-  assign is_branch = control.is_branch;
+  assign branch_taken = alu_res[0] & control.is_branch;
   assign pc_branch = immediate_data * 2 + pc_execute;
 
   //select forwarded value if fw valid

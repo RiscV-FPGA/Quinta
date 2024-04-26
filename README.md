@@ -17,19 +17,19 @@ The project will be built for the Nexys A7-100T FPGA.
 - [x] imm_gen
 - [x] registers
 
-- [ ] Branches
-- [ ] Forwarding
-- [ ] Hazard
+- [x] Branches
+- [x] Forwarding
+- [x] Hazard
 
 ## Phase1 instructions
 
 - [x] INSTR_LUI
-- [ ] INSTR_BEQ
-- [ ] INSTR_BNE
-- [ ] INSTR_BLT
-- [ ] INSTR_BGE
-- [ ] INSTR_BLTU
-- [ ] INSTR_BGEU
+- [z] INSTR_BEQ
+- [z] INSTR_BNE
+- [z] INSTR_BLT
+- [z] INSTR_BGE
+- [z] INSTR_BLTU
+- [z] INSTR_BGEU
 - [x] INSTR_LW
 - [x] INSTR_SW
 - [x] INSTR_ADDI

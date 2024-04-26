@@ -33,18 +33,18 @@ module instruction_memory (
     end
   end
 
-  //logic temp = 0;
-  //always @(posedge clk) begin
-  //  if (start == 1 && temp == 0) begin
-  //    temp = 1;
-  //    for (int i = 0; i < 25; i++) begin
-  //      if (i < 10) begin
-  //        $display("inst_addr__%0d: %032b", i, instr_ram[i]);
-  //      end else begin
-  //        $display("inst_addr_%0d: %032b", i, instr_ram[i]);
-  //      end
-  //    end
-  //  end
-  //end
+  logic temp = 0;
+  always @(posedge clk) begin
+    if (start == 1 && temp == 0) begin
+      temp = 1;
+      for (int i = 0; i < 25; i++) begin
+        if (i < 10) begin
+          $display("inst_addr__%0d: %032b", i, instr_ram[i]);
+        end else begin
+          $display("inst_addr_%0d: %032b", i, instr_ram[i]);
+        end
+      end
+    end
+  end
 
 endmodule
