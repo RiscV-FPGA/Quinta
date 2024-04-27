@@ -1,17 +1,48 @@
-verilator -Isrc src/lib/common_pkg.sv --cc src/top.sv --exe test/tb_top_vga.cpp -o top_vga -CFLAGS "$(sdl2-config --cflags)" -LDFLAGS "$(sdl2-config --libs)"
+BOLD=$(tput bold)
+UNDERLINE=$(tput smul)
+RESET_UNDERLINE=$(tput rmul)
+RESET=$(tput sgr0)
+
+remove_vcd=false
+gtk_wave=false
+
+# for flags
+for arg in "$@"; do
+    case $arg in
+    --rm_vcd)
+        remove_vcd=true
+        ;;
+    --gtk_wave)
+        gtk_wave=true
+        ;;
+    -h | --help)
+        echo "Usage: sim_vga [--rm_vcd] [-h]"
+        echo "--rm_vcd : Removes .vcd-file at the end."
+        echo "-h  : Display this help message."
+        ;;
+    # Add more flags here if needed
+    *)
+        # Ignore unrecognized flags, mabe print warning and help here
+        ;;
+    esac
+done
+
+echo "$BOLD Running vga_top $RESET"
+
+venv/bin/python src/mem_to_bytes.py
+
+verilator --trace -Isrc src/lib/common_pkg.sv --cc src/top.sv
+verilator --trace -Isrc src/lib/common_pkg.sv --cc src/top.sv --exe test/tb_top_vga.cpp -o top_vga -CFLAGS "$(sdl2-config --cflags)" -LDFLAGS "$(sdl2-config --libs)"
 make -C ./obj_dir -f Vcommon_pkg.mk
 ./obj_dir/top_vga
+rm obj_dir -r
 
+if [ "$gtk_wave" = true ]; then
+    gtkwave waveform.vcd --script=test/wave/tb_top_vga.tcl
+fi
 
-#verilator --cc src/lib/*.sv --cc src/*.sv
-#verilator --cc src/lib/*.sv --cc src/*.sv --exe test/tb_top_vga.cpp 
-#verilator --cc --exe --build test/tb_top_vga.cpp --cc src/lib/*.sv --cc src/*.sv 
+if [ "$remove_vcd" = true ]; then
+   rm waveform.vcd
+fi
 
-#verilator -Isrc/ --cc src/lib/*.sv --cc src/*.sv --exe test/tb_top_vga.cpp -o $1  -CFLAGS "$(sdl2-config --cflags)" -LDFLAGS "$(sdl2-config --libs)" 
-#make -C ./obj_dir -f V$1.mk
-#./obj_dir/$1
-#rm obj_dir -r
-
-##verilator --cc --exe --build test/tb_vga.cpp -o vga -Isrc/ --cc src/vga*.sv -CFLAGS "$(sdl2-config --cflags)" -LDFLAGS "$(sdl2-config --libs)"
-##verilator -Isrc/ --cc src/vga.sv --exe test/tb_vga.cpp -o vga     -CFLAGS "$(sdl2-config --cflags)" -LDFLAGS "$(sdl2-config --libs)"
-##verilator -Isrc/ --cc src/lib/common_pkg.sv --cc src/lib/common_instructions_pkg.sv --cc src/top.sv --exe test/tb_top_vga.cpp -o vga     -CFLAGS "$(sdl2-config --cflags)" -LDFLAGS "$(sdl2-config --libs)"
+echo "$BOLD Done! $RESET"

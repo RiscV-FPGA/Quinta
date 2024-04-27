@@ -6,10 +6,14 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <verilated.h>
+#include <verilated_vcd_c.h>
 
 // screen dimensions
 const int H_RES = 1368;
 const int V_RES = 768;
+
+#define MAX_SIM_TIME 200000
+vluint64_t sim_time = 0;
 
 typedef struct Pixel { // for SDL texture
   uint8_t a;           // transparency
@@ -33,8 +37,8 @@ int main(int argc, char *argv[]) {
   SDL_Texture *sdl_texture = NULL;
 
   sdl_window =
-      SDL_CreateWindow("Square", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                       H_RES, V_RES, SDL_WINDOW_SHOWN);
+      SDL_CreateWindow("vga_top", SDL_WINDOWPOS_CENTERED,
+                       SDL_WINDOWPOS_CENTERED, H_RES, V_RES, SDL_WINDOW_SHOWN);
   if (!sdl_window) {
     printf("Window creation failed: %s\n", SDL_GetError());
     return 1;
@@ -63,6 +67,11 @@ int main(int argc, char *argv[]) {
   // initialize Verilog module
   Vcommon_pkg *top = new Vcommon_pkg;
 
+  Verilated::traceEverOn(true);
+  VerilatedVcdC *m_trace = new VerilatedVcdC;
+  top->trace(m_trace, 5);
+  m_trace->open("waveform.vcd");
+
   // reset
   top->rst = 1;
   top->sys_clk = 0;
@@ -73,18 +82,39 @@ int main(int argc, char *argv[]) {
   top->sys_clk = 0;
   top->eval();
 
-  // initialize frame rate
-  uint64_t start_ticks = SDL_GetPerformanceCounter();
-  uint64_t frame_count = 0;
+  uint64_t clk_cycle = 0;
 
-  // main loop
-  while (1) {
+  // main gtk loop
+  while (sim_time < MAX_SIM_TIME) {
+    // cycle the clock
+    top->sys_clk ^= 1;
+
+    if (sim_time > 10 && sim_time < 100) {
+      top->rx_serial = 0;
+    } else {
+      top->rx_serial = 1;
+    }
+
+    top->eval();
+    m_trace->dump(sim_time);
+    sim_time++;
+  }
+
+  // main gtk end
+  printf("number of clk cycles: %" PRIu64 "\n", sim_time);
+  m_trace->close();
+
+  // loop to show the vga
+  while (true) {
+    if (keyb_state[SDL_SCANCODE_Q]) {
+      break; // quit if user presses 'Q'
+    }
+
     // cycle the clock
     top->sys_clk = 1;
     top->eval();
     top->sys_clk = 0;
     top->eval();
-
     // update pixel if not in blanking interval
     if (top->sdl_de) {
       Pixel *p = &screenbuffer[top->sdl_sy * H_RES + top->sdl_sx];
@@ -95,7 +125,7 @@ int main(int argc, char *argv[]) {
     }
 
     // update texture once per frame (in blanking)
-    if (top->sdl_sy == V_RES && top->sdl_sx == 0) {
+    if (top->sdl_sy == 0 && top->sdl_sx == 0) {
       // check for quit event
       SDL_Event e;
       if (SDL_PollEvent(&e)) {
@@ -103,26 +133,17 @@ int main(int argc, char *argv[]) {
           break;
         }
       }
-
-      if (keyb_state[SDL_SCANCODE_Q])
-        break; // quit if user presses 'Q'
-
       SDL_UpdateTexture(sdl_texture, NULL, screenbuffer, H_RES * sizeof(Pixel));
       SDL_RenderClear(sdl_renderer);
       SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
       SDL_RenderPresent(sdl_renderer);
-      frame_count++;
     }
+    top->eval();
   }
 
-  // calculate frame rate
-  uint64_t end_ticks = SDL_GetPerformanceCounter();
-  double duration =
-      ((double)(end_ticks - start_ticks)) / SDL_GetPerformanceFrequency();
-  double fps = (double)frame_count / duration;
-  printf("Frames per second: %.1f\n", fps);
-
   top->final(); // simulation done
+  delete top;
+  exit(EXIT_SUCCESS);
 
   SDL_DestroyTexture(sdl_texture);
   SDL_DestroyRenderer(sdl_renderer);
