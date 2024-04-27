@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 import common_pkg::*;
 
 module execute_stage (
@@ -64,8 +62,8 @@ module execute_stage (
       .right_operand(right_operand),
       .alu_op(control.alu_op),
       .alu_inv_res(control.alu_inv_res),
-      .alu_res(alu_res_internal),
-      .zero_flag(zero_flag)
+      .alu_res(alu_res_internal)
+      //.zero_flag(zero_flag)
   );
 
 endmodule

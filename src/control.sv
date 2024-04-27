@@ -1,5 +1,4 @@
 import common_pkg::*;
-import common_instructions_pkg::*;
 
 module control (
     input instruction_t instruction,

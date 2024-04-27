@@ -1,19 +1,27 @@
-`timescale 1ns / 1ps
-
 import common_pkg::*;
 
 module top (
-    input logic sys_clk,
-    input logic rst,
-    input logic rx_serial,
-    output logic [3:0] vga_r,
-    output logic [3:0] vga_g,
-    output logic [3:0] vga_b,
-    output logic vga_hsync,
-    output logic vga_vsync,
-    input logic finish  // for tb (read registers at end)
+    input  logic        sys_clk,
+    input  logic        rst,
+    input  logic        rx_serial,
+    output logic [ 3:0] vga_r,
+    output logic [ 3:0] vga_g,
+    output logic [ 3:0] vga_b,
+    output logic        vga_hsync,
+    output logic        vga_vsync,
+    // FOR TB START
+    input  logic        finish,
+    output logic [ 7:0] sdl_r,
+    output logic [ 7:0] sdl_g,
+    output logic [ 7:0] sdl_b,
+    output logic [31:0] sdl_sx,
+    output logic [31:0] sdl_sy,
+    output logic        sdl_de
+    // FOR TB END
+
     //output logic [15:0] led
 );
+
 
   logic                start;
   logic         [31:0] write_instr_data;
@@ -66,14 +74,6 @@ module top (
   logic         [31:0] alu_res_wb;
   logic         [31:0] mem_data_wb;
   logic         [31:0] wb_data_wb;  // to decode for saving
-
-  // ONLY FOR TB
-  logic         [ 7:0] sdl_r;
-  logic         [ 7:0] sdl_g;
-  logic         [ 7:0] sdl_b;
-  logic         [31:0] sdl_sx;
-  logic         [31:0] sdl_sy;
-  logic                sdl_de;
 
   //assign clk = sys_clk;
 

@@ -27,8 +27,8 @@ module decompressor (
             instruction_out.opcode = 7'b0100011;
             instruction_out.block1 = temp[4:0];
             instruction_out.block2 = 3'b010;
-            instruction_out.block3 = instruction_in[9:7];
-            instruction_out.block4 = instruction_in[4:2];
+            instruction_out.block3 = {2'b00, instruction_in[9:7]};
+            instruction_out.block4 = {2'b00, instruction_in[4:2]};
             instruction_out.block5 = {{5{temp[6]}}, temp[6:5]};
           end
           default: begin
@@ -89,25 +89,25 @@ module decompressor (
             case (instruction_in[11:10])
               2'b00: begin  //SRLI - msb of imm is ignored here
                 instruction_out.opcode = 7'b0010011;
-                instruction_out.block1 = instruction_in[9:7];
+                instruction_out.block1 = {2'b00, instruction_in[9:7]};
                 instruction_out.block2 = 3'b101;
-                instruction_out.block3 = instruction_in[9:7];
+                instruction_out.block3 = {2'b00, instruction_in[9:7]};
                 instruction_out.block4 = instruction_in[6:2];
                 instruction_out.block5 = 7'b0000000;
               end
               2'b01: begin  //SRAI -||-
                 instruction_out.opcode = 7'b0010011;
-                instruction_out.block1 = instruction_in[9:7];
+                instruction_out.block1 = {2'b00, instruction_in[9:7]};
                 instruction_out.block2 = 3'b101;
-                instruction_out.block3 = instruction_in[9:7];
+                instruction_out.block3 = {2'b00, instruction_in[9:7]};
                 instruction_out.block4 = instruction_in[6:2];
                 instruction_out.block5 = 7'b0100000;
               end
               2'b10: begin  //ANDI
                 instruction_out.opcode = 7'b0010011;
-                instruction_out.block1 = instruction_in[9:7];
+                instruction_out.block1 = {2'b00, instruction_in[9:7]};
                 instruction_out.block2 = 3'b111;
-                instruction_out.block3 = instruction_in[9:7];
+                instruction_out.block3 = {2'b00, instruction_in[9:7]};
                 instruction_out.block4 = instruction_in[6:2];
                 instruction_out.block5 = {7{instruction_in[12]}};
               end
@@ -115,34 +115,34 @@ module decompressor (
                 case (instruction_in[6:5])
                   2'b00: begin  //SUB
                     instruction_out.opcode = 7'b0110011;
-                    instruction_out.block1 = instruction_in[9:7];
+                    instruction_out.block1 = {2'b00, instruction_in[9:7]};
                     instruction_out.block2 = 3'b000;
-                    instruction_out.block3 = instruction_in[9:7];
-                    instruction_out.block4 = instruction_in[4:2];
+                    instruction_out.block3 = {2'b00, instruction_in[9:7]};
+                    instruction_out.block4 = {2'b00, instruction_in[4:2]};
                     instruction_out.block5 = 7'b0100000;
                   end
                   2'b01: begin  //XOR -> AND
                     instruction_out.opcode = 7'b0110011;
-                    instruction_out.block1 = instruction_in[9:7];
+                    instruction_out.block1 = {2'b00, instruction_in[9:7]};
                     instruction_out.block2 = 3'b111;
-                    instruction_out.block3 = instruction_in[9:7];
-                    instruction_out.block4 = instruction_in[4:2];
+                    instruction_out.block3 = {2'b00, instruction_in[9:7]};
+                    instruction_out.block4 = {2'b00, instruction_in[4:2]};
                     instruction_out.block5 = 7'b0000000;
                   end
                   2'b10: begin  //OR
                     instruction_out.opcode = 7'b0110011;
-                    instruction_out.block1 = instruction_in[9:7];
+                    instruction_out.block1 = {2'b00, instruction_in[9:7]};
                     instruction_out.block2 = 3'b110;
-                    instruction_out.block3 = instruction_in[9:7];
-                    instruction_out.block4 = instruction_in[4:2];
+                    instruction_out.block3 = {2'b00, instruction_in[9:7]};
+                    instruction_out.block4 = {2'b00, instruction_in[4:2]};
                     instruction_out.block5 = 7'b0000000;
                   end
                   2'b11: begin  //AND
                     instruction_out.opcode = 7'b0110011;
-                    instruction_out.block1 = instruction_in[9:7];
+                    instruction_out.block1 = {2'b00, instruction_in[9:7]};
                     instruction_out.block2 = 3'b111;
-                    instruction_out.block3 = instruction_in[9:7];
-                    instruction_out.block4 = instruction_in[4:2];
+                    instruction_out.block3 = {2'b00, instruction_in[9:7]};
+                    instruction_out.block4 = {2'b00, instruction_in[4:2]};
                     instruction_out.block5 = 7'b0000000;
                   end
                   default: begin
@@ -180,7 +180,7 @@ module decompressor (
               instruction_in[11:10], instruction_in[4:3], instruction_in[12]
             };
             instruction_out.block2 = 3'b000;
-            instruction_out.block3 = instruction_in[9:7];
+            instruction_out.block3 = {2'b00, instruction_in[9:7]};
             instruction_out.block4 = 5'b00000;
             instruction_out.block5 = {
               {4{instruction_in[12]}}, instruction_in[6:5], instruction_in[2]
@@ -192,7 +192,7 @@ module decompressor (
               instruction_in[11:10], instruction_in[4:3], instruction_in[12]
             };
             instruction_out.block2 = 3'b001;
-            instruction_out.block3 = instruction_in[9:7];
+            instruction_out.block3 = {2'b00, instruction_in[9:7]};
             instruction_out.block4 = 5'b00000;
             instruction_out.block5 = {
               {4{instruction_in[12]}}, instruction_in[6:5], instruction_in[2]
@@ -206,9 +206,9 @@ module decompressor (
         case (instruction_in[15:13])
           3'b000: begin  //SLLI
             instruction_out.opcode = 7'b0010011;
-            instruction_out.block1 = instruction_in[9:7];
+            instruction_out.block1 = {2'b00, instruction_in[9:7]};
             instruction_out.block2 = 3'b001;
-            instruction_out.block3 = instruction_in[9:7];
+            instruction_out.block3 = {2'b00, instruction_in[9:7]};
             instruction_out.block4 = instruction_in[6:2];
             instruction_out.block5 = 7'b0000000;
           end

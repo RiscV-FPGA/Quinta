@@ -17,7 +17,8 @@ module instruction_memory (
 
   always @(posedge clk) begin
     if (write_enable) begin
-      instr_ram[byte_address[31:2]] <= write_data;
+      instr_ram[byte_address[11:2]] <= write_data;
+      //instr_ram[byte_address[31:2]] <= write_data;
       //$display("write %032b, @%d", write_data, byte_address);
       //$display("---------------------------------");
     end
@@ -25,11 +26,14 @@ module instruction_memory (
 
   always_comb begin : blockName
     if (byte_address[1] == 0) begin  // standard 32 bit slot
-      read_data = instr_ram[byte_address[31:2]];
+      read_data = instr_ram[byte_address[11:2]];
+      // read_data = instr_ram[byte_address[31:2]];
 
     end else begin  // half slot :(
-      read_data[15:0]  = instr_ram[byte_address[31:2]][31:16];
-      read_data[31:16] = instr_ram[byte_address[31:2]+1][15:0];
+      read_data[15:0]  = instr_ram[byte_address[11:2]][31:16];
+      read_data[31:16] = instr_ram[byte_address[11:2]+1][15:0];
+      //read_data[15:0]  = instr_ram[byte_address[31:2]][31:16];
+      //read_data[31:16] = instr_ram[byte_address[31:2]+1][15:0];
     end
   end
 

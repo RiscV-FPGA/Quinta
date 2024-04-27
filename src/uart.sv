@@ -15,7 +15,7 @@ module uart (
 
   logic       rx_serial_d;
   logic       rx_serial_dd;
-  logic [9:0] clk_counter;  // 10 bits max count 1023
+  logic [31:0] clk_counter;  // 10 bits max count 1023
   logic [2:0] bit_index_counter;  //8 bits total
 
   typedef enum {
@@ -26,7 +26,6 @@ module uart (
   } uart_state_t;
 
   uart_state_t uart_state;
-
 
   // dubble flip flop for input
   always @(posedge clk) begin

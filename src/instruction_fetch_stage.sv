@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 import common_pkg::*;
 
 module instruction_fetch_stage (
@@ -9,7 +7,6 @@ module instruction_fetch_stage (
     input  logic         [31:0] write_byte_address,
     input  logic         [31:0] write_instr_data,
     input  logic                write_instr_valid,
-    input  logic                is_branch,
     input  logic                branch_taken,
     input  logic         [31:0] pc_branch,
     input  logic                hazard_detected,
@@ -26,7 +23,7 @@ module instruction_fetch_stage (
       pc <= 0;
     end else begin
       if (start == 1) begin
-        if (is_branch == 1 & branch_taken == 1) begin
+        if ( branch_taken == 1) begin
           pc <= pc_branch;
         end else if (hazard_detected == 1 || instruction_internal[6:0] == 7'b1111111) begin
           pc <= pc;

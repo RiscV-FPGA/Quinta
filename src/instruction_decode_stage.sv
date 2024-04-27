@@ -8,8 +8,6 @@ module instruction_decode_stage (
     input logic reg_write,
     input logic [4:0] write_id,
     input logic [31:0] write_data,
-    input logic is_branch,
-    input logic branch_taken,
     output logic [31:0] immediate_data,
     output control_t control,
     output logic [31:0] read1_data,

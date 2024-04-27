@@ -33,7 +33,7 @@ module imm_gen (
       end
       J_TYPE: begin
         immediate_data = {
-          {12{instruction.block5[6]}},
+          {13{instruction.block5[6]}},
           {
             instruction.block3,
             instruction.block2,

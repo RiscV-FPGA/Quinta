@@ -72,11 +72,10 @@ module vga (
   // -----------------SYNC------------------------
 
   initial begin
-    //$readmemb("src/vga_one.mem", one);
-    //$readmemb("src/vga_zero.mem", zero);
-    $readmemb("vga_one.mem", one);
-    $readmemb("vga_zero.mem", zero);
-
+    $readmemb("src/vga_one.mem", one);
+    $readmemb("src/vga_zero.mem", zero);
+    //$readmemb("vga_one.mem", one);
+    //$readmemb("vga_zero.mem", zero);
   end
 
   vga_ram vga_ram_inst (
