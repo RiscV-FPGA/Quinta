@@ -41,6 +41,11 @@ set signals {
     tb_top.top_inst.instruction_decode_stage_inst.TB_reg_write -
     tb_top.top_inst.instruction_decode_stage_inst.TB_write_back_id -
 
+    tb_top.top_inst.instruction_decode_stage_inst.write_data -
+    tb_top.top_inst.instruction_decode_stage_inst.write_id -
+    tb_top.top_inst.instruction_decode_stage_inst.reg_write -
+
+
 }
 
 # Iterate through the list of signals and add them

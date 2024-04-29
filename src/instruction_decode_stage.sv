@@ -8,8 +8,6 @@ module instruction_decode_stage (
     input logic reg_write,
     input logic [4:0] write_id,
     input logic [31:0] write_data,
-    input logic is_branch,
-    input logic branch_taken,
     output logic [31:0] immediate_data,
     output control_t control,
     output logic [31:0] read1_data,
@@ -28,20 +26,20 @@ module instruction_decode_stage (
   logic [31:0] read2_data_regs;
 
   always_comb begin : register_forwarding
-    if (write_id == rs1) begin
+    if (write_id == rs1 && reg_write == 1) begin
       read1_data = write_data;
     end else begin
       read1_data = read1_data_regs;
     end
 
-    if (write_id == rs2) begin
+    if (write_id == rs2 && reg_write == 1) begin
       read2_data = write_data;
     end else begin
       read2_data = read2_data_regs;
     end
   end
 
-  logic TB_ALU_AND;
+  /*logic TB_ALU_AND;
   logic TB_ALU_OR;
   logic TB_ALU_XOR;
   logic TB_ALU_ADD;
@@ -64,6 +62,7 @@ module instruction_decode_stage (
   logic TB_is_branch;
   logic TB_reg_write;
   logic [4:0] TB_write_back_id;
+*/
 
   assign rs1_internal = instruction.block3;
   assign rs2_internal = instruction.block4;
@@ -99,7 +98,7 @@ module instruction_decode_stage (
 
 
   // FOR TB
-  always_comb begin
+  /*always_comb begin
     TB_R_TYPE = 0;
     TB_I_TYPE = 0;
     TB_S_TYPE = 0;
@@ -149,5 +148,5 @@ module instruction_decode_stage (
 
     TB_write_back_id = control.write_back_id;
   end
-
+*/
 endmodule

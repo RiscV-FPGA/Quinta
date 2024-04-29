@@ -7,3 +7,4 @@ rm vivado_pid*.str
 rm vivado_*.log
 rm vivado_*.jou
 rm hs_err_pid*.log
+rm vivado_*.zip

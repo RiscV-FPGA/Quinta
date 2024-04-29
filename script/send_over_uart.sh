@@ -5,12 +5,11 @@
 #stty -a -F /dev/ttyUSB0         # To view the current settings for UART3, use
 
 # Check if the file is provided as argument
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <filename>"
-    exit 1
-fi
-
 filename=$1
+if [ $# -ne 1 ]; then
+    python3 src/mem_to_bytes.py
+    filename='src/instruction_mem_temp.mem'
+fi
 
 # Read each line from the file and convert to hexadecimal
 while IFS= read -r line; do
@@ -21,7 +20,7 @@ while IFS= read -r line; do
         hex="0$hex"
     fi
 
-    #echo "$hex"
+    echo "$hex"
     echo -n "\x$hex" >/dev/ttyUSB1
 done <"$filename"
 

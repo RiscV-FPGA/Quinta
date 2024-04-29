@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 import common_pkg::*;
 
 module execute_stage (
@@ -16,7 +14,6 @@ module execute_stage (
     input logic [31:0] fw_data_2,
     output logic [31:0] alu_res,
     output logic [31:0] mem_data,
-    output logic is_branch,
     output logic branch_taken,
     output logic [31:0] pc_branch
 );
@@ -33,9 +30,8 @@ module execute_stage (
 
 
   assign mem_data = data2_internal;
-  assign branch_taken = alu_res[0];
-  assign is_branch = control.is_branch;
-  assign pc_branch = immediate_data * 2 + pc_execute;
+  assign branch_taken = alu_res[0] & control.is_branch;
+  assign pc_branch = immediate_data * 2 + pc_execute + 4;
 
   //select forwarded value if fw valid
   assign data1_internal = fw_data_1_valid ? fw_data_1 : data1;
@@ -66,8 +62,8 @@ module execute_stage (
       .right_operand(right_operand),
       .alu_op(control.alu_op),
       .alu_inv_res(control.alu_inv_res),
-      .alu_res(alu_res_internal),
-      .zero_flag(zero_flag)
+      .alu_res(alu_res_internal)
+      //.zero_flag(zero_flag)
   );
 
 endmodule

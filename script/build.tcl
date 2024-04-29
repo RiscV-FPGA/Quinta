@@ -30,41 +30,22 @@ add_files -norecurse [file join "$ROOT" src registers.sv]
 add_files -norecurse [file join "$ROOT" src writeback_stage.sv]
 add_files -norecurse [file join "$ROOT" src forwarding_unit.sv]
 add_files -norecurse [file join "$ROOT" src hazard_detection_unit.sv]
-#add_files -norecurse [file join "$ROOT" src clk_wiz_wrapper.sv]
 add_files -norecurse [file join "$ROOT" src vga.sv]
 add_files -norecurse [file join "$ROOT" src vga_ram.sv]
 add_files -norecurse [file join "$ROOT" src uart_collector.sv]
 add_files -norecurse [file join "$ROOT" src uart.sv]
 
 
-#add_files -norecurse [file join "$ROOT" src instruction_mem_temp.mem]
 add_files -norecurse [file join "$ROOT" src vga_one.mem]
 add_files -norecurse [file join "$ROOT" src vga_zero.mem]
-
-#add_files -norecurse [file join "$ROOT" src vga_ram_data.mem]
-#add_files -norecurse [file join "$ROOT" src vga_ram_instr.mem]
-#add_files -norecurse [file join "$ROOT" src vga_ram_reg.mem]
-
-
 
 add_files -fileset constrs_1 [file join "$ROOT" src constraint.xdc]
 
 import_files -force
-#import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_execute_stage.sv]
-#import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_instruction_decode_stage.sv]
-#import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_instruction_fetch_stage.sv]
-#import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_memory_stage.sv]
-#import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_writeback_stage.sv]
-#import_files -fileset sim_1 -norecurse [file join "$ROOT" test tb_top.sv]
-
-#set_property top tb_top [get_filesets sim_1]
-#set_property top_lib xil_defaultlib [get_filesets sim_1]
-
-#update_compile_order -fileset sim_1
 update_compile_order -fileset sources_1
 
 start_gui
 
 ## run impl
-launch_runs impl_1 -to_step write_bitstream -jobs 6
+launch_runs impl_1 -to_step write_bitstream -jobs 12
 #wait_on_run impl_1

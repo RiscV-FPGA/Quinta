@@ -19,12 +19,10 @@ module tb_uart_top ();
     input [7:0] i_Data;
     integer ii;
     begin
-
       // Send Start Bit
       rx_serial <= 1'b0;
       #(BIT_PERIOD);
       #1000;
-
 
       // Send Data Byte
       for (ii = 0; ii < 8; ii = ii + 1) begin
@@ -49,15 +47,17 @@ module tb_uart_top ();
       .start(start)
   );
 
-  logic [7:0] ram[1024];  // 512 compact or 256 32-bit instructions
+  logic [7:0] instr_ram[1024];  // 512 compact or 256 32-bit instructions
+
   always @(posedge clk) begin
-    if (write_instr_valid) begin
-      ram[write_byte_address]   <= write_instr_data[31:24];
-      ram[write_byte_address+1] <= write_instr_data[23:16];
-      ram[write_byte_address+2] <= write_instr_data[15:8];
-      ram[write_byte_address+3] <= write_instr_data[7:0];
+    if (write_instr_valid == 1) begin
+      instr_ram[write_byte_address]   <= write_instr_data[31:24];
+      instr_ram[write_byte_address+1] <= write_instr_data[23:16];
+      instr_ram[write_byte_address+2] <= write_instr_data[15:8];
+      instr_ram[write_byte_address+3] <= write_instr_data[7:0];
     end
   end
+
 
   always #(CLK_PERIOD / 2) clk <= !clk;
 
@@ -175,11 +175,11 @@ module tb_uart_top ();
 
     for (int i = 0; i < 25; i++) begin
       if (i < 10) begin
-        $display("inst_addr__%0d: %08b_%08b_%08b_%08b", i, ram[4*i], ram[4*i+1], ram[4*i+2],
-                 ram[4*i+3]);
+        $display("inst_addr__%0d: %08b_%08b_%08b_%08b", i, instr_ram[4*i], instr_ram[4*i+1],
+                 instr_ram[4*i+2], instr_ram[4*i+3]);
       end else begin
-        $display("inst_addr_%0d: %08b_%08b_%08b_%08b", i, ram[4*i], ram[4*i+1], ram[4*i+2],
-                 ram[4*i+3]);
+        $display("inst_addr_%0d: %08b_%08b_%08b_%08b", i, instr_ram[4*i], instr_ram[4*i+1],
+                 instr_ram[4*i+2], instr_ram[4*i+3]);
       end
     end
     #(CLK_PERIOD * 10);

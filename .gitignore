@@ -20,3 +20,4 @@ doc/.DS_Store
 obj_dir
 .Xil
 instruction_mem_temp.mem
+instruction_mem_raw.mem

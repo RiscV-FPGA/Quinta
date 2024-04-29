@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 import common_pkg::*;
 
 module hazard_detection_unit (

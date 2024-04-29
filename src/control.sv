@@ -1,5 +1,4 @@
 import common_pkg::*;
-import common_instructions_pkg::*;
 
 module control (
     input instruction_t instruction,
@@ -33,6 +32,9 @@ module control (
       end
       7'b0000011: begin
         control.encoding = I_TYPE;  //load
+      end
+      7'b1111111: begin
+        control.encoding = HALT_TYPE;
       end
       default: begin
         // NOP (ADDI x0 x0 0)
@@ -288,6 +290,9 @@ logic reg_write
       end
       INSTR_FMV_W_X: begin  //5
 
+      end
+      INSTR_HALT: begin
+        // control == 0 :)
       end
       default: begin
         // NOP (ADDI x0 x0 0)
