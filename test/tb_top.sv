@@ -53,7 +53,7 @@ module tb_top;
       // Send Start Bit
       rx_serial <= 1'b0;
       #(BIT_PERIOD);
-      #1000;
+      //#1000;
       // Send Data Byte
       for (ii = 0; ii < 8; ii = ii + 1) begin
         rx_serial <= i_Data[ii];

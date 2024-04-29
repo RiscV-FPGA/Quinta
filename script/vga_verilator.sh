@@ -35,7 +35,7 @@ verilator --trace -Isrc src/lib/common_pkg.sv --cc src/top.sv
 verilator --trace -Isrc src/lib/common_pkg.sv --cc src/top.sv --exe test/tb_top_vga.cpp -o top_vga -CFLAGS "$(sdl2-config --cflags)" -LDFLAGS "$(sdl2-config --libs)"
 make -C ./obj_dir -f Vcommon_pkg.mk
 ./obj_dir/top_vga
-rm obj_dir -r
+#rm obj_dir -r
 
 if [ "$gtk_wave" = true ]; then
     gtkwave waveform.vcd --script=test/wave/tb_top_vga.tcl

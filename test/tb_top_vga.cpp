@@ -4,9 +4,15 @@
 
 #include "Vcommon_pkg.h"
 #include <SDL2/SDL.h>
+#include <array>
 #include <stdio.h>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
+
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 // screen dimensions
 const int H_RES = 1368;
@@ -14,6 +20,7 @@ const int V_RES = 768;
 
 #define MAX_SIM_TIME 200000
 vluint64_t sim_time = 0;
+int clk_per_rx_serial_bit = 868;
 
 typedef struct Pixel { // for SDL texture
   uint8_t a;           // transparency
@@ -21,6 +28,54 @@ typedef struct Pixel { // for SDL texture
   uint8_t g;           // green
   uint8_t r;           // red
 } Pixel;
+
+void delay_clk(Vcommon_pkg *top, VerilatedVcdC *m_trace, int num_cycles) {
+  for (int i = 0; i < num_cycles * 2; i++) {
+    top->sys_clk ^= 1; // Toggle clock
+    top->eval();
+    m_trace->dump(sim_time);
+    sim_time++;
+  }
+}
+
+void send_uart_byte(Vcommon_pkg *top, VerilatedVcdC *m_trace,
+                    std::array<char, 8> serial_data) {
+  top->rx_serial = 0; // start bit
+  delay_clk(top, m_trace, clk_per_rx_serial_bit);
+  for (int i = 0; i < 8; i++) {
+    top->rx_serial = serial_data[7 - i];
+    delay_clk(top, m_trace, clk_per_rx_serial_bit);
+  }
+  top->rx_serial = 1; // stop bit
+  delay_clk(top, m_trace, clk_per_rx_serial_bit);
+}
+
+void open_send_file(Vcommon_pkg *top, VerilatedVcdC *m_trace,
+                    std::string file_name) {
+  std::ifstream file(file_name);
+  std::string line;
+
+  if (!file.is_open()) {
+    std::cerr << "Error opening file" << std::endl;
+  }
+
+  // Read file line by line
+  while (std::getline(file, line)) {
+    // Convert line to std::array<char, 8>
+    std::array<char, 8> serial_data;
+    for (size_t i = 0; i < 8; ++i) {
+      serial_data[i] = line[i];
+    }
+    // std::cout << "Serial data array: ";
+    // for (const auto &bit : serial_data) {
+    //   std::cout << bit;
+    // }
+    // std::cout << std::endl;
+
+    send_uart_byte(top, m_trace, serial_data);
+  }
+  file.close();
+}
 
 int main(int argc, char *argv[]) {
   Verilated::commandArgs(argc, argv);
@@ -72,35 +127,28 @@ int main(int argc, char *argv[]) {
   top->trace(m_trace, 5);
   m_trace->open("waveform.vcd");
 
-  // reset
+  // start values:
+  top->sys_clk = 0;
   top->rst = 1;
-  top->sys_clk = 0;
+  top->rx_serial = 1;
+
   top->eval();
-  top->sys_clk = 1;
-  top->eval();
+  m_trace->dump(sim_time);
+  sim_time++;
+  delay_clk(top, m_trace, 1);
   top->rst = 0;
-  top->sys_clk = 0;
-  top->eval();
+  delay_clk(top, m_trace, 1);
 
-  uint64_t clk_cycle = 0;
-
-  // main gtk loop
-  while (sim_time < MAX_SIM_TIME) {
-    // cycle the clock
-    top->sys_clk ^= 1;
-
-    if (sim_time > 10 && sim_time < 100) {
-      top->rx_serial = 0;
-    } else {
-      top->rx_serial = 1;
-    }
-
-    top->eval();
-    m_trace->dump(sim_time);
-    sim_time++;
-  }
+  // open instruction file and send it over uart
+  open_send_file(top, m_trace, "src/instruction_mem_temp.mem");
+  delay_clk(top, m_trace, 200);
 
   // main gtk end
+  delay_clk(top, m_trace, 10);
+  top->finish = 1;
+  delay_clk(top, m_trace, 1);
+  top->finish = 0;
+  delay_clk(top, m_trace, 10);
   printf("number of clk cycles: %" PRIu64 "\n", sim_time);
   m_trace->close();
 
