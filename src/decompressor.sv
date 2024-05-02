@@ -124,8 +124,9 @@ module decompressor (
                   2'b01: begin  //XOR
                     instruction_out.opcode = 7'b0110011;
                     instruction_out.block1 = {2'b00, instruction_in[9:7]};
+                    //instruction_out.block2 = 3'b111;
                     //instruction_out.block2 = 3'b100;
-                    instruction_out.block2 = 3'b111;
+                    instruction_out.block2 = instruction_in[15:13];
                     instruction_out.block3 = {2'b00, instruction_in[9:7]};
                     instruction_out.block4 = {2'b00, instruction_in[4:2]};
                     instruction_out.block5 = 7'b0000000;

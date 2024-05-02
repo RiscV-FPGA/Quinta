@@ -18,7 +18,7 @@ module registers (
   always_ff @(posedge clk) begin
     if (rst == 1) begin
       for (int i = 0; i < 32; i++) begin
-        register[i] <= 0;
+        register[i] <= 32'b00000000_00000000_00000000_00000000;
       end
 
     end else begin
