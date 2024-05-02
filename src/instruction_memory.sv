@@ -4,8 +4,8 @@ module instruction_memory (
     input logic [31:0] byte_address,
     input logic write_enable,
     input logic [31:0] write_data,
-    output logic [31:0] read_data,
-    input logic start  //temp for tb
+    output logic [31:0] read_data
+    //input logic start  //temp for tb
 );
 
   logic [31:0] instr_ram[1024];  // 512 compact or 256 32-bit instructions
@@ -37,18 +37,18 @@ module instruction_memory (
     end
   end
 
-  logic temp = 0;
-  always @(posedge clk) begin
-    if (start == 1 && temp == 0) begin
-      temp = 1;
-      for (int i = 0; i < 25; i++) begin
-        if (i < 10) begin
-          $display("inst_addr__%0d: %032b", i, instr_ram[i]);
-        end else begin
-          $display("inst_addr_%0d: %032b", i, instr_ram[i]);
-        end
-      end
-    end
-  end
+  // logic temp = 0;
+  // always @(posedge clk) begin
+  //   if (start == 1 && temp == 0) begin
+  //     temp = 1;
+  //     for (int i = 0; i < 25; i++) begin
+  //       if (i < 10) begin
+  //         $display("inst_addr__%0d: %032b", i, instr_ram[i]);
+  //       end else begin
+  //         $display("inst_addr_%0d: %032b", i, instr_ram[i]);
+  //       end
+  //     end
+  //   end
+  // end
 
 endmodule

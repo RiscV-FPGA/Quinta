@@ -23,7 +23,7 @@ module instruction_fetch_stage (
       pc <= 0;
     end else begin
       if (start == 1) begin
-        if ( branch_taken == 1) begin
+        if (branch_taken == 1) begin
           pc <= pc_branch;
         end else if (hazard_detected == 1 || instruction_internal[6:0] == 7'b1111111) begin
           pc <= pc;
@@ -56,8 +56,8 @@ module instruction_fetch_stage (
       .byte_address(byte_address),
       .write_data(write_instr_data),
       .write_enable(write_instr_valid),
-      .read_data(instruction_internal),
-      .start(start)
+      .read_data(instruction_internal)
+      //.start(start)
   );
 
   decompressor decompressor_inst (
