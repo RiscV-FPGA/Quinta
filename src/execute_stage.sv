@@ -31,7 +31,7 @@ module execute_stage (
 
   assign mem_data = data2_internal;
   assign branch_taken = alu_res[0] & control.is_branch;
-  assign pc_branch = immediate_data * 2 + pc_execute + 4;
+  assign pc_branch = immediate_data * 2 + pc_execute;
 
   //select forwarded value if fw valid
   assign data1_internal = fw_data_1_valid ? fw_data_1 : data1;

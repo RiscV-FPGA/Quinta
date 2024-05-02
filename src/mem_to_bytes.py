@@ -29,11 +29,17 @@ with open(input_file, 'r') as infile:
                     for section in sections[::-1]:
                         temp_outfile.write(section + '\n')
 
-            # Add the last instruction containing 32 ones at the end of the temp output file
+            # Add the last instruction one nop and one 32-ones at the end of the temp output file
+            last_instruction_nop = '00010011000000000000000000000000'
+            sections_last = [last_instruction_nop[i:i+8] for i in range(0, len(last_instruction_nop), 8)]
+            for section in sections_last:
+                temp_outfile.write(section + '\n')
+
             last_instruction_32_ones = '1' * 32
             sections_last = [last_instruction_32_ones[i:i+8] for i in range(0, len(last_instruction_32_ones), 8)]
             for section in sections_last:
                 temp_outfile.write(section + '\n')
 
         # Write the last instruction containing 32 ones to the raw output file
+        raw_outfile.write(last_instruction_nop + '\n')
         raw_outfile.write(last_instruction_32_ones + '\n')
