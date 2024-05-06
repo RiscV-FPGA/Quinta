@@ -57,7 +57,39 @@ module execute_stage (
     end
   end
 
+  //logic [64:0] shift_0;
+  //logic [64:0] shift_1;
+  //logic [64:0] shift_2;
+  //logic [64:0] shift_3;
+  //logic [64:0] shift_4;
+  //
+  //logic mul_start;
+  //
+  //always @(posedge clk) begin
+  //  if (rst == 1) begin
+  //    mul_start <= 0;
+  //  end else begin
+  //    if (control.alu_op == ALU_MUL) begin
+  //      mul_start <= 1;
+  //      shift_0   <= {1'b0, 32'h00_00_00_00, right_operand};
+  //    end
+  //  end
+  //end
+  //
+  //always_comb begin
+  //  if (mul_start) begin
+  //    for (int i = 0; i < 16; i++) begin
+  //      if (shift_0[0] == 0) begin
+  //        shift_1 = {1'b0, left_operand, right_operand};
+  //      end
+  //      shift_1 = shift_1 >> 1;
+  //    end
+  //  end
+  //end
+
   alu alu_inst (
+      .clk(clk),
+      .rst(rst),
       .left_operand(left_operand),
       .right_operand(right_operand),
       .alu_op(control.alu_op),
