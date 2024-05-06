@@ -13,7 +13,7 @@ set_property simulator_language Verilog [current_project]
 set top_module [file join "$ROOT" src top.sv]
 
 # HDL files
-add_files -norecurse [file join "$ROOT" src top.sv]
+add_files -norecurse [file join "$ROOT" src top_build.sv]
 add_files -norecurse [file join "$ROOT" src lib common_pkg.sv]
 add_files -norecurse [file join "$ROOT" src alu.sv]
 add_files -norecurse [file join "$ROOT" src control.sv]

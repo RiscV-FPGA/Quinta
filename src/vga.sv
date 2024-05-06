@@ -1,4 +1,6 @@
-module vga (
+module vga #(
+    parameter logic TB_MODE = 0
+) (
     input  logic        clk,               // pixel clock
     input  logic        rst,               // sim reset
     input  logic [31:0] reg_mem_data,
@@ -23,21 +25,22 @@ module vga (
 
   // -----------------SYNC------------------------
   // horizontal timings
-  parameter integer HA_END = 1368 - 1;  // end of active pixels
-  parameter integer HS_STA = HA_END + 72;  // sync starts after front porch
-  parameter integer HS_END = HS_STA + 144;  // sync ends
-  parameter integer LINE = 1800 - 1;  // last pixel on line (after back porch)
+  integer HA_END = 1368 - 1;  // end of active pixels
+  integer HS_STA = HA_END + 72;  // sync starts after front porch
+  integer HS_END = HS_STA + 144;  // sync ends
+  integer LINE = 1800 - 1;  // last pixel on line (after back porch)
 
   // vertical timings
-  parameter integer VA_END = 768 - 1;  // end of active pixels
-  parameter integer VS_STA = VA_END + 1;  // sync starts after front porch
-  parameter integer VS_END = VS_STA + 3;  // sync ends
-  parameter integer SCREEN = 795 - 1;  // last line on screen (after back porch)
+  integer VA_END = 768 - 1;  // end of active pixels
+  integer VS_STA = VA_END + 1;  // sync starts after front porch
+  integer VS_END = VS_STA + 3;  // sync ends
+  integer SCREEN = 795 - 1;  // last line on screen (after back porch)
 
-  logic [31:0] sx, sy;
+  logic [31:0] sx;
+  logic [31:0] sy;
   logic de;
 
-  logic [31:0] ram_y_address;
+  logic [5:0] ram_y_address;
   //logic [31:0] ram_x_address;
   logic [31:0] write_address;
   logic [7:0] ram_in;
@@ -70,10 +73,15 @@ module vga (
   // -----------------SYNC------------------------
 
   initial begin
-    $readmemb("src/vga_one.mem", one);
-    $readmemb("src/vga_zero.mem", zero);
-    //$readmemb("vga_one.mem", one);
-    //$readmemb("vga_zero.mem", zero);
+    if (TB_MODE == 1) begin
+      $readmemb("src/vga_one.mem", one);
+      $readmemb("src/vga_zero.mem", zero);
+    end else begin
+      $readmemb("vga_one.mem", one);
+      $readmemb("vga_zero.mem", zero);
+    end
+
+
   end
 
   vga_ram vga_ram_inst (
@@ -91,7 +99,7 @@ module vga (
       .ram_out(ram_out)
   );
 
-  assign ram_y_address = {4'b0000, sy[31:4]};  // = sy/16
+  assign ram_y_address = {sy[9:4]};  // = sy/16
 
   // num
   logic one_in_ram;

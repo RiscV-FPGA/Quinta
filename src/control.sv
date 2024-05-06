@@ -238,13 +238,15 @@ logic reg_write
 
       end
       INSTR_MUL: begin  //4
-
+        control.alu_op = ALU_MUL;
+        control.reg_write = 1;
       end
       INSTR_MULH: begin  //4
 
       end
       INSTR_DIV: begin  //4
-
+        control.alu_op = ALU_DIV;
+        control.reg_write = 1;
       end
       INSTR_DIVU: begin  //4
 

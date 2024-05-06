@@ -23,7 +23,8 @@ module forwarding_unit (
 
 
   always_comb begin
-    if (control_mem.write_back_id == rs_1 && control_mem.mem_read == 0 && control_mem.reg_write == 1) begin
+    if (control_mem.write_back_id == rs_1 &&
+     control_mem.mem_read == 0 && control_mem.reg_write == 1) begin // 2line if :(
       data_1 = alu_res_mem;
       data_1_valid = 1;
     end else if (control_wb.write_back_id == rs_1 && control_wb.reg_write == 1) begin
@@ -39,7 +40,8 @@ module forwarding_unit (
       data_1_valid = 0;
     end
 
-    if (control_mem.write_back_id == rs_2 && control_mem.mem_read == 0 && control_mem.reg_write == 1) begin
+    if (control_mem.write_back_id == rs_2 &&
+    control_mem.mem_read == 0 && control_mem.reg_write == 1) begin // 2line if :(
       data_2 = alu_res_mem;
       data_2_valid = 1;
     end else if (control_wb.write_back_id == rs_2 && control_wb.reg_write == 1) begin

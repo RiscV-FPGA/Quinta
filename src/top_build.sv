@@ -1,21 +1,24 @@
 import common_pkg::*;
 
-module top (
-    input  logic        sys_clk,
-    input  logic        rst,
-    input  logic        rx_serial,
-    output logic [ 3:0] vga_r,
-    output logic [ 3:0] vga_g,
-    output logic [ 3:0] vga_b,
-    output logic        vga_hsync,
-    output logic        vga_vsync,
+module top_build (
+    input  logic       sys_clk,
+    input  logic       rst,
+    input  logic       rx_serial,
+    output logic [3:0] vga_r,
+    output logic [3:0] vga_g,
+    output logic [3:0] vga_b,
+    output logic       vga_hsync,
+    output logic       vga_vsync
     // FOR TB START
-    input  logic        finish,
-    output logic [31:0] sdl_sx,
-    output logic [31:0] sdl_sy,
-    output logic        sdl_de
+    //input  logic        finish,
+    //output logic [31:0] sdl_sx,
+    //output logic [31:0] sdl_sy,
+    //output logic        sdl_de
     // FOR TB END
 );
+  wire          [31:0] sdl_sx;
+  wire          [31:0] sdl_sy;
+  wire                 sdl_de;
 
   logic                start;
   logic         [31:0] write_instr_data;
@@ -227,7 +230,7 @@ module top (
   assign write_word_address = {2'b00, write_byte_address[31:2]};
 
   vga #(
-      .TB_MODE(1)
+      .TB_MODE(0)
   ) vga_inst (
       .clk(sys_clk),
       .rst(rst),

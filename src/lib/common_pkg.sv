@@ -12,7 +12,9 @@ package common_pkg;
     ALU_SHIFT_RIGHT_AR_IMM = 4'b1010,
     ALU_LESS_THAN_UNSIGNED = 4'b1011,
     ALU_LESS_THAN_SIGNED   = 4'b1100,
-    ALU_EQUAL              = 4'b1101
+    ALU_EQUAL              = 4'b1101,
+    ALU_MUL                = 4'b1110,
+    ALU_DIV                = 4'b1111
   } alu_op_t;
 
   typedef struct packed {  //32 bit instruction
@@ -122,7 +124,6 @@ package common_pkg;
   } normal_instructions_t;
 
   typedef enum logic [15:0] {
-    // instr      =     func7____rs2___rs1_func3_rd___op_code,
     COMPACT_LW       = 16'b010???????????00,
     COMPACT_SW       = 16'b110???????????00,
     COMPACT_ADDI     = 16'b000???????????01,

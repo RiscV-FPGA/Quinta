@@ -1,14 +1,14 @@
 module vga_ram (
     input  logic         clk,
-    input  logic [ 31:0] read_address,
+    input  logic [  5:0] read_address,      // max addr = 63
     input  logic [ 31:0] reg_mem_data,
     input  logic [  4:0] reg_mem_addr,
     input  logic         reg_mem_enable,
     input  logic [ 31:0] instr_mem_data,
-    input  logic [ 31:0] instr_mem_addr,    // more bits?
+    input  logic [ 31:0] instr_mem_addr,
     input  logic         instr_mem_enable,
     input  logic [ 31:0] data_mem_data,
-    input  logic [ 31:0] data_mem_addr,     // more bits?
+    input  logic [ 31:0] data_mem_addr,
     input  logic         data_mem_enable,
     output logic [159:0] ram_out
 );
@@ -17,16 +17,6 @@ module vga_ram (
   logic [31:0] reg_mem  [32];
   logic [63:0] instr_mem[46];
   logic [63:0] data_mem [46];
-
-
-  //initial begin
-  //$readmemb("src/vga_ram_reg.mem", reg_mem);
-  //$readmemb("src/vga_ram_instr.mem", instr_mem);
-  //$readmemb("src/vga_ram_data.mem", data_mem);
-  //$readmemb("vga_ram_reg.mem", reg_mem);
-  //$readmemb("vga_ram_instr.mem", instr_mem);
-  //$readmemb("vga_ram_data.mem", data_mem);
-  //end
 
   always @(posedge clk) begin
     if (reg_mem_enable == 1) begin
@@ -51,7 +41,7 @@ module vga_ram (
   end
 
   always_comb begin
-    ram_out = {instr_mem[read_address], reg_mem[read_address], data_mem[read_address]};
+    ram_out = {instr_mem[read_address], reg_mem[read_address[4:0]], data_mem[read_address]};
   end
 
 endmodule
