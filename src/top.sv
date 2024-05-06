@@ -17,7 +17,6 @@ module top (
     // FOR TB END
 );
 
-
   logic                start;
   logic         [31:0] write_instr_data;
   logic                write_instr_valid;
@@ -224,8 +223,6 @@ module top (
       .write_byte_address(write_byte_address),
       .start(start)
   );
-
-  //assign led = write_instr_data[15:0];
 
   assign write_word_address = {2'b00, write_byte_address[31:2]};
 
