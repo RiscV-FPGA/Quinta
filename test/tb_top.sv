@@ -41,8 +41,8 @@ module tb_top;
   top top_inst (
       .sys_clk(clk),
       .rst(rst),
-      .rx_serial(rx_serial),
-      .finish(finish)
+      .rx_serial(rx_serial)
+      //.finish(finish)
   );
 
   // Takes in input byte and serializes it
@@ -205,7 +205,7 @@ module tb_top;
 
     #(clk_period * 200);
 
-    finish = 1;
+    //finish = 1;
     #clk_period;
     $finish();
   end

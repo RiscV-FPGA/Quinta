@@ -9,8 +9,8 @@ module registers (
     input logic [4:0] write_id,
     input logic [31:0] write_data,
     output logic [31:0] read1_data,
-    output logic [31:0] read2_data,
-    input logic finish
+    output logic [31:0] read2_data
+    //input logic finish
 );
 
   logic [31:0] register[32];
@@ -18,7 +18,7 @@ module registers (
   always_ff @(posedge clk) begin
     if (rst == 1) begin
       for (int i = 0; i < 32; i++) begin
-        register[i] <= 0;
+        register[i] <= 32'b00000000_00000000_00000000_00000000;
       end
 
     end else begin
@@ -43,16 +43,16 @@ module registers (
     end
   end
 
-  always_ff @(posedge clk) begin
-    if (finish == 1) begin
-      for (int i = 0; i < 32; i++) begin
-        if (i < 10) begin
-          $display("register_addr__%0d: %d", i, $signed(register[i]));
-        end else begin
-          $display("register_addr_%0d: %d", i, $signed(register[i]));
-        end
-      end
-    end
-  end
+  // always_ff @(posedge clk) begin
+  //   if (finish == 1) begin
+  //     for (int i = 0; i < 32; i++) begin
+  //       if (i < 10) begin
+  //         $display("register_addr__%0d: %d", i, $signed(register[i]));
+  //       end else begin
+  //         $display("register_addr_%0d: %d", i, $signed(register[i]));
+  //       end
+  //     end
+  //   end
+  // end
 
 endmodule
