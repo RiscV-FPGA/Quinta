@@ -1,25 +1,20 @@
 import common_pkg::*;
 
 module top (
-    input  logic       sys_clk,
-    input  logic       rst,
-    input  logic       rx_serial,
-    output logic [3:0] vga_r,
-    output logic [3:0] vga_g,
-    output logic [3:0] vga_b,
-    output logic       vga_hsync,
-    output logic       vga_vsync
+    input  logic        sys_clk,
+    input  logic        rst,
+    input  logic        rx_serial,
+    output logic [ 3:0] vga_r,
+    output logic [ 3:0] vga_g,
+    output logic [ 3:0] vga_b,
+    output logic        vga_hsync,
+    output logic        vga_vsync,
     // FOR TB START
-    //input  logic        finish,
-    //output logic [ 7:0] sdl_r,
-    //output logic [ 7:0] sdl_g,
-    //output logic [ 7:0] sdl_b,
-    //output logic [31:0] sdl_sx,
-    //output logic [31:0] sdl_sy,
-    //output logic        sdl_de
+    input  logic        finish,
+    output logic [31:0] sdl_sx,
+    output logic [31:0] sdl_sy,
+    output logic        sdl_de
     // FOR TB END
-
-    //output logic [15:0] led
 );
 
 
@@ -250,13 +245,13 @@ module top (
       .vga_hsync(vga_hsync),
       .vga_r(vga_r),
       .vga_g(vga_g),
-      .vga_b(vga_b)
+      .vga_b(vga_b),
       //.sdl_r(sdl_r),
       //.sdl_g(sdl_g),
       //.sdl_b(sdl_b),
-      //.sdl_sx(sdl_sx),
-      //.sdl_sy(sdl_sy),
-      //.sdl_de(sdl_de)
+      .sdl_sx(sdl_sx),
+      .sdl_sy(sdl_sy),
+      .sdl_de(sdl_de)
   );
 
 endmodule

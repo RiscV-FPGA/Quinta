@@ -21,3 +21,4 @@ obj_dir
 .Xil
 instruction_mem_temp.mem
 instruction_mem_raw.mem
+src/instruction_mem.mem

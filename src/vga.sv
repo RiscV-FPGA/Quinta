@@ -14,13 +14,11 @@ module vga (
     output logic        vga_hsync,
     output logic [ 3:0] vga_r,
     output logic [ 3:0] vga_g,
-    output logic [ 3:0] vga_b
-    //output logic [ 7:0] sdl_r,             // 8-bit red // for tb only
-    //output logic [ 7:0] sdl_g,             // 8-bit green // for tb only
-    //output logic [ 7:0] sdl_b,             // 8-bit blue // for tb only
-    //output logic [31:0] sdl_sx,            // horizontal SDL position
-    //output logic [31:0] sdl_sy,            // vertical SDL position
-    //output logic        sdl_de             // data enable (low in blanking interval)
+    output logic [ 3:0] vga_b,
+    // FOR TB ONLY
+    output logic [31:0] sdl_sx,            // horizontal SDL position
+    output logic [31:0] sdl_sy,            // vertical SDL position
+    output logic        sdl_de             // data enable (low in blanking interval)
 );
 
   // -----------------SYNC------------------------
@@ -72,10 +70,10 @@ module vga (
   // -----------------SYNC------------------------
 
   initial begin
-    //$readmemb("src/vga_one.mem", one);
-    //$readmemb("src/vga_zero.mem", zero);
-    $readmemb("vga_one.mem", one);
-    $readmemb("vga_zero.mem", zero);
+    $readmemb("src/vga_one.mem", one);
+    $readmemb("src/vga_zero.mem", zero);
+    //$readmemb("vga_one.mem", one);
+    //$readmemb("vga_zero.mem", zero);
   end
 
   vga_ram vga_ram_inst (
@@ -162,13 +160,10 @@ module vga (
     end
   end
 
-  // SDL output (8 bits per colour channel)
-  //always_ff @(posedge clk) begin
-  //  sdl_sx <= sx;
-  //  sdl_sy <= sy;
-  //  sdl_de <= de;
-  //  sdl_r  <= {2{vga_r}};  // double signal width from 4 to 8 bits
-  //  sdl_g  <= {2{vga_g}};
-  //  sdl_b  <= {2{vga_b}};
-  //end
+  // SDL output FOR TB
+  always_ff @(posedge clk) begin
+    sdl_sx <= sx;
+    sdl_sy <= sy;
+    sdl_de <= de;
+  end
 endmodule

@@ -167,9 +167,9 @@ int main(int argc, char *argv[]) {
     if (top->sdl_de) {
       Pixel *p = &screenbuffer[top->sdl_sy * H_RES + top->sdl_sx];
       p->a = 0xFF; // transparency
-      p->b = top->sdl_b;
-      p->g = top->sdl_g;
-      p->r = top->sdl_r;
+      p->b = top->vga_b * 16;
+      p->g = top->vga_g * 16;
+      p->r = top->vga_r * 16;
     }
 
     // update texture once per frame (in blanking)
