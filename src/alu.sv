@@ -13,49 +13,13 @@ module alu (
 
   logic [31:0] internal_alu_res;
 
-  logic [64:0] mul_shift_0;
-  //logic [64:0] mul_add_0;
-  logic [64:0] mul_shift_1;
-  logic [64:0] mul_add_1;
-  logic [64:0] mul_shift_2;
-  logic [64:0] mul_add_2;
-  logic [64:0] mul_shift_3;
-  logic [64:0] mul_add_3;
-  logic [64:0] mul_shift_4;
-  logic [64:0] mul_add_4;
-
-  logic [ 4:0] alu_cnt;
-
+  logic state;
+  logic [31:0] left_operand_1;
+  logic [31:0] left_operand_2;
+  logic [31:0] right_operand_1;
+  logic [31:0] right_operand_2;
 
   always_comb begin
-    if (mul_shift_0[0] == 1) begin  // 1
-      mul_add_1 = mul_shift_0 + {left_operand, 32'h00_00_00_00};
-    end else begin
-      mul_add_1 = mul_shift_0;
-    end
-    mul_shift_1 = mul_add_1 >> 1;
-
-    if (mul_shift_1[0] == 1) begin  // 2
-      mul_add_2 = mul_shift_1 + {left_operand, 32'h00_00_00_00};
-    end else begin
-      mul_add_2 = mul_shift_1;
-    end
-    mul_shift_2 = mul_add_2 >> 1;
-
-    if (mul_shift_2[0] == 1) begin  // 3
-      mul_add_3 = mul_shift_2 + {left_operand, 32'h00_00_00_00};
-    end else begin
-      mul_add_3 = mul_shift_2;
-    end
-    mul_shift_3 = mul_add_3 >> 1;
-
-    if (mul_shift_3[0] == 1) begin  // 4
-      mul_add_4 = mul_shift_3 + {left_operand, 32'h00_00_00_00};
-    end else begin
-      mul_add_4 = mul_shift_3;
-    end
-    mul_shift_4 = mul_add_4 >> 1;
-
     case (alu_op)
       ALU_AND: internal_alu_res = left_operand & right_operand;
 
@@ -83,7 +47,11 @@ module alu (
       ALU_EQUAL: internal_alu_res = {31'b0, left_operand == right_operand};
 
       ALU_MUL: begin
-        internal_alu_res = mul_shift_4[31:0];
+        if (state == 1) begin
+          internal_alu_res = left_operand_1 * right_operand_1;
+        end else begin
+          internal_alu_res = left_operand_2 * right_operand_2;
+        end
       end
 
       ALU_DIV: begin
@@ -104,16 +72,17 @@ module alu (
 
   always @(posedge clk) begin
     if (rst == 1) begin
-      alu_cnt <= 0;
+      state <= 'b0;
     end else begin
-      if (alu_cnt == 0 && alu_op == ALU_MUL) begin
-        alu_cnt <= alu_cnt + 1;
-        mul_shift_0 <= {1'b0, 32'h00_00_00_00, right_operand};
-      end else if (alu_cnt > 0 && alu_cnt < 8) begin
-        alu_cnt <= alu_cnt + 1;
-        mul_shift_0 <= mul_shift_4;
+      state <= ~state;
+
+
+      if (state == 1) begin
+        left_operand_1  <= left_operand;
+        right_operand_1 <= right_operand;
       end else begin
-        alu_cnt <= 0;
+        left_operand_2  <= left_operand;
+        right_operand_2 <= right_operand;
       end
     end
   end
