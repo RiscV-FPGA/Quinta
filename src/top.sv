@@ -25,6 +25,7 @@ module top (
 
   instruction_t        instruction_fetch;
   logic         [31:0] pc_fetch;
+  logic                pc_pause_fetch;
 
 
   instruction_t        instruction_decode;
@@ -132,6 +133,8 @@ module top (
     end
   end
 
+  assign pc_pause_fetch = hazard_detected_decode | insert_bubble_execute;
+
   instruction_fetch_stage instruction_fetch_stage_inst (
       .clk(sys_clk),
       .rst(rst),
@@ -141,7 +144,7 @@ module top (
       .write_instr_valid(write_instr_valid),
       .branch_taken(branch_taken_mem),
       .pc_branch(pc_branch_mem),
-      .hazard_detected(hazard_detected_decode),
+      .hazard_detected(pc_pause_fetch),
       .pc(pc_fetch),
       .instruction(instruction_fetch)
   );

@@ -1,20 +1,21 @@
 package common_pkg;
 
-  typedef enum logic [3:0] {
-    ALU_AND                = 4'b0000,
-    ALU_OR                 = 4'b0001,
-    ALU_XOR                = 4'b0010,
-    ALU_ADD                = 4'b0011,
-    ALU_SUB                = 4'b0110,
-    ALU_SHIFT_LEFT         = 4'b0111,
-    ALU_SHIFT_RIGHT        = 4'b1000,
-    ALU_SHIFT_RIGHT_AR     = 4'b1001,
-    ALU_SHIFT_RIGHT_AR_IMM = 4'b1010,
-    ALU_LESS_THAN_UNSIGNED = 4'b1011,
-    ALU_LESS_THAN_SIGNED   = 4'b1100,
-    ALU_EQUAL              = 4'b1101,
-    ALU_MUL                = 4'b1110,
-    ALU_DIV                = 4'b1111
+  typedef enum logic [4:0] {
+    ALU_AND                = 5'b00000,
+    ALU_OR                 = 5'b00001,
+    ALU_XOR                = 5'b00010,
+    ALU_ADD                = 5'b00011,
+    ALU_SUB                = 5'b00110,
+    ALU_SHIFT_LEFT         = 5'b00111,
+    ALU_SHIFT_RIGHT        = 5'b01000,
+    ALU_SHIFT_RIGHT_AR     = 5'b01001,
+    ALU_SHIFT_RIGHT_AR_IMM = 5'b01010,
+    ALU_LESS_THAN_UNSIGNED = 5'b01011,
+    ALU_LESS_THAN_SIGNED   = 5'b01100,
+    ALU_EQUAL              = 5'b01101,
+    ALU_MUL                = 5'b01110,
+    ALU_MULH               = 5'b01111,
+    ALU_DIV                = 5'b10000
   } alu_op_t;
 
   typedef struct packed {  //32 bit instruction

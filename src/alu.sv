@@ -17,10 +17,13 @@ module alu (
   logic [31:0] left_operand_d;
   logic [31:0] right_operand_d;
   logic [63:0] mul_res;
-  logic [63:0] mul_res_d;  //m-reg
-  logic [63:0] mul_res_dd;  // p-reg
-  logic [63:0] mul_res_ddd;  // p-reg
-  logic [ 1:0] mul_bubble;
+  logic [63:0] mul_res_d;  //m/p-reg
+  logic [63:0] mul_res_dd;  //m/p-reg
+  logic [63:0] mul_res_ddd;  //m/p-reg
+  logic [63:0] mul_res_dddd;  //m/p-reg
+  logic [63:0] mul_res_ddddd;  //m/p-reg
+
+  logic [ 2:0] mul_bubble;
 
   always_comb begin
     case (alu_op)
@@ -49,7 +52,9 @@ module alu (
 
       ALU_EQUAL: internal_alu_res = {31'b0, left_operand == right_operand};
 
-      ALU_MUL: internal_alu_res = mul_res_ddd[31:0];
+      ALU_MUL: internal_alu_res = mul_res_ddddd[31:0];
+
+      ALU_MULH: internal_alu_res = mul_res_ddddd[63:32];
 
       ALU_DIV: internal_alu_res = left_operand + right_operand;
       //  internal_alu_res = left_operand / right_operand;
@@ -61,19 +66,13 @@ module alu (
   end
 
   always_ff @(posedge clk) begin
-    if (alu_op == ALU_MUL) begin
-      left_operand_d <= left_operand;
-      right_operand_d <= right_operand;
-      mul_res_d <= 'b0;
-      mul_res_dd <= 'b0;
-      mul_res_ddd <= 'b0;
-    end else begin
-      left_operand_d <= left_operand;
-      right_operand_d <= right_operand;
-      mul_res_d <= mul_res;
-      mul_res_dd <= mul_res_d;
-      mul_res_ddd <= mul_res_dd;
-    end
+    left_operand_d <= left_operand;
+    right_operand_d <= right_operand;
+    mul_res_d <= mul_res;
+    mul_res_dd <= mul_res_d;
+    mul_res_ddd <= mul_res_dd;
+    mul_res_dddd <= mul_res_ddd;
+    mul_res_ddddd <= mul_res_dddd;
   end
 
   assign mul_res = left_operand_d * right_operand_d;
@@ -86,7 +85,7 @@ module alu (
         mul_bubble <= 1;
       end
 
-      if (mul_bubble == 3) begin
+      if (mul_bubble == 6) begin
         mul_bubble <= 0;
       end else if (mul_bubble > 0) begin
         mul_bubble <= mul_bubble + 1;
@@ -95,7 +94,7 @@ module alu (
   end
 
   always_comb begin
-    if ((alu_op == ALU_MUL && mul_bubble == 0) || (mul_bubble > 0 && mul_bubble < 3)) begin
+    if ((alu_op == ALU_MUL && mul_bubble == 0) || (mul_bubble > 0 && mul_bubble < 6)) begin
       insert_bubble = 1;
     end else begin
       insert_bubble = 0;
