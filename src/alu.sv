@@ -13,11 +13,21 @@ module alu (
 
   logic [31:0] internal_alu_res;
 
-  logic state;
+  logic [ 1:0] state;
   logic [31:0] left_operand_1;
   logic [31:0] left_operand_2;
+  logic [31:0] left_operand_3;
+  logic [31:0] left_operand_4;
   logic [31:0] right_operand_1;
   logic [31:0] right_operand_2;
+  logic [31:0] right_operand_3;
+  logic [31:0] right_operand_4;
+
+  logic [31:0] mul_res_1;
+  logic [31:0] mul_res_2;
+  logic [31:0] mul_res_3;
+  logic [31:0] mul_res_4;
+  logic [31:0] mul_res;
 
   always_comb begin
     case (alu_op)
@@ -47,11 +57,7 @@ module alu (
       ALU_EQUAL: internal_alu_res = {31'b0, left_operand == right_operand};
 
       ALU_MUL: begin
-        if (state == 1) begin
-          internal_alu_res = left_operand_1 * right_operand_1;
-        end else begin
-          internal_alu_res = left_operand_2 * right_operand_2;
-        end
+        internal_alu_res = mul_res;
       end
 
       ALU_DIV: begin
@@ -66,23 +72,39 @@ module alu (
     endcase
   end
 
-  //always_comb begin : MUL_COMB
-
-  //end
+  always_comb begin : MUL_COMB
+    if (state == 1) begin
+      mul_res_1 = left_operand_1 * right_operand_1;
+    end else if (state == 2) begin
+      mul_res_2 = left_operand_2 * right_operand_2;
+    end else if (state == 3) begin
+      mul_res_3 = left_operand_3 * right_operand_3;
+    end else begin
+      mul_res_4 = left_operand_4 * right_operand_4;
+    end
+  end
 
   always @(posedge clk) begin
     if (rst == 1) begin
       state <= 'b0;
     end else begin
-      state <= ~state;
-
-
+      state <= state + 1;
       if (state == 1) begin
-        left_operand_1  <= left_operand;
+        left_operand_1 <= left_operand;
         right_operand_1 <= right_operand;
-      end else begin
-        left_operand_2  <= left_operand;
+        mul_res <= right_operand_2;
+      end else if (state == 2) begin
+        left_operand_2 <= left_operand;
         right_operand_2 <= right_operand;
+        mul_res <= right_operand_3;
+      end else if (state == 3) begin
+        left_operand_3 <= left_operand;
+        right_operand_3 <= right_operand;
+        mul_res <= right_operand_4;
+      end else begin
+        left_operand_4 <= left_operand;
+        right_operand_4 <= right_operand;
+        mul_res <= right_operand_1;
       end
     end
   end
