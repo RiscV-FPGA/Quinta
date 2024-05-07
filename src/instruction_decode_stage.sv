@@ -79,7 +79,7 @@ module instruction_decode_stage (
       .rst(rst),
       .read1_id(rs1),
       .read2_id(rs2),
-      .write_en(reg_write),  // reg_write
+      .write_en(reg_write),
       .write_id(write_id),
       .write_data(write_data),
       .read1_data(read1_data_regs),

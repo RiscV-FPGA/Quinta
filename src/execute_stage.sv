@@ -15,7 +15,8 @@ module execute_stage (
     output logic [31:0] alu_res,
     output logic [31:0] mem_data,
     output logic branch_taken,
-    output logic [31:0] pc_branch
+    output logic [31:0] pc_branch,
+    output logic insert_bubble
 );
 
   logic [31:0] left_operand;
@@ -94,7 +95,8 @@ module execute_stage (
       .right_operand(right_operand),
       .alu_op(control.alu_op),
       .alu_inv_res(control.alu_inv_res),
-      .alu_res(alu_res_internal)
+      .alu_res(alu_res_internal),
+      .insert_bubble(insert_bubble)
       //.zero_flag(zero_flag)
   );
 
