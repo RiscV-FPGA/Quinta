@@ -66,7 +66,7 @@ module execute_stage (
   //
   //logic mul_start;
   //
-  //always @(posedge clk) begin
+  //always_ff @(posedge clk) begin
   //  if (rst == 1) begin
   //    mul_start <= 0;
   //  end else begin

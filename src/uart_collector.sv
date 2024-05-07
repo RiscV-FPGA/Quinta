@@ -40,7 +40,7 @@ module uart_collector (
       .rx_byte_valid(rx_byte_valid)
   );
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if (rst == 1) begin
       write_instr_data <= 'b0;
       write_instr_valid <= 'b0;

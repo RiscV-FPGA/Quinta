@@ -19,6 +19,7 @@ module alu (
   logic [63:0] mul_res;
   logic [63:0] mul_res_d;  //m-reg
   logic [63:0] mul_res_dd;  // p-reg
+  logic [63:0] mul_res_ddd;  // p-reg
   logic [ 1:0] mul_bubble;
 
   always_comb begin
@@ -48,7 +49,7 @@ module alu (
 
       ALU_EQUAL: internal_alu_res = {31'b0, left_operand == right_operand};
 
-      ALU_MUL: internal_alu_res = mul_res_dd[31:0];
+      ALU_MUL: internal_alu_res = mul_res_ddd[31:0];
 
       ALU_DIV: internal_alu_res = left_operand + right_operand;
       //  internal_alu_res = left_operand / right_operand;
@@ -59,18 +60,25 @@ module alu (
     endcase
   end
 
-
-
-  always @(posedge clk) begin
-    left_operand_d <= left_operand;
-    right_operand_d <= right_operand;
-    mul_res_d <= mul_res;
-    mul_res_dd <= mul_res_d;
+  always_ff @(posedge clk) begin
+    if (alu_op == ALU_MUL) begin
+      left_operand_d <= left_operand;
+      right_operand_d <= right_operand;
+      mul_res_d <= 'b0;
+      mul_res_dd <= 'b0;
+      mul_res_ddd <= 'b0;
+    end else begin
+      left_operand_d <= left_operand;
+      right_operand_d <= right_operand;
+      mul_res_d <= mul_res;
+      mul_res_dd <= mul_res_d;
+      mul_res_ddd <= mul_res_dd;
+    end
   end
 
   assign mul_res = left_operand_d * right_operand_d;
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if (rst == 1) begin
       mul_bubble <= 'b0;
     end else begin
