@@ -63,12 +63,12 @@ The project will be built for the Nexys A7-100T FPGA.
 - [ ] INSTR_LB
 - [ ] INSTR_LH
 - [ ] INSTR_AUIPC
-- [ ] INSTR_MUL
-- [ ] INSTR_MULH
-- [ ] INSTR_DIV
-- [ ] INSTR_DIVU
-- [ ] INSTR_REM
-- [ ] INSTR_REMU
+- [x] INSTR_MUL
+- [x] INSTR_MULH
+- [x] INSTR_DIV
+- [x] INSTR_DIVU
+- [x] INSTR_REM
+- [x] INSTR_REMU
 
 ## Phase3 instructions
 
