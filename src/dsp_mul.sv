@@ -17,7 +17,7 @@ module dsp_mul (
   logic [63:0] mul_res_internal_ddddd;
 
 
-  assign mul_res_internal = left_operand_d * right_operand_d;
+  assign mul_res_internal = $signed(left_operand_d) * $signed(right_operand_d);
 
   always_ff @(posedge clk) begin
     left_operand_d         <= left_operand;

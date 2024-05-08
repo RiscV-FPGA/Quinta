@@ -73,7 +73,7 @@ module alu (
     if (rst == 1) begin
       mul_bubble <= 'b0;
     end else begin
-      if (alu_op == ALU_MUL && mul_bubble == 0) begin
+      if ((alu_op == ALU_MUL || alu_op == ALU_MULH) && mul_bubble == 0) begin
         mul_bubble <= 1;
       end
 
@@ -86,7 +86,7 @@ module alu (
   end
 
   always_comb begin
-    if ((alu_op == ALU_MUL && mul_bubble == 0) || (mul_bubble > 0 && mul_bubble < 6)) begin
+    if (((alu_op == ALU_MUL ||alu_op == ALU_MULH)  && mul_bubble == 0) || (mul_bubble > 0 && mul_bubble < 6)) begin
       insert_bubble = 1;
     end else begin
       insert_bubble = 0;
