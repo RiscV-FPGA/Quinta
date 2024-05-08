@@ -33,7 +33,8 @@ add_files -norecurse [file join "$ROOT" src vga.sv]
 add_files -norecurse [file join "$ROOT" src vga_ram.sv]
 add_files -norecurse [file join "$ROOT" src uart_collector.sv]
 add_files -norecurse [file join "$ROOT" src uart.sv]
-
+add_files -norecurse [file join "$ROOT" src dsp_mul.sv]
+add_files -norecurse [file join "$ROOT" src dsp_div.sv]
 
 add_files -norecurse [file join "$ROOT" src vga_one.mem]
 add_files -norecurse [file join "$ROOT" src vga_zero.mem]

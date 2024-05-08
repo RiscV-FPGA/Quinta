@@ -242,19 +242,26 @@ logic reg_write
         control.reg_write = 1;
       end
       INSTR_MULH: begin  //4
-
+        control.alu_op = ALU_MULH;
+        control.reg_write = 1;
       end
       INSTR_DIV: begin  //4
         control.alu_op = ALU_DIV;
         control.reg_write = 1;
       end
       INSTR_DIVU: begin  //4
+        control.alu_op = ALU_DIVU;
+        control.reg_write = 1;
 
       end
       INSTR_REM: begin  //4
+        control.alu_op = ALU_REM;
+        control.reg_write = 1;
 
       end
       INSTR_REMU: begin  //4
+        control.alu_op = ALU_REMU;
+        control.reg_write = 1;
 
       end
       INSTR_FLW: begin  //5

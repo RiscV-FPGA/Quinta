@@ -26,8 +26,12 @@ module uart_collector (
   logic short_end;
 
   logic [31:0] instr_internal;
-  // logic [31:0] old_instr_internal;
   logic [2:0] start_counter;
+
+  logic [31:0] write_instr_data_internal;
+  logic write_instr_valid_internal;
+  logic [31:0] write_byte_address_internal;
+  logic start_internal;
 
   uart uart_inst (
       .clk(clk),
@@ -38,13 +42,27 @@ module uart_collector (
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
+      write_instr_data <= 'b0;
+      write_instr_valid <= 'b0;
+      write_byte_address <= 'b0;
+      start <= 'b0;
+    end else begin
+      write_instr_data <= write_instr_data_internal;
+      write_instr_valid <= write_instr_valid_internal;
+      write_byte_address <= write_byte_address_internal;
+      start <= start_internal;
+    end
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst == 1) begin
       byte_counter <= 0;
-      start <= 0;
+      start_internal <= 0;
       start_counter <= 0;
       uart_collector_state <= idle;
-      write_instr_valid <= 0;
+      write_instr_valid_internal <= 0;
     end else begin
-      write_instr_valid <= 0;
+      write_instr_valid_internal <= 0;
       //uart_collector_state <= uart_collector_state;
 
       case (uart_collector_state)
@@ -81,11 +99,11 @@ module uart_collector (
         end
 
         done: begin
-          write_byte_address <= byte_counter - 4;
-          write_instr_valid <= 1;
+          write_byte_address_internal <= byte_counter - 4;
+          write_instr_valid_internal <= 1;
           //$display("data_instr: %032b", instr_internal);
           //old_instr_internal <= write_instr_data;
-          write_instr_data <= instr_internal;
+          write_instr_data_internal <= instr_internal;
           uart_collector_state <= idle;
         end
 
@@ -95,11 +113,11 @@ module uart_collector (
       endcase
 
       if (instr_internal == 32'b11111111_11111111_11111111_11111111 && start_counter == 0) begin
-        if (write_instr_data[31:16] == 16'b11111111_11111111) begin
+        if (write_instr_data_internal[31:16] == 16'b11111111_11111111) begin
           //$display("short");
-          write_instr_data[31:16] <= 16'b00000000_00010011;  // first half of nop
-          write_byte_address <= byte_counter - 6;
-          write_instr_valid <= 1;
+          write_instr_data_internal[31:16] <= 16'b00000000_00010011;  // first half of nop
+          write_byte_address_internal <= byte_counter - 6;
+          write_instr_valid_internal <= 1;
 
           short_end <= 1;
         end else begin
@@ -109,33 +127,33 @@ module uart_collector (
         start_counter <= 1;
       end
 
-      if (start_counter == 3'b111 && start == 0) begin  // delay start abit to have time add nop
-        start <= 1;
-      end else if (start_counter == 3'b110 && start == 0 && short_end == 0) begin  //32 bit
+      if (start_counter == 3'b111 && start_internal == 0) begin  //delay start to have time add nop
+        start_internal <= 1;
+      end else if (start_counter == 3'b110 && start_internal == 0 && short_end == 0) begin  //32 bit
         start_counter <= start_counter + 1;
-        write_byte_address <= byte_counter - 8 + start_counter * 4;
-        write_instr_valid <= 1;
-        write_instr_data <= 32'b11111111_11111111_11111111_11111111;  // own instr HALT
-      end else if (start_counter == 3'b110 && start == 0 && short_end == 1) begin  // 16 bit offset
+        write_byte_address_internal <= byte_counter - 8 + start_counter * 4;
+        write_instr_valid_internal <= 1;
+        write_instr_data_internal <= 32'b11111111_11111111_11111111_11111111;  // own instr HALT
+      end else if (start_counter == 3'b110 && start_internal == 0 && short_end == 1) begin  // 16bit
         start_counter <= start_counter + 1;
-        write_byte_address <= byte_counter - 6 + start_counter * 4;
-        write_instr_valid <= 1;
-        write_instr_data <= 32'b00000000_00000000_11111111_11111111;  // own instr HALT
-      end else if (start_counter == 3'b101 && start == 0 && short_end == 1) begin  // 16 bit offset
+        write_byte_address_internal <= byte_counter - 6 + start_counter * 4;
+        write_instr_valid_internal <= 1;
+        write_instr_data_internal <= 32'b00000000_00000000_11111111_11111111;  // own instr HALT
+      end else if (start_counter == 3'b101 && start_internal == 0 && short_end == 1) begin  //16bit
         start_counter <= start_counter + 1;
-        write_byte_address <= byte_counter - 6 + start_counter * 4;
-        write_instr_valid <= 1;
-        write_instr_data <= 32'b11111111_11111111_00000000_00000000;  // own instr HALT
-      end else if (start_counter > 0 && start == 0 && short_end == 0) begin  // 32 bit
+        write_byte_address_internal <= byte_counter - 6 + start_counter * 4;
+        write_instr_valid_internal <= 1;
+        write_instr_data_internal <= 32'b11111111_11111111_00000000_00000000;  // own instr HALT
+      end else if (start_counter > 0 && start_internal == 0 && short_end == 0) begin  // 32 bit
         start_counter <= start_counter + 1;
-        write_byte_address <= byte_counter - 8 + start_counter * 4;
-        write_instr_valid <= 1;
-        write_instr_data <= 32'b00000000_00000000_00000000_00010011;  // NOP
-      end else if (start_counter > 0 && start == 0 && short_end == 1) begin  // 16 bit offset
+        write_byte_address_internal <= byte_counter - 8 + start_counter * 4;
+        write_instr_valid_internal <= 1;
+        write_instr_data_internal <= 32'b00000000_00000000_00000000_00010011;  // NOP
+      end else if (start_counter > 0 && start_internal == 0 && short_end == 1) begin  // 16 bit
         start_counter <= start_counter + 1;
-        write_byte_address <= byte_counter - 6 + start_counter * 4;
-        write_instr_valid <= 1;
-        write_instr_data <= 32'b00000000_00010011_00000000_00000000;  // NOP (offseted)
+        write_byte_address_internal <= byte_counter - 6 + start_counter * 4;
+        write_instr_valid_internal <= 1;
+        write_instr_data_internal <= 32'b00000000_00010011_00000000_00000000;  // NOP (offseted)
       end
     end
   end

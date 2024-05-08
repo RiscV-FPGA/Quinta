@@ -15,7 +15,7 @@ module instruction_memory (
   //$readmemb("instruction_mem_temp.mem", instr_ram);
   //end
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if (write_enable) begin
       instr_ram[byte_address[11:2]] <= write_data;
       //instr_ram[byte_address[31:2]] <= write_data;
@@ -38,7 +38,7 @@ module instruction_memory (
   end
 
   // logic temp = 0;
-  // always @(posedge clk) begin
+  // always_ff @(posedge clk) begin
   //   if (start == 1 && temp == 0) begin
   //     temp = 1;
   //     for (int i = 0; i < 25; i++) begin

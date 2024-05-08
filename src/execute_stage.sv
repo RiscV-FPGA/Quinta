@@ -15,7 +15,8 @@ module execute_stage (
     output logic [31:0] alu_res,
     output logic [31:0] mem_data,
     output logic branch_taken,
-    output logic [31:0] pc_branch
+    output logic [31:0] pc_branch,
+    output logic insert_bubble
 );
 
   logic [31:0] left_operand;
@@ -57,12 +58,45 @@ module execute_stage (
     end
   end
 
+  //logic [64:0] shift_0;
+  //logic [64:0] shift_1;
+  //logic [64:0] shift_2;
+  //logic [64:0] shift_3;
+  //logic [64:0] shift_4;
+  //
+  //logic mul_start;
+  //
+  //always_ff @(posedge clk) begin
+  //  if (rst == 1) begin
+  //    mul_start <= 0;
+  //  end else begin
+  //    if (control.alu_op == ALU_MUL) begin
+  //      mul_start <= 1;
+  //      shift_0   <= {1'b0, 32'h00_00_00_00, right_operand};
+  //    end
+  //  end
+  //end
+  //
+  //always_comb begin
+  //  if (mul_start) begin
+  //    for (int i = 0; i < 16; i++) begin
+  //      if (shift_0[0] == 0) begin
+  //        shift_1 = {1'b0, left_operand, right_operand};
+  //      end
+  //      shift_1 = shift_1 >> 1;
+  //    end
+  //  end
+  //end
+
   alu alu_inst (
+      .clk(clk),
+      .rst(rst),
       .left_operand(left_operand),
       .right_operand(right_operand),
       .alu_op(control.alu_op),
       .alu_inv_res(control.alu_inv_res),
-      .alu_res(alu_res_internal)
+      .alu_res(alu_res_internal),
+      .insert_bubble(insert_bubble)
       //.zero_flag(zero_flag)
   );
 

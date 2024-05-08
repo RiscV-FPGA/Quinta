@@ -18,7 +18,7 @@ module vga_ram (
   logic [63:0] instr_mem[46];
   logic [63:0] data_mem [46];
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if (reg_mem_enable == 1) begin
       reg_mem[reg_mem_addr] <= reg_mem_data;
     end

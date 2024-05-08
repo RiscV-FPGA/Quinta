@@ -1,4 +1,4 @@
-#stty -F /dev/ttyUSB1 115200
+stty -F /dev/ttyUSB1 115200
 
 #stty -F /dev/ttyUSB0 crtscts    # To enable RTS/CTS flow control
 #stty -F /dev/ttyUSB0 -crtscts   # To disable flow control with

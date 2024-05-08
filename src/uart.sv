@@ -28,12 +28,12 @@ module uart (
   uart_state_t uart_state;
 
   // dubble flip flop for input
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     rx_serial_d  <= rx_serial;
     rx_serial_dd <= rx_serial_d;
   end
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     rx_byte_valid <= 1'b0;
 
     case (uart_state)
