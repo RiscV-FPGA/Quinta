@@ -14,16 +14,8 @@ module alu (
 
   logic [31:0] internal_alu_res;
 
-  logic [31:0] left_operand_d;
-  logic [31:0] right_operand_d;
   logic [63:0] mul_res;
-  logic [63:0] mul_res_d;  //m/p-reg
-  logic [63:0] mul_res_dd;  //m/p-reg
-  logic [63:0] mul_res_ddd;  //m/p-reg
-  logic [63:0] mul_res_dddd;  //m/p-reg
-  logic [63:0] mul_res_ddddd;  //m/p-reg
-
-  logic [ 2:0] mul_bubble;
+  logic [ 7:0] mul_bubble;
 
   always_comb begin
     case (alu_op)
@@ -52,12 +44,17 @@ module alu (
 
       ALU_EQUAL: internal_alu_res = {31'b0, left_operand == right_operand};
 
-      ALU_MUL: internal_alu_res = mul_res_ddddd[31:0];
+      ALU_MUL: internal_alu_res = mul_res[31:0];
 
-      ALU_MULH: internal_alu_res = mul_res_ddddd[63:32];
+      ALU_MULH: internal_alu_res = mul_res[63:32];
 
-      ALU_DIV: internal_alu_res = left_operand + right_operand;
-      //  internal_alu_res = left_operand / right_operand;
+      ALU_DIV: internal_alu_res = left_operand + right_operand;  //FIX
+
+      ALU_DIVU: internal_alu_res = left_operand + right_operand;  //FIX
+
+      ALU_REM: internal_alu_res = left_operand + right_operand;  //FIX
+
+      ALU_REMU: internal_alu_res = left_operand + right_operand;  //FIX
 
       default: begin
         internal_alu_res = left_operand + right_operand;
@@ -65,17 +62,12 @@ module alu (
     endcase
   end
 
-  always_ff @(posedge clk) begin
-    left_operand_d <= left_operand;
-    right_operand_d <= right_operand;
-    mul_res_d <= mul_res;
-    mul_res_dd <= mul_res_d;
-    mul_res_ddd <= mul_res_dd;
-    mul_res_dddd <= mul_res_ddd;
-    mul_res_ddddd <= mul_res_dddd;
-  end
-
-  assign mul_res = left_operand_d * right_operand_d;
+  dsp_mul dsp_mul_inst (
+      .clk(clk),
+      .left_operand(left_operand),
+      .right_operand(right_operand),
+      .mul_res(mul_res)
+  );
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
