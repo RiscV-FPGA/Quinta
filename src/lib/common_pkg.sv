@@ -15,7 +15,10 @@ package common_pkg;
     ALU_EQUAL              = 5'b01101,
     ALU_MUL                = 5'b01110,
     ALU_MULH               = 5'b01111,
-    ALU_DIV                = 5'b10000
+    ALU_DIV                = 5'b10000,
+    ALU_DIVU               = 5'b10001,
+    ALU_REM                = 5'b10010,
+    ALU_REMU               = 5'b10011
   } alu_op_t;
 
   typedef struct packed {  //32 bit instruction

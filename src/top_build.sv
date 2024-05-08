@@ -16,6 +16,7 @@ module top_build (
     //output logic        sdl_de
     // FOR TB END
 );
+
   wire          [31:0] sdl_sx;
   wire          [31:0] sdl_sy;
   wire                 sdl_de;
@@ -28,6 +29,7 @@ module top_build (
 
   instruction_t        instruction_fetch;
   logic         [31:0] pc_fetch;
+  logic                pc_pause_fetch;
 
 
   instruction_t        instruction_decode;
@@ -52,6 +54,7 @@ module top_build (
   logic         [31:0] pc_branch_execute;
   logic         [ 4:0] rs1_execute;
   logic         [ 4:0] rs2_execute;
+  logic                insert_bubble_execute;
 
 
   control_t            control_mem;
@@ -82,11 +85,14 @@ module top_build (
       if (hazard_detected_decode == 1) begin
         instruction_decode <= instruction_decode;
         pc_decode          <= pc_decode;
+      end else if (insert_bubble_execute == 1) begin
+        instruction_decode <= instruction_decode;
+        pc_decode          <= pc_decode;
       end else begin
         pc_decode <= pc_fetch;
         instruction_decode <= instruction_fetch;
         if (branch_taken_mem == 1) begin
-          instruction_decode <= 0;  // nop
+          instruction_decode <= 'b0;  // nop
         end
       end
 
@@ -102,8 +108,14 @@ module top_build (
         control_execute.reg_write <= 0;  // nop
         control_execute.mem_write <= 0;  // nop
         control_execute.is_branch <= 0;  // nop
-        //rs1_execute <= 0; // needed?
-        //rs2_execute <= 0;
+      end else if (insert_bubble_execute == 1) begin
+        pc_execute <= pc_execute;  // paus stage
+        data1_execute <= data1_execute;
+        data2_execute <= data2_execute;
+        immediate_data_execute <= immediate_data_execute;
+        rs1_execute <= rs1_execute;
+        rs2_execute <= rs2_execute;
+        control_execute <= control_execute;
       end
 
       //mem_reg <= ex_reg
@@ -125,6 +137,8 @@ module top_build (
     end
   end
 
+  assign pc_pause_fetch = hazard_detected_decode | insert_bubble_execute;
+
   instruction_fetch_stage instruction_fetch_stage_inst (
       .clk(sys_clk),
       .rst(rst),
@@ -134,7 +148,7 @@ module top_build (
       .write_instr_valid(write_instr_valid),
       .branch_taken(branch_taken_mem),
       .pc_branch(pc_branch_mem),
-      .hazard_detected(hazard_detected_decode),
+      .hazard_detected(pc_pause_fetch),
       .pc(pc_fetch),
       .instruction(instruction_fetch)
   );
@@ -180,7 +194,8 @@ module top_build (
       .alu_res(alu_res_execute),
       .mem_data(mem_data_execute),
       .branch_taken(branch_taken_execute),
-      .pc_branch(pc_branch_execute)
+      .pc_branch(pc_branch_execute),
+      .insert_bubble(insert_bubble_execute)
   );
 
   memory_stage memory_stage_inst (
