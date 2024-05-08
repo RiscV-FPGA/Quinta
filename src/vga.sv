@@ -80,8 +80,6 @@ module vga #(
       $readmemb("vga_one.mem", one);
       $readmemb("vga_zero.mem", zero);
     end
-
-
   end
 
   vga_ram vga_ram_inst (
