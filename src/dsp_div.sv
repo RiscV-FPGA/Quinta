@@ -11,34 +11,9 @@ module dsp_div (
     output logic [31:0] rem_res_signed
 );
 
-  //logic [31:0] left_operand_d;
-  //logic [31:0] right_operand_d;
-  //logic [31:0] div_res_internal;
-  //always_comb begin
-  //  if (alu_op == ALU_DIV) begin
-  //    div_res_internal = $signed(left_operand_d) / $signed(right_operand_d);
-  //  end else begin
-  //    div_res_internal = left_operand_d / right_operand_d;
-  //  end
-  //end
-
-  // assign div_res_internal = $signed(left_operand_d) / $signed(right_operand_d);
-  //
-  // always_ff @(posedge clk) begin
-  //   left_operand_d     <= left_operand;
-  //   right_operand_d    <= right_operand;
-  //   div_res_internal_d <= div_res_internal;
-  // end
-  //
-  // assign div_res = div_res_internal_d;
-
-
-
-
   logic [31:0] right_operand_d_sigend;
   logic [31:0] left_operand_d_sigend;
   logic [31:0] right_operand_d;
-  logic [31:0] left_operand_d;
   logic [31:0] right_operand_unsigned;
   logic [31:0] left_operand_unsigned;
 
@@ -76,7 +51,6 @@ module dsp_div (
       if ((alu_op == ALU_DIVU || alu_op == ALU_REMU) && run == 0) begin
         run <= 1;
         i <= 0;
-        left_operand_d <= left_operand;
         right_operand_d <= right_operand;
         acc <= {{32{1'b0}}, left_operand[31]};
         quo <= {left_operand[30:0], 1'b0};
@@ -85,30 +59,25 @@ module dsp_div (
         i <= 0;
         left_operand_d_sigend <= left_operand;
         right_operand_d_sigend <= right_operand;
-        if (left_operand[31] == 0 && right_operand[31] == 0) begin  // + + = + +
-          left_operand_d <= left_operand;
-          right_operand_d <= right_operand;
-          acc <= {{32{1'b0}}, left_operand[31]};
-          quo <= {left_operand[30:0], 1'b0};
-        end else if (left_operand[31] == 1 && right_operand[31] == 0) begin  // - + = - -
-          left_operand_d <= left_operand_unsigned;
-          right_operand_d <= right_operand;
+
+        if (left_operand[31] == 1) begin
           acc <= {{32{1'b0}}, left_operand_unsigned[31]};
           quo <= {left_operand_unsigned[30:0], 1'b0};
-        end else if (left_operand[31] == 0 && right_operand[31] == 1) begin  // + - = - +
-          left_operand_d <= left_operand;
-          right_operand_d <= right_operand_unsigned;
+        end else begin
           acc <= {{32{1'b0}}, left_operand[31]};
           quo <= {left_operand[30:0], 1'b0};
-        end else begin  // - - = + -
-          right_operand_d <= right_operand_unsigned;
-          left_operand_d <= left_operand_unsigned;
-          acc <= {{32{1'b0}}, left_operand_unsigned[31]};
-          quo <= {left_operand_unsigned[30:0], 1'b0};
         end
+
+        if (right_operand[31] == 1) begin
+          right_operand_d <= right_operand_unsigned;
+        end else begin
+          right_operand_d <= right_operand;
+        end
+
       end else begin
-        if (i == 32 - 1) begin  // we're done
+        if (i == 32 - 1) begin  //done
           run <= 0;
+          i <= 0;
         end else begin  // next iteration
           i   <= i + 1;
           acc <= acc_next;
