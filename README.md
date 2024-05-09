@@ -54,15 +54,15 @@ The project will be built for the Nexys A7-100T FPGA.
 
 ## Phase2 instructions
 
-- [ ] INSTR_JAL
-- [ ] INSTR_JALR
+- [x] INSTR_JAL
+- [x] INSTR_JALR
 - [ ] INSTR_LBU
 - [ ] INSTR_LHU
 - [ ] INSTR_SB
 - [ ] INSTR_SH
 - [ ] INSTR_LB
 - [ ] INSTR_LH
-- [ ] INSTR_AUIPC
+- [x] INSTR_AUIPC
 - [x] INSTR_MUL
 - [x] INSTR_MULH
 - [x] INSTR_DIV
@@ -87,5 +87,14 @@ The project will be built for the Nexys A7-100T FPGA.
 
 ![Block Diagram](/doc/overview_riscV.png)
 (todo: add beq comparition)
+
+## Instructions with problem in RIPES
+
+c.or
+c.xor
+c.lw
+c.sw
+
+## Git stats
 
 ![Alt](https://repobeats.axiom.co/api/embed/8cecad938df30ff41abc7afbe6f5f0a3571eab39.svg "Repobeats analytics image")

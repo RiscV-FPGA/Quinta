@@ -55,15 +55,18 @@ package common_pkg;
   typedef struct packed {
     alu_op_t alu_op;
     encoding_t encoding;
-    logic alu_src;  // alu mux control
+    logic alu_pc;  // set right op to imm
+    logic alu_src;  // set right op to imm
+    logic alu_bypass;
+    logic alu_jump;
     logic alu_inv_res;  // invert alu result
     logic mem_read;  // mem read
     logic mem_write;  // mem write
     //logic mem_to_reg;  // not in use yet dont know exatly what to do with
     logic is_branch;  // is branch
     logic reg_write;  // write back to reg
-
     logic [4:0] write_back_id;
+    logic wb_pc;
     //logic mem_to_reg;
   } control_t;
 

@@ -59,6 +59,7 @@ module top (
   logic         [31:0] mem_data_out_mem;
   logic                branch_taken_mem;
   logic         [31:0] pc_branch_mem;
+  logic         [31:0] pc_mem;
 
   logic         [31:0] forwarding_data_1;
   logic         [31:0] forwarding_data_2;
@@ -70,6 +71,7 @@ module top (
   logic         [31:0] alu_res_wb;
   logic         [31:0] mem_data_wb;
   logic         [31:0] wb_data_wb;  // to decode for saving
+  logic         [31:0] pc_wb;
 
   //assign clk = sys_clk;
 
@@ -120,6 +122,7 @@ module top (
       branch_taken_mem <= branch_taken_execute;  // added this to fix the critical path
       pc_branch_mem <= pc_branch_execute;
       control_mem <= control_execute;
+      pc_mem <= pc_execute;
       if (branch_taken_mem == 1) begin
         control_mem.reg_write <= 0;  // nop
         control_mem.mem_write <= 0;  // nop
@@ -127,8 +130,9 @@ module top (
       end
 
       //wb_reg <= mem_reg
-      control_wb  <= control_mem;
-      alu_res_wb  <= alu_res_in_mem;
+      pc_wb <= pc_mem;
+      control_wb <= control_mem;
+      alu_res_wb <= alu_res_in_mem;
       mem_data_wb <= mem_data_out_mem;
     end
   end
@@ -223,6 +227,7 @@ module top (
       .clk(sys_clk),
       .rst(rst),
       .control(control_wb),
+      .pc_wb(pc_wb),
       .alu_res(alu_res_wb),
       .mem_data(mem_data_wb),
       .wb_data(wb_data_wb)

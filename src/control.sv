@@ -18,13 +18,19 @@ module control (
       7'b0010011: begin
         control.encoding = I_TYPE;
       end
+      7'b1100111: begin // I type JALR
+        control.encoding = I_TYPE;
+      end
       7'b0100011: begin
         control.encoding = S_TYPE;
       end
       7'b1100011: begin
         control.encoding = B_TYPE;
       end
-      7'b0110111: begin
+      7'b0110111: begin  // U type LUI
+        control.encoding = U_TYPE;
+      end
+      7'b0010111: begin  // U type AUIPC
         control.encoding = U_TYPE;
       end
       7'b1101111: begin
@@ -56,17 +62,34 @@ logic reg_write
     // CHECK INSTR
     casez (instruction)
       INSTR_LUI: begin
-        control.alu_src   = 1;
-        control.reg_write = 1;
+        control.alu_src    = 1;
+        control.reg_write  = 1;
+        control.alu_bypass = 1;
 
       end
       INSTR_AUIPC: begin  // 4
+        control.alu_src = 1;
+        control.alu_pc = 1;
+        control.reg_write = 1;
+        control.alu_op = ALU_ADD;
 
       end
       INSTR_JAL: begin  // 4
+        control.alu_src = 1;
+        control.alu_pc = 1;
+        control.reg_write = 1;
+        control.alu_jump = 1;
+        control.wb_pc = 1;
+        control.alu_op = ALU_ADD;
 
       end
       INSTR_JALR: begin  // 4
+        control.alu_src = 1;
+        //control.alu_pc = 1;
+        control.reg_write = 1;
+        control.alu_jump = 1;
+        control.wb_pc = 1;
+        control.alu_op = ALU_ADD;
 
       end
       INSTR_BEQ: begin  // branch
