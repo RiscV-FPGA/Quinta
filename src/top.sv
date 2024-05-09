@@ -22,6 +22,8 @@ module top (
   logic                write_instr_valid;
   logic         [31:0] write_byte_address;
   logic         [31:0] write_word_address;
+  logic                mem_data_valid;
+
 
   instruction_t        instruction_fetch;
   logic         [31:0] pc_fetch;
@@ -104,7 +106,7 @@ module top (
       control_execute <= control_decode;
       if (hazard_detected_decode == 1 || branch_taken_mem == 1) begin
         control_execute.reg_write <= 0;  // nop
-        control_execute.mem_write <= 0;  // nop
+        control_execute.mem_write <= MEM_NO_OP;  // nop
         control_execute.is_branch <= 0;  // nop
       end else if (insert_bubble_execute == 1) begin
         pc_execute <= pc_execute;  // paus stage
@@ -125,7 +127,7 @@ module top (
       pc_mem <= pc_execute;
       if (branch_taken_mem == 1) begin
         control_mem.reg_write <= 0;  // nop
-        control_mem.mem_write <= 0;  // nop
+        control_mem.mem_write <= MEM_NO_OP;  // nop
         control_mem.is_branch <= 0;  // nop
       end
 
@@ -244,6 +246,7 @@ module top (
   );
 
   assign write_word_address = {2'b00, write_byte_address[31:2]};
+  assign mem_data_valid = (control_mem.mem_write == MEM_NO_OP) ? 1'b0 : 1'b1;
 
   vga #(
       .TB_MODE(1)
@@ -258,7 +261,7 @@ module top (
       .instr_mem_enable(write_instr_valid),
       .data_mem_data(mem_data_in_mem),
       .data_mem_addr(alu_res_in_mem),
-      .data_mem_enable(control_mem.mem_write),
+      .data_mem_enable(mem_data_valid),
       .vga_vsync(vga_vsync),
       .vga_hsync(vga_hsync),
       .vga_r(vga_r),

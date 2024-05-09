@@ -18,7 +18,7 @@ module control (
       7'b0010011: begin
         control.encoding = I_TYPE;
       end
-      7'b1100111: begin // I type JALR
+      7'b1100111: begin  // I type JALR
         control.encoding = I_TYPE;
       end
       7'b0100011: begin
@@ -126,15 +126,23 @@ logic reg_write
 
       end
       INSTR_LB: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_BYTE;
+        control.reg_write = 1;
 
       end
       INSTR_LH: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_HALF_WORD;
+        control.reg_write = 1;
 
       end
       INSTR_LW: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
-        control.mem_read = 1;
+        control.mem_read = MEM_FULL_WORD;
         control.reg_write = 1;
 
       end
@@ -145,15 +153,21 @@ logic reg_write
 
       end
       INSTR_SB: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_write = MEM_BYTE;
 
       end
       INSTR_SH: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_write = MEM_HALF_WORD;
 
       end
       INSTR_SW: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
-        control.mem_write = 1;
+        control.mem_write = MEM_FULL_WORD;
 
       end
       INSTR_ADDI: begin

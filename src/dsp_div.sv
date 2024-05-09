@@ -77,7 +77,7 @@ module dsp_div (
       end else begin
         if (i == 32 - 1) begin  //done
           run <= 0;
-          i <= 0;
+          i   <= 0;
         end else begin  // next iteration
           i   <= i + 1;
           acc <= acc_next;
