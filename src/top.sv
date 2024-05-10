@@ -17,11 +17,15 @@ module top (
     // FOR TB END
 );
 
+  logic         [31:0] mem_data_in_vga;
+
   logic                start;
   logic         [31:0] write_instr_data;
   logic                write_instr_valid;
   logic         [31:0] write_byte_address;
   logic         [31:0] write_word_address;
+  logic                mem_data_valid;
+
 
   instruction_t        instruction_fetch;
   logic         [31:0] pc_fetch;
@@ -59,6 +63,7 @@ module top (
   logic         [31:0] mem_data_out_mem;
   logic                branch_taken_mem;
   logic         [31:0] pc_branch_mem;
+  logic         [31:0] pc_mem;
 
   logic         [31:0] forwarding_data_1;
   logic         [31:0] forwarding_data_2;
@@ -70,6 +75,7 @@ module top (
   logic         [31:0] alu_res_wb;
   logic         [31:0] mem_data_wb;
   logic         [31:0] wb_data_wb;  // to decode for saving
+  logic         [31:0] pc_wb;
 
   //assign clk = sys_clk;
 
@@ -102,7 +108,7 @@ module top (
       control_execute <= control_decode;
       if (hazard_detected_decode == 1 || branch_taken_mem == 1) begin
         control_execute.reg_write <= 0;  // nop
-        control_execute.mem_write <= 0;  // nop
+        control_execute.mem_write <= MEM_NO_OP;  // nop
         control_execute.is_branch <= 0;  // nop
       end else if (insert_bubble_execute == 1) begin
         pc_execute <= pc_execute;  // paus stage
@@ -120,15 +126,17 @@ module top (
       branch_taken_mem <= branch_taken_execute;  // added this to fix the critical path
       pc_branch_mem <= pc_branch_execute;
       control_mem <= control_execute;
+      pc_mem <= pc_execute;
       if (branch_taken_mem == 1) begin
         control_mem.reg_write <= 0;  // nop
-        control_mem.mem_write <= 0;  // nop
+        control_mem.mem_write <= MEM_NO_OP;  // nop
         control_mem.is_branch <= 0;  // nop
       end
 
       //wb_reg <= mem_reg
-      control_wb  <= control_mem;
-      alu_res_wb  <= alu_res_in_mem;
+      pc_wb <= pc_mem;
+      control_wb <= control_mem;
+      alu_res_wb <= alu_res_in_mem;
       mem_data_wb <= mem_data_out_mem;
     end
   end
@@ -200,7 +208,8 @@ module top (
       .alu_res_in(alu_res_in_mem),
       .mem_data_in(mem_data_in_mem),
       .control(control_mem),
-      .mem_data_out(mem_data_out_mem)
+      .mem_data_out(mem_data_out_mem),
+      .mem_data_in_vga(mem_data_in_vga)
   );
 
   forwarding_unit forwarding_unit_inst (
@@ -223,6 +232,7 @@ module top (
       .clk(sys_clk),
       .rst(rst),
       .control(control_wb),
+      .pc_wb(pc_wb),
       .alu_res(alu_res_wb),
       .mem_data(mem_data_wb),
       .wb_data(wb_data_wb)
@@ -239,6 +249,7 @@ module top (
   );
 
   assign write_word_address = {2'b00, write_byte_address[31:2]};
+  assign mem_data_valid = (control_mem.mem_write == MEM_NO_OP) ? 1'b0 : 1'b1;
 
   vga #(
       .TB_MODE(1)
@@ -251,9 +262,9 @@ module top (
       .instr_mem_data(write_instr_data),
       .instr_mem_addr(write_word_address),
       .instr_mem_enable(write_instr_valid),
-      .data_mem_data(mem_data_in_mem),
+      .data_mem_data(mem_data_in_vga),
       .data_mem_addr(alu_res_in_mem),
-      .data_mem_enable(control_mem.mem_write),
+      .data_mem_enable(mem_data_valid),
       .vga_vsync(vga_vsync),
       .vga_hsync(vga_hsync),
       .vga_r(vga_r),

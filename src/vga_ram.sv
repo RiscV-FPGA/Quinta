@@ -14,9 +14,22 @@ module vga_ram (
 );
 
   //logic [159:0] mem[48];  //1280 = 160*64/8
-  logic [31:0] reg_mem  [32];
+  logic [31:0] reg_mem[32];
   logic [63:0] instr_mem[46];
-  logic [63:0] data_mem [46];
+  logic [63:0] data_mem[46];
+
+
+  logic [5:0] word_address;
+  logic [1:0] byte_offset;
+  logic [31:0] write_data_processed;
+
+  assign word_address = data_mem_addr[7:2];
+  assign byte_offset  = data_mem_addr[1:0];
+
+  always_comb begin
+    write_data_processed = data_mem_data << byte_offset * 8;
+  end
+
 
   always_ff @(posedge clk) begin
     if (reg_mem_enable == 1) begin
@@ -32,10 +45,18 @@ module vga_ram (
     end
 
     if (data_mem_enable) begin
-      if (data_mem_addr < 46) begin
-        data_mem[data_mem_addr][63:32] <= data_mem_data;
+      if (word_address < 46) begin
+        //        data_mem[data_mem_addr][63:32] <= data_mem_data;
+        data_mem[word_address][39:32] <= write_data_processed[7:0];
+        data_mem[word_address][47:40] <= write_data_processed[15:8];
+        data_mem[word_address][55:48] <= write_data_processed[23:16];
+        data_mem[word_address][63:56] <= write_data_processed[31:24];
       end else begin
-        data_mem[data_mem_addr-46][31:0] <= data_mem_data;
+        //        data_mem[data_mem_addr-46][31:0] <= data_mem_data;
+        data_mem[word_address-46][7:0]   <= write_data_processed[7:0];
+        data_mem[word_address-46][15:8]  <= write_data_processed[15:8];
+        data_mem[word_address-46][23:16] <= write_data_processed[23:16];
+        data_mem[word_address-46][31:24] <= write_data_processed[31:24];
       end
     end
   end

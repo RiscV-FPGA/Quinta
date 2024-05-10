@@ -34,18 +34,19 @@ module decompressor (
         instruction_out.block5 = {7{instruction_in[12]}};
       end
       COMPACT_JAL: begin
-        instruction_out = {
+        instruction_out.opcode = 7'b1101111;
+        instruction_out.block1 = 5'b00001;  // ra (return address = x1)
+
+        instruction_out.block2 = {3{instruction_in[12]}};
+        instruction_out.block3 = {5{instruction_in[12]}};
+        instruction_out.block4 = {instruction_in[11], instruction_in[5:3], instruction_in[12]};
+        instruction_out.block5 = {
           instruction_in[12],
           instruction_in[8],
           instruction_in[10:9],
           instruction_in[6],
           instruction_in[7],
-          instruction_in[2],
-          instruction_in[11],
-          instruction_in[6:3],
-          {8{instruction_in[12]}},
-          5'b00001,
-          7'b1101111
+          instruction_in[2]
         };
       end
       COMPACT_LI: begin
@@ -125,19 +126,20 @@ module decompressor (
       end
       COMPACT_J: begin
         //J -> JAL
-        instruction_out = {
+        instruction_out.opcode = 7'b1101111;
+        instruction_out.block1 = 5'b00000;
+        instruction_out.block2 = {3{instruction_in[12]}};
+        instruction_out.block3 = {5{instruction_in[12]}};
+        instruction_out.block4 = {instruction_in[11], instruction_in[5:3], instruction_in[12]};
+        instruction_out.block5 = {
           instruction_in[12],
           instruction_in[8],
           instruction_in[10:9],
           instruction_in[6],
           instruction_in[7],
-          instruction_in[2],
-          instruction_in[11],
-          instruction_in[6:3],
-          {8{instruction_in[12]}},
-          5'b00000,
-          7'b1101111
+          instruction_in[2]
         };
+
       end
       COMPACT_BEQZ: begin
         instruction_out.opcode = 7'b1100011;
@@ -167,7 +169,7 @@ module decompressor (
         if (instruction_in[6:2] == 5'b00000) begin
           //JR -> JALR
           instruction_out.opcode = 7'b1100111;
-          instruction_out.block1 = '0;
+          instruction_out.block1 = 5'b00000;
           instruction_out.block2 = 3'b000;
           instruction_out.block3 = instruction_in[11:7];
           instruction_out.block4 = '0;

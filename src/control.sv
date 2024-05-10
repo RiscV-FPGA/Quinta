@@ -18,13 +18,19 @@ module control (
       7'b0010011: begin
         control.encoding = I_TYPE;
       end
+      7'b1100111: begin  // I type JALR
+        control.encoding = I_TYPE;
+      end
       7'b0100011: begin
         control.encoding = S_TYPE;
       end
       7'b1100011: begin
         control.encoding = B_TYPE;
       end
-      7'b0110111: begin
+      7'b0110111: begin  // U type LUI
+        control.encoding = U_TYPE;
+      end
+      7'b0010111: begin  // U type AUIPC
         control.encoding = U_TYPE;
       end
       7'b1101111: begin
@@ -56,17 +62,34 @@ logic reg_write
     // CHECK INSTR
     casez (instruction)
       INSTR_LUI: begin
-        control.alu_src   = 1;
-        control.reg_write = 1;
+        control.alu_src    = 1;
+        control.reg_write  = 1;
+        control.alu_bypass = 1;
 
       end
       INSTR_AUIPC: begin  // 4
+        control.alu_src = 1;
+        control.alu_pc = 1;
+        control.reg_write = 1;
+        control.alu_op = ALU_ADD;
 
       end
       INSTR_JAL: begin  // 4
+        control.alu_src = 1;
+        control.alu_pc = 1;
+        control.reg_write = 1;
+        control.alu_jump = 1;
+        control.wb_pc = 1;
+        control.alu_op = ALU_ADD;
 
       end
       INSTR_JALR: begin  // 4
+        control.alu_src = 1;
+        //control.alu_pc = 1;
+        control.reg_write = 1;
+        control.alu_jump = 1;
+        control.wb_pc = 1;
+        control.alu_op = ALU_ADD;
 
       end
       INSTR_BEQ: begin  // branch
@@ -103,34 +126,56 @@ logic reg_write
 
       end
       INSTR_LB: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_BYTE;
+        control.reg_write = 1;
 
       end
       INSTR_LH: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_HALF_WORD;
+        control.reg_write = 1;
 
       end
       INSTR_LW: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
-        control.mem_read = 1;
+        control.mem_read = MEM_FULL_WORD;
         control.reg_write = 1;
 
       end
       INSTR_LBU: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_BYTE_U;
+        control.reg_write = 1;
 
       end
       INSTR_LHU: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_HALF_WORD_U;
+        control.reg_write = 1;
 
       end
       INSTR_SB: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_write = MEM_BYTE;
 
       end
       INSTR_SH: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_write = MEM_HALF_WORD;
 
       end
       INSTR_SW: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
-        control.mem_write = 1;
+        control.mem_write = MEM_FULL_WORD;
 
       end
       INSTR_ADDI: begin

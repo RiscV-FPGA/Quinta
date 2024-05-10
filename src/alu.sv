@@ -91,7 +91,7 @@ module alu (
     end
   end  // MUL END
 
-  dsp_div dsp_div_inst (  // DIV START
+  dsp_div dsp_div_inst (  // DIV REM START
       .clk(clk),
       .rst(rst),
       .alu_op(alu_op),
@@ -107,7 +107,8 @@ module alu (
     if (rst == 1) begin
       div_bubble <= 'b0;
     end else begin
-      if ((alu_op == ALU_DIV || alu_op == ALU_DIVU) && div_bubble == 0) begin
+      if ((alu_op == ALU_DIV || alu_op == ALU_DIVU || alu_op == ALU_REM || alu_op == ALU_REMU)
+      && div_bubble == 0) begin
         div_bubble <= 1;
       end
 
@@ -117,16 +118,17 @@ module alu (
         div_bubble <= div_bubble + 1;
       end
     end
-  end  // DIV END
+  end  // DIV REM END
 
 
-  // BUBBLE
+  // BUBBLE START
   always_comb begin
     if (((alu_op == ALU_MUL ||alu_op == ALU_MULH)  && mul_bubble == 0)
     || (mul_bubble > 0 && mul_bubble < 6)) begin
       insert_bubble = 1;
-    end else if(((alu_op == ALU_DIV ||alu_op == ALU_DIVU)  && div_bubble == 0)
-    || (div_bubble > 0 && div_bubble < 32)) begin
+    end else if(((alu_op == ALU_DIV || alu_op == ALU_DIVU
+    || alu_op == ALU_REM || alu_op == ALU_REMU) && div_bubble == 0)
+    || (div_bubble > 0 && div_bubble < 32)) begin // long hard if statement be careful :)
       insert_bubble = 1;
     end else begin
       insert_bubble = 0;
