@@ -33,7 +33,7 @@ module execute_stage (
     if (control.is_branch == 1) begin
       pc_branch = immediate_data * 2 + pc_execute;
     end else begin
-      pc_branch = alu_res;
+      pc_branch = left_operand + right_operand;
     end
   end
 

@@ -6,14 +6,16 @@ module memory_stage (
     input logic [31:0] alu_res_in,
     input logic [31:0] mem_data_in,
     input control_t control,
-    output logic [31:0] mem_data_out
+    output logic [31:0] mem_data_out,
+    output logic [31:0] mem_data_in_vga
 );
 
   logic [31:0] mem_data_internal_in;
   logic [31:0] mem_data_internal_out;
 
   logic mem_data_valid;
-  assign mem_data_valid = (control.mem_write == 2'b00) ? 1'b0 : 1'b1;
+  assign mem_data_valid  = (control.mem_write == 2'b00) ? 1'b0 : 1'b1;
+  assign mem_data_in_vga = mem_data_internal_in;
 
   always_comb begin : IN_MUX
     if (control.mem_write == MEM_HALF_WORD) begin
@@ -29,7 +31,7 @@ module memory_stage (
       .clk(clk),
       .byte_address(alu_res_in),
       .write_enable(mem_data_valid),
-      .write_data(mem_data_in),
+      .write_data(mem_data_internal_in),
       .read_data(mem_data_internal_out)
   );
 

@@ -21,6 +21,7 @@ module top_build (
   wire          [31:0] sdl_sy;
   wire                 sdl_de;
   logic                mem_data_valid;
+  logic         [31:0] mem_data_in_vga;
 
   logic                start;
   logic         [31:0] write_instr_data;
@@ -209,6 +210,7 @@ module top_build (
       .alu_res_in(alu_res_in_mem),
       .mem_data_in(mem_data_in_mem),
       .control(control_mem),
+      .mem_data_in_vga(mem_data_in_vga),
       .mem_data_out(mem_data_out_mem)
   );
 
@@ -262,7 +264,7 @@ module top_build (
       .instr_mem_data(write_instr_data),
       .instr_mem_addr(write_word_address),
       .instr_mem_enable(write_instr_valid),
-      .data_mem_data(mem_data_in_mem),
+      .data_mem_data(mem_data_in_vga),
       .data_mem_addr(alu_res_in_mem),
       .data_mem_enable(mem_data_valid),
       .vga_vsync(vga_vsync),

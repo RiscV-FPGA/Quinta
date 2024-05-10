@@ -58,10 +58,10 @@ The project will be built for the Nexys A7-100T FPGA.
 - [x] INSTR_JALR
 - [ ] INSTR_LBU
 - [ ] INSTR_LHU
-- [ ] INSTR_SB
-- [ ] INSTR_SH
-- [ ] INSTR_LB
-- [ ] INSTR_LH
+- [x] INSTR_SB
+- [x] INSTR_SH
+- [x] INSTR_LB
+- [x] INSTR_LH
 - [x] INSTR_AUIPC
 - [x] INSTR_MUL
 - [x] INSTR_MULH
