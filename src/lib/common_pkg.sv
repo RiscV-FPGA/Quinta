@@ -46,11 +46,13 @@ package common_pkg;
     HALT_TYPE
   } encoding_t;
 
-  typedef enum logic [1:0] {
-    MEM_NO_OP = 2'b00,
-    MEM_FULL_WORD = 2'b01,
-    MEM_HALF_WORD = 2'b10,
-    MEM_BYTE      = 2'b11
+  typedef enum logic [2:0] {
+    MEM_NO_OP       = 3'b000,
+    MEM_FULL_WORD   = 3'b001,
+    MEM_HALF_WORD   = 3'b010,
+    MEM_BYTE        = 3'b011,
+    MEM_HALF_WORD_U = 3'b100,
+    MEM_BYTE_U      = 3'b101
   } mem_op_t;
 
   typedef struct packed {

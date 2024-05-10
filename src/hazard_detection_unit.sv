@@ -10,7 +10,7 @@ module hazard_detection_unit (
 );
 
   always_comb begin
-    if (control_ex.mem_read != 2'b00) begin  // load value instruction
+    if (control_ex.mem_read != MEM_NO_OP) begin  // load value instruction
       if (control_ex.write_back_id == rs1 || control_ex.write_back_id == rs2) begin
         hazard_detected = 1;
       end else begin

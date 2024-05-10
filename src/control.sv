@@ -147,9 +147,17 @@ logic reg_write
 
       end
       INSTR_LBU: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_BYTE_U;
+        control.reg_write = 1;
 
       end
       INSTR_LHU: begin  // 4
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_HALF_WORD_U;
+        control.reg_write = 1;
 
       end
       INSTR_SB: begin  // 4

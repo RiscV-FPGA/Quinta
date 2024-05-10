@@ -14,7 +14,7 @@ module memory_stage (
   logic [31:0] mem_data_internal_out;
 
   logic mem_data_valid;
-  assign mem_data_valid  = (control.mem_write == 2'b00) ? 1'b0 : 1'b1;
+  assign mem_data_valid  = (control.mem_write == MEM_NO_OP) ? 1'b0 : 1'b1;
   assign mem_data_in_vga = mem_data_internal_in;
 
   always_comb begin : IN_MUX
@@ -36,13 +36,13 @@ module memory_stage (
   );
 
   always_comb begin : OUT_MUX
-    if (control.mem_read == MEM_HALF_WORD) begin
-      mem_data_out = {16'b00000000_00000000, mem_data_internal_out[15:0]};
-    end else if (control.mem_read == MEM_BYTE) begin
-      mem_data_out = {24'b00000000_00000000_00000000, mem_data_internal_out[7:0]};
-    end else begin
-      mem_data_out = mem_data_internal_out;
-    end
+    case (control.mem_read)
+      MEM_HALF_WORD: mem_data_out = {{16{mem_data_internal_out[15]}}, mem_data_internal_out[15:0]};
+      MEM_BYTE: mem_data_out = {{24{mem_data_internal_out[7]}}, mem_data_internal_out[7:0]};
+      MEM_HALF_WORD_U: mem_data_out = {16'b00000000_00000000, mem_data_internal_out[15:0]};
+      MEM_BYTE_U: mem_data_out = {24'b00000000_00000000_00000000, mem_data_internal_out[7:0]};
+      default: mem_data_out = mem_data_internal_out;
+    endcase
   end
 
 endmodule

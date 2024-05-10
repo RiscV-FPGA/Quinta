@@ -9,7 +9,7 @@ module writeback_stage (
 );
 
   always_comb begin
-    if (control.mem_read != 2'b00) begin
+    if (control.mem_read != MEM_NO_OP) begin
       wb_data = mem_data;
     end else if (control.wb_pc == 1) begin
       wb_data = pc_wb + 4;
