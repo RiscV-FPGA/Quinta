@@ -309,6 +309,14 @@ logic reg_write
         control.reg_write = 1;
 
       end
+      INSTR_FMV_W_X: begin  //5
+        control.alu_op = ALU_F_INT_FLOAT;
+        control.reg_write = 1;
+      end
+      INSTR_FMV_X_W: begin  //5
+        control.alu_op = ALU_F_FLOAT_INT;
+        control.reg_write = 1;
+      end
       INSTR_FLW: begin  //5
 
       end
@@ -330,9 +338,7 @@ logic reg_write
       INSTR_FSQRT_S: begin  //5
 
       end
-      INSTR_FMV_X_W: begin  //5
 
-      end
       INSTR_FEQ_S: begin  //5
 
       end
@@ -340,9 +346,6 @@ logic reg_write
 
       end
       INSTR_FLE_S: begin  //5
-
-      end
-      INSTR_FMV_W_X: begin  //5
 
       end
       INSTR_HALT: begin

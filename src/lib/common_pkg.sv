@@ -18,7 +18,18 @@ package common_pkg;
     ALU_DIV                = 5'b10000,
     ALU_DIVU               = 5'b10001,
     ALU_REM                = 5'b10010,
-    ALU_REMU               = 5'b10011
+    ALU_REMU               = 5'b10011,
+    ALU_F_INT_FLOAT        = 5'b10100,
+    ALU_F_FLOAT_INT        = 5'b10101,
+    ALU_F_ADD              = 5'b10110,
+    ALU_F_SUB              = 5'b10111,
+    ALU_F_MUL              = 5'b11000,
+    ALU_F_DIV              = 5'b11001,
+    ALU_F_SQRT             = 5'b11010,
+    ALU_F_EQ               = 5'b11011,
+    ALU_F_LT               = 5'b11100,
+    ALU_F_LTEQ             = 5'b11101
+
   } alu_op_t;
 
   typedef struct packed {  //32 bit instruction

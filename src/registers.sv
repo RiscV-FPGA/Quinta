@@ -13,17 +13,17 @@ module registers (
     //input logic finish
 );
 
-  logic [31:0] register[32];
+  logic [31:0] int_register[32];
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
       for (int i = 0; i < 32; i++) begin
-        register[i] <= 32'b00000000_00000000_00000000_00000000;
+        int_register[i] <= 32'b00000000_00000000_00000000_00000000;
       end
 
     end else begin
       if (write_en == 1) begin
-        register[write_id] <= write_data;
+        int_register[write_id] <= write_data;
       end
     end
   end
@@ -33,13 +33,13 @@ module registers (
     if (read1_id == 0) begin
       read1_data = 0;
     end else begin
-      read1_data = register[read1_id];
+      read1_data = int_register[read1_id];
     end
 
     if (read2_id == 0) begin
       read2_data = 0;
     end else begin
-      read2_data = register[read2_id];
+      read2_data = int_register[read2_id];
     end
   end
 
