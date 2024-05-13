@@ -79,11 +79,11 @@ The project will be built for the Nexys A7-100T FPGA.
 - [ ] INSTR_FMUL_S
 - [ ] INSTR_FDIV_S
 - [ ] INSTR_FSQRT_S
-- [ ] INSTR_FMV_X_W
+- [x] INSTR_FMV_X_W
 - [ ] INSTR_FEQ_S
 - [ ] INSTR_FLT_S
 - [ ] INSTR_FLE_S
-- [ ] INSTR_FMV_W_X
+- [x] INSTR_FMV_W_X
 
 ![Block Diagram](/doc/overview_riscV.png)
 (todo: add beq comparition)

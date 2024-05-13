@@ -15,16 +15,22 @@ module alu (
   logic [31:0] internal_alu_res;
 
   logic [63:0] mul_res;
-  logic [ 7:0] mul_bubble;
+  logic [7:0] mul_bubble;
 
   logic [31:0] div_res_unsigned;
   logic [31:0] rem_res_unsigned;
   logic [31:0] div_res_signed;
   logic [31:0] rem_res_signed;
-  logic [ 7:0] div_bubble;
+  logic [7:0] div_bubble;
 
   logic [31:0] int_float_res;
   logic [31:0] float_int_res;
+  logic [7:0] float_bubble;
+
+  logic alu_mul;
+  logic alu_div;
+  logic alu_float;
+
 
   always_comb begin
     case (alu_op)
@@ -76,6 +82,14 @@ module alu (
     endcase
   end
 
+  assign alu_mul = (alu_op == ALU_MUL || alu_op == ALU_MULH) ? 1'b1 : 1'b0;
+
+  assign alu_div = (alu_op == ALU_DIV || alu_op == ALU_DIVU
+  || alu_op == ALU_REM || alu_op == ALU_REMU) ? 1'b1 : 1'b0; // long statement be careful :)
+
+  assign alu_float = (alu_op == ALU_F_INT_FLOAT) ? 1'b1 : 1'b0;
+
+
   dsp_mul dsp_mul_inst (  // MUL START
       .clk(clk),
       .left_operand(left_operand),
@@ -87,7 +101,7 @@ module alu (
     if (rst == 1) begin
       mul_bubble <= 'b0;
     end else begin
-      if ((alu_op == ALU_MUL || alu_op == ALU_MULH) && mul_bubble == 0) begin
+      if (alu_mul && mul_bubble == 0) begin
         mul_bubble <= 1;
       end
 
@@ -115,8 +129,7 @@ module alu (
     if (rst == 1) begin
       div_bubble <= 'b0;
     end else begin
-      if ((alu_op == ALU_DIV || alu_op == ALU_DIVU || alu_op == ALU_REM || alu_op == ALU_REMU)
-      && div_bubble == 0) begin
+      if (alu_div && div_bubble == 0) begin
         div_bubble <= 1;
       end
 
@@ -129,7 +142,7 @@ module alu (
   end  // DIV REM END
 
 
-  dsp_float dsp_float_inst (
+  dsp_float dsp_float_inst (  // FLOAT START
       .clk(clk),
       .rst(rst),
       .alu_op(alu_op),
@@ -139,15 +152,29 @@ module alu (
       .float_int_res(float_int_res)
   );
 
+  always_ff @(posedge clk) begin
+    if (rst == 1) begin
+      float_bubble <= 'b0;
+    end else begin
+      if (alu_float && float_bubble == 0) begin
+        float_bubble <= 1;
+      end
+
+      if (float_bubble == 32) begin
+        float_bubble <= 0;
+      end else if (float_bubble > 0) begin
+        float_bubble <= float_bubble + 1;
+      end
+    end
+  end  // FLOAT END
 
   // BUBBLE START
   always_comb begin
-    if (((alu_op == ALU_MUL ||alu_op == ALU_MULH)  && mul_bubble == 0)
-    || (mul_bubble > 0 && mul_bubble < 6)) begin
+    if ((alu_mul && mul_bubble == 0) || (mul_bubble > 0 && mul_bubble < 6)) begin
       insert_bubble = 1;
-    end else if(((alu_op == ALU_DIV || alu_op == ALU_DIVU
-    || alu_op == ALU_REM || alu_op == ALU_REMU) && div_bubble == 0)
-    || (div_bubble > 0 && div_bubble < 32)) begin // long hard if statement be careful :)
+    end else if ((alu_div && div_bubble == 0) || (div_bubble > 0 && div_bubble < 32)) begin
+      insert_bubble = 1;
+    end else if ((alu_float && float_bubble == 0) || (float_bubble > 0 && float_bubble < 32)) begin
       insert_bubble = 1;
     end else begin
       insert_bubble = 0;
