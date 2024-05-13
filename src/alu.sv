@@ -23,6 +23,9 @@ module alu (
   logic [31:0] rem_res_signed;
   logic [ 7:0] div_bubble;
 
+  logic [31:0] int_float_res;
+  logic [31:0] float_int_res;
+
   always_comb begin
     case (alu_op)
       ALU_AND: internal_alu_res = left_operand & right_operand;
@@ -61,6 +64,11 @@ module alu (
       ALU_REM: internal_alu_res = rem_res_signed;
 
       ALU_REMU: internal_alu_res = rem_res_unsigned;
+
+      // float
+      ALU_F_INT_FLOAT: internal_alu_res = int_float_res;
+
+      ALU_F_FLOAT_INT: internal_alu_res = float_int_res;
 
       default: begin
         internal_alu_res = left_operand + right_operand;
@@ -119,6 +127,17 @@ module alu (
       end
     end
   end  // DIV REM END
+
+
+  dsp_float dsp_float_inst (
+      .clk(clk),
+      .rst(rst),
+      .alu_op(alu_op),
+      .left_operand(left_operand),
+      .right_operand(right_operand),
+      .int_float_res(int_float_res),
+      .float_int_res(float_int_res)
+  );
 
 
   // BUBBLE START
