@@ -1,6 +1,6 @@
 import common_pkg::*;
 
-module registers (
+module registers_float (
     input logic clk,
     input logic rst,
     input logic [4:0] read1_id,
@@ -17,21 +17,10 @@ module registers (
   always_ff @(posedge clk) begin
       if (write_en == 1) begin
         int_register[write_id] <= write_data;
-      end
-  end
-
-  always_comb begin
-    if (read1_id == 0) begin
-      read1_data = 0;
-    end else begin
-      read1_data = int_register[read1_id];
-    end
-
-    if (read2_id == 0) begin
-      read2_data = 0;
-    end else begin
-      read2_data = int_register[read2_id];
     end
   end
+
+  assign read1_data = int_register[read1_id];
+  assign read2_data = int_register[read2_id];
 
 endmodule

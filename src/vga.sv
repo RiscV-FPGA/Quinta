@@ -1,11 +1,14 @@
 module vga #(
     parameter logic TB_MODE = 0
 ) (
-    input  logic        clk,               // pixel clock
-    input  logic        rst,               // sim reset
+    input  logic        clk,                   // pixel clock
+    input  logic        rst,                   // sim reset
     input  logic [31:0] reg_mem_data,
     input  logic [ 4:0] reg_mem_addr,
     input  logic        reg_mem_enable,
+    input  logic [31:0] float_reg_mem_data,
+    input  logic [ 4:0] float_reg_mem_addr,
+    input  logic        float_reg_mem_enable,
     input  logic [31:0] instr_mem_data,
     input  logic [31:0] instr_mem_addr,
     input  logic        instr_mem_enable,
@@ -18,9 +21,9 @@ module vga #(
     output logic [ 3:0] vga_g,
     output logic [ 3:0] vga_b,
     // FOR TB ONLY
-    output logic [31:0] sdl_sx,            // horizontal SDL position
-    output logic [31:0] sdl_sy,            // vertical SDL position
-    output logic        sdl_de             // data enable (low in blanking interval)
+    output logic [31:0] sdl_sx,                // horizontal SDL position
+    output logic [31:0] sdl_sy,                // vertical SDL position
+    output logic        sdl_de                 // data enable (low in blanking interval)
 );
 
   // -----------------SYNC------------------------
@@ -44,7 +47,7 @@ module vga #(
   //logic [31:0] ram_x_address;
   logic [31:0] write_address;
   logic [7:0] ram_in;
-  logic [159:0] ram_out;
+  logic [127:0] ram_out;
   logic we;
 
   logic [7:0] one[16];
@@ -90,6 +93,9 @@ module vga #(
       .reg_mem_data(reg_mem_data),
       .reg_mem_addr(reg_mem_addr),
       .reg_mem_enable(reg_mem_enable),
+      .float_reg_mem_data(float_reg_mem_data),
+      .float_reg_mem_addr(float_reg_mem_addr),
+      .float_reg_mem_enable(float_reg_mem_enable),
       .instr_mem_data(instr_mem_data),
       .instr_mem_addr(instr_mem_addr),
       .instr_mem_enable(instr_mem_enable),
@@ -104,16 +110,14 @@ module vga #(
   // num
   logic one_in_ram;
   always_comb begin
-    if (sx < 272) begin
-      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+1];  //instr1
-    end else if (sx < 536) begin
-      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+2];  //instr2
-    end else if (sx < 808) begin
-      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+4];  //reg
-    end else if (sx < 1080) begin
-      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+6];  //mem1
-    end else if (sx < 1344) begin
-      one_in_ram = ram_out[160-{3'b000, sx[31:3]}+7];  //mem2
+    if (sx > 23 && sx < 280) begin
+      one_in_ram = ram_out[128-{3'b000, sx[31:3]}+2];  //instr1
+    end else if (sx > 375 && sx < 632) begin
+      one_in_ram = ram_out[128-{3'b000, sx[31:3]}+14];  //reg
+    end else if (sx > 727 && sx < 984) begin
+      one_in_ram = ram_out[128-{3'b000, sx[31:3]}+26];  //reg_float
+    end else if (sx > 1079 && sx < 1336) begin
+      one_in_ram = ram_out[128-{3'b000, sx[31:3]}+38];  //mem1
     end else begin
       one_in_ram = 0;
     end
@@ -138,11 +142,11 @@ module vga #(
     if (sy > 736) begin
       background_on = 1;
     end else begin
-      if (sx < 16 || (sx > 271 && sx < 280) || (sx > 535 && sx < 552)) begin
+      if (sx < 24 || (sx > 279 && sx < 375) || (sx > 631 && sx < 727)) begin
         background_on = 1;  // two else if becose they got so long :)
-      end else if ((sx > 807 && sx < 824) || (sx > 1079 && sx < 1088) || sx > 1343) begin
+      end else if ((sx > 983 && sx < 1079) || sx > 1336) begin
         background_on = 1;  // two else if becose they got so long :)
-      end else if (sx > 551 && sx < 808 && sy > 511) begin
+      end else if (sx > 375 && sx < 984 && sy > 511) begin
         background_on = 1;
       end else if (sy > 735) begin
         background_on = 1;

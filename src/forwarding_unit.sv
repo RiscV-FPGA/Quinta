@@ -10,6 +10,7 @@ module forwarding_unit (
     input logic [31:0] mem_data_wb,
     input logic [4:0] rs_1,
     input logic [4:0] rs_2,
+    input logic reg_read_float,
     output logic [31:0] data_1,
     output logic [31:0] data_2,
     output logic data_1_valid,
@@ -18,16 +19,18 @@ module forwarding_unit (
 
   logic [4:0] mem_write_back_id;
   logic [4:0] wb_write_back_id;
+  logic mem_forward;
+  logic wb_forward;
   assign mem_write_back_id = control_mem.write_back_id;
-  assign wb_write_back_id  = control_wb.write_back_id;
+  assign wb_write_back_id = control_wb.write_back_id;
+  assign mem_forward = control_mem.mem_read == MEM_NO_OP && control_mem.reg_write;
 
 
   always_comb begin
-    if (control_mem.write_back_id == rs_1 &&
-     control_mem.mem_read == MEM_NO_OP && control_mem.reg_write == 1) begin // 2line if :(
+    if (mem_write_back_id == rs_1 && mem_forward && reg_read_float == 0) begin
       data_1 = alu_res_mem;
       data_1_valid = 1;
-    end else if (control_wb.write_back_id == rs_1 && control_wb.reg_write == 1) begin
+    end else if (wb_write_back_id == rs_1 && control_wb.reg_write == 1 && reg_read_float == 0) begin
       if (control_wb.mem_read == 1) begin
         data_1 = mem_data_wb;
         data_1_valid = 1;
@@ -40,11 +43,10 @@ module forwarding_unit (
       data_1_valid = 0;
     end
 
-    if (control_mem.write_back_id == rs_2 &&
-    control_mem.mem_read == MEM_NO_OP && control_mem.reg_write == 1) begin // 2line if :(
+    if (mem_write_back_id == rs_2 && mem_forward && reg_read_float == 0) begin
       data_2 = alu_res_mem;
       data_2_valid = 1;
-    end else if (control_wb.write_back_id == rs_2 && control_wb.reg_write == 1) begin
+    end else if (wb_write_back_id == rs_2 && control_wb.reg_write == 1 && reg_read_float == 0) begin
       if (control_wb.mem_read != MEM_NO_OP) begin
         data_2 = mem_data_wb;
         data_2_valid = 1;
