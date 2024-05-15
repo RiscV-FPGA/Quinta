@@ -6,7 +6,8 @@ module dsp_float (
     input logic [31:0] left_operand,
     input logic [31:0] right_operand,
     output logic [31:0] int_float_res,
-    output logic [31:0] float_int_res
+    output logic [31:0] float_int_res,
+    output logic [31:0] float_add_res
 );
 
   logic run;
@@ -69,13 +70,11 @@ module dsp_float (
     end
   end
 
-
   logic [ 7:0] float_int_exponent;
   logic [ 7:0] float_int_shift;
   logic [23:0] float_int_martisa;
   logic [23:0] float_int_martisa_shifted;
   logic [23:0] float_int_martisa_shifted_unsigned;
-
 
   assign float_int_exponent = left_operand[30:23];
   assign float_int_shift = float_int_exponent - 127;
@@ -90,5 +89,39 @@ module dsp_float (
       float_int_res = {8'b00000000, float_int_martisa_shifted};
     end
   end
+
+  // FLOAT ADD
+  /* verilator lint_off UNOPTFLAT */ // FIX THIS!
+/*  logic [32:0] right_operand_add;
+  logic [32:0] left_operand_add;
+
+  logic [24:0] add_martisa;
+  logic [ 7:0] add_exponent;
+
+  always_comb begin
+    if (left_operand[30:23] > right_operand[30:23]) begin
+      right_operand_add[23:0] = {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]);
+      right_operand_add[31:24] = left_operand[30:23];
+      right_operand_add[32] = right_operand[31];
+      left_operand_add = {left_operand[31], left_operand[30:23], 1'b1, left_operand[22:0]};
+    end else begin
+      left_operand_add[23:0] = {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]);
+      left_operand_add[31:24] = right_operand[30:23];
+      left_operand_add[32] = left_operand[31];
+      right_operand_add = {right_operand[31], right_operand[30:23], 1'b1, right_operand[22:0]};
+    end
+
+    if (add_martisa[24] == 1) begin
+      float_add_res = {(left_operand[31] & right_operand[31]), add_exponent, add_martisa[23:1]};
+    end else begin
+      float_add_res = {
+        (left_operand[31] & right_operand[31]), left_operand_add[31:24], add_martisa[22:0]
+      };
+    end
+  end
+
+  assign add_martisa  = left_operand_add[23:0] + right_operand[23:0];
+  assign add_exponent = left_operand_add[31:24] + 1;
+  /* verilator lint_on UNOPTFLAT */
 
 endmodule

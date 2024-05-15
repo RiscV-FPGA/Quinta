@@ -307,15 +307,15 @@ logic reg_write
       INSTR_REMU: begin  //4
         control.alu_op = ALU_REMU;
         control.reg_write = 1;
-
       end
       INSTR_FMV_W_X: begin  //5
         control.alu_op = ALU_F_INT_FLOAT;
-        control.reg_write = 1;
+        control.reg_write_float = 1;
       end
       INSTR_FMV_X_W: begin  //5
         control.alu_op = ALU_F_FLOAT_INT;
         control.reg_write = 1;
+        control.reg_read_float = 1;
       end
       INSTR_FLW: begin  //5
 
@@ -355,7 +355,7 @@ logic reg_write
         // NOP (ADDI x0 x0 0)
         control.alu_op = ALU_AND;
         control.alu_src = 1;  // imm to alu
-        control.reg_write = 1;
+        //control.reg_write = 1;
       end
     endcase
 
