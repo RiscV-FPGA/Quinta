@@ -26,6 +26,7 @@ module alu (
   logic [31:0] int_float_res;
   logic [31:0] float_int_res;
   logic [31:0] float_add_res;
+  logic [31:0] float_sub_res;
   logic [7:0] float_bubble;
 
   logic alu_mul;
@@ -76,6 +77,10 @@ module alu (
       ALU_F_INT_FLOAT: internal_alu_res = int_float_res;
 
       ALU_F_FLOAT_INT: internal_alu_res = float_int_res;
+
+      ALU_F_ADD: internal_alu_res = float_add_res;
+
+      ALU_F_SUB: internal_alu_res = float_sub_res;
 
       default: begin
         internal_alu_res = left_operand + right_operand;
@@ -151,7 +156,8 @@ module alu (
       .right_operand(right_operand),
       .int_float_res(int_float_res),
       .float_int_res(float_int_res),
-      .float_add_res(float_add_res)
+      .float_add_res(float_add_res),
+      .float_sub_res(float_sub_res)
   );
 
   always_ff @(posedge clk) begin

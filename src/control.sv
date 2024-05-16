@@ -324,9 +324,15 @@ logic reg_write
 
       end
       INSTR_FADD_S: begin  //5
+        control.alu_op = ALU_F_ADD;
+        control.reg_write_float = 1;
+        control.reg_read_float = 1;
 
       end
       INSTR_FSUB_S: begin  //5
+        control.alu_op = ALU_F_SUB;
+        control.reg_write_float = 1;
+        control.reg_read_float = 1;
 
       end
       INSTR_FMUL_S: begin  //5
@@ -353,7 +359,7 @@ logic reg_write
       end
       default: begin
         // NOP (ADDI x0 x0 0)
-        control.alu_op = ALU_AND;
+        control.alu_op  = ALU_AND;
         control.alu_src = 1;  // imm to alu
         //control.reg_write = 1;
       end
