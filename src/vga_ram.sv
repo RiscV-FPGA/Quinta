@@ -16,7 +16,6 @@ module vga_ram (
     output logic [127:0] ram_out
 );
 
-  //logic [159:0] mem[48];  //1280 = 160*64/8
   logic [31:0] reg_mem[32];
   logic [31:0] float_reg_mem[32];
   logic [31:0] instr_mem[46];
@@ -33,7 +32,6 @@ module vga_ram (
   always_comb begin
     write_data_mem_processed = data_mem_data << byte_offset * 8;
   end
-
 
   always_ff @(posedge clk) begin
     if (reg_mem_enable == 1) begin

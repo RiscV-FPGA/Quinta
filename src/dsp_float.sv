@@ -7,7 +7,8 @@ module dsp_float (
     input logic [31:0] right_operand,
     output logic [31:0] int_float_res,
     output logic [31:0] float_int_res,
-    output logic [31:0] float_add_res
+    output logic [31:0] float_add_res,
+    output logic [31:0] float_sub_res
 );
 
   logic run;
@@ -91,37 +92,96 @@ module dsp_float (
   end
 
   // FLOAT ADD
-  /* verilator lint_off UNOPTFLAT */ // FIX THIS!
-/*  logic [32:0] right_operand_add;
+  logic [31:0] add_left_right;
+  logic [31:0] sub_left_right;
+  logic [31:0] sub_right_left;
+
+  logic [32:0] right_operand_add;
   logic [32:0] left_operand_add;
 
-  logic [24:0] add_martisa;
+  logic [24:0] add_martisa_unshifted;
+  logic [22:0] add_martisa;
   logic [ 7:0] add_exponent;
+
+  logic [23:0] sub_left_right_martisa_unshifted;
+  logic [22:0] sub_left_right_martisa;
+  logic [ 7:0] sub_left_right_exponent;
+
+  logic [24:0] sub_right_left_martisa_unshifted;
+  logic [22:0] sub_right_left_martisa;
+  logic [ 7:0] sub_right_left_exponent;
 
   always_comb begin
     if (left_operand[30:23] > right_operand[30:23]) begin
-      right_operand_add[23:0] = {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]);
+      right_operand_add[23:0] = {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]); // verilog_lint:
       right_operand_add[31:24] = left_operand[30:23];
       right_operand_add[32] = right_operand[31];
       left_operand_add = {left_operand[31], left_operand[30:23], 1'b1, left_operand[22:0]};
     end else begin
-      left_operand_add[23:0] = {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]);
+      left_operand_add[23:0] = {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]); // verilog_lint:
       left_operand_add[31:24] = right_operand[30:23];
       left_operand_add[32] = left_operand[31];
       right_operand_add = {right_operand[31], right_operand[30:23], 1'b1, right_operand[22:0]};
     end
-
-    if (add_martisa[24] == 1) begin
-      float_add_res = {(left_operand[31] & right_operand[31]), add_exponent, add_martisa[23:1]};
-    end else begin
-      float_add_res = {
-        (left_operand[31] & right_operand[31]), left_operand_add[31:24], add_martisa[22:0]
-      };
-    end
   end
 
-  assign add_martisa  = left_operand_add[23:0] + right_operand[23:0];
-  assign add_exponent = left_operand_add[31:24] + 1;
-  /* verilator lint_on UNOPTFLAT */
+  // ADD
+  assign add_martisa_unshifted = left_operand_add[23:0] + right_operand_add[23:0];
+  always_comb begin
+    if (add_martisa_unshifted[24] == 1) begin
+      add_martisa  = add_martisa_unshifted[23:1];
+      add_exponent = left_operand_add[31:24] + 1;
+    end else begin
+      add_martisa  = add_martisa_unshifted[22:0];
+      add_exponent = left_operand_add[31:24];
+    end
+  end
+  assign add_left_right = {(left_operand[31] & right_operand[31]), add_exponent, add_martisa};
+
+  // SUB LEFT-RIGHT
+  assign sub_left_right_martisa_unshifted = left_operand_add[23:0] - right_operand_add[23:0];
+  always_comb begin
+    if (sub_left_right_martisa_unshifted[23] == 0) begin
+      sub_left_right_martisa  = sub_left_right_martisa_unshifted[22:0];
+      sub_left_right_exponent = left_operand_add[31:24] - 1;
+    end else begin
+      sub_left_right_martisa  = sub_left_right_martisa_unshifted[23:1];
+      sub_left_right_exponent = left_operand_add[31:24];
+    end
+  end
+  assign sub_left_right = {
+    (left_operand[31] & right_operand[31]), sub_left_right_exponent, sub_left_right_martisa
+  };
+
+  // SUB RIGHT-LEFT
+  assign sub_right_left_martisa_unshifted = right_operand_add[23:0] - left_operand_add[23:0];
+  always_comb begin
+    if (sub_right_left_martisa_unshifted[23] == 0) begin
+      sub_right_left_martisa  = sub_right_left_martisa_unshifted[22:0];
+      sub_right_left_exponent = left_operand_add[31:24] - 1;
+    end else begin
+      sub_right_left_martisa  = sub_right_left_martisa_unshifted[23:1];
+      sub_right_left_exponent = left_operand_add[31:24];
+    end
+  end
+  assign sub_right_left = {
+    (left_operand[31] & right_operand[31]), sub_right_left_exponent, sub_right_left_martisa
+  };
+
+  always_comb begin
+    if (left_operand[31] == 0 && right_operand[31] == 0) begin
+      float_add_res = add_left_right;  //  A+B=A+B
+      float_sub_res = sub_left_right;  //  A-B=A-B
+    end else if (left_operand[31] == 1 && right_operand[31] == 0) begin
+      float_add_res = sub_right_left;  // -A+B=B-A
+      float_sub_res = add_left_right;  // -A-B=A+B
+    end else if (left_operand[31] == 0 && right_operand[31] == 1) begin
+      float_add_res = sub_left_right;  //  A+-B=A-B
+      float_sub_res = add_left_right;  //  A--B=A+B
+    end else begin
+      float_add_res = add_left_right;  // -A+-B=A+B
+      float_sub_res = sub_right_left;  // -A--B=B-A
+    end
+  end
 
 endmodule
