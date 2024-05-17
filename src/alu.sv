@@ -22,18 +22,22 @@ module alu (
   logic [31:0] float_int_res;
   logic [31:0] float_add_res;
   logic [31:0] float_sub_res;
+  logic        float_lt_res;
+  logic        float_lte_res;
+  logic [31:0] float_mul_res;
+  logic [31:0] float_div_res;
+  logic [31:0] float_sqrt_res;
 
-  logic [7:0] bubble_1;
-  logic [7:0] bubble_2;
-  logic [7:0] bubble_6;
-  logic [7:0] bubble_32;
+  logic [ 7:0] bubble_1;
+  logic [ 7:0] bubble_2;
+  logic [ 7:0] bubble_6;
+  logic [ 7:0] bubble_32;
 
-
-  logic alu_mul;
-  logic alu_div;
-  logic alu_float_32;
-  logic alu_float_2;
-  logic alu_float_1;
+  logic        alu_mul;
+  logic        alu_div;
+  logic        alu_float_32;
+  logic        alu_float_2;
+  logic        alu_float_1;
 
 
   always_comb begin
@@ -127,7 +131,12 @@ module alu (
       .int_float_res(int_float_res),
       .float_int_res(float_int_res),
       .float_add_res(float_add_res),
-      .float_sub_res(float_sub_res)
+      .float_sub_res(float_sub_res),
+      .float_lt_res(float_lt_res),
+      .float_lte_res(float_lte_res),
+      .float_mul_res(float_mul_res),
+      .float_div_res(float_div_res),
+      .float_sqrt_res(float_sqrt_res)
   );  // FLOAT END
 
   // BUBBLE START

@@ -75,7 +75,7 @@ The project will be built for the Nexys A7-100T FPGA.
 - [ ] INSTR_FLW
 - [ ] INSTR_FSW
 - [x] INSTR_FADD_S
-- [ ] INSTR_FSUB_S
+- [x] INSTR_FSUB_S
 - [ ] INSTR_FMUL_S
 - [ ] INSTR_FDIV_S
 - [ ] INSTR_FSQRT_S
