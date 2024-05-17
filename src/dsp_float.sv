@@ -83,11 +83,11 @@ module dsp_float (
   assign float_int_martisa_shifted = float_int_martisa >> (23 - float_int_shift);
   assign float_int_martisa_shifted_unsigned = ~float_int_martisa_shifted + 1;
 
-  always_comb begin
+  always_ff @(posedge clk) begin
     if (left_operand[31] == 1) begin
-      float_int_res = {8'b11111111, float_int_martisa_shifted_unsigned};
+      float_int_res <= {8'b11111111, float_int_martisa_shifted_unsigned};
     end else begin
-      float_int_res = {8'b00000000, float_int_martisa_shifted};
+      float_int_res <= {8'b00000000, float_int_martisa_shifted};
     end
   end
 
@@ -96,8 +96,15 @@ module dsp_float (
   logic [31:0] sub_left_right;
   logic [31:0] sub_right_left;
 
-  logic [32:0] right_operand_add;
-  logic [32:0] left_operand_add;
+
+  logic [23:0] right_operand_add;
+  logic [23:0] left_operand_add;
+  logic [ 7:0] exponent_add;
+  logic        sign_add;
+  logic [23:0] right_operand_add_d;
+  logic [23:0] left_operand_add_d;
+  logic [ 7:0] exponent_add_d;
+  logic        sign_add_d;
 
   logic [24:0] add_martisa_unshifted;
   logic [22:0] add_martisa;
@@ -111,62 +118,62 @@ module dsp_float (
   logic [22:0] sub_right_left_martisa;
   logic [ 7:0] sub_right_left_exponent;
 
-  always_comb begin
+  always_ff @(posedge clk) begin
     if (left_operand[30:23] > right_operand[30:23]) begin
-      right_operand_add[23:0] = {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]); // verilog_lint:
-      right_operand_add[31:24] = left_operand[30:23];
-      right_operand_add[32] = right_operand[31];
-      left_operand_add = {left_operand[31], left_operand[30:23], 1'b1, left_operand[22:0]};
+      right_operand_add <= {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]); // verilog_lint:
+      exponent_add <= left_operand[30:23];
+      left_operand_add <= {1'b1, left_operand[22:0]};
     end else begin
-      left_operand_add[23:0] = {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]); // verilog_lint:
-      left_operand_add[31:24] = right_operand[30:23];
-      left_operand_add[32] = left_operand[31];
-      right_operand_add = {right_operand[31], right_operand[30:23], 1'b1, right_operand[22:0]};
+      left_operand_add <= {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]); // verilog_lint:
+      exponent_add <= right_operand[30:23];
+      right_operand_add <= {1'b1, right_operand[22:0]};
     end
+    sign_add            <= left_operand[31] & right_operand[31];
+
+    right_operand_add_d <= right_operand_add;
+    left_operand_add_d  <= left_operand_add;
+    exponent_add_d      <= exponent_add;
+    sign_add_d          <= sign_add;
   end
 
   // ADD
-  assign add_martisa_unshifted = left_operand_add[23:0] + right_operand_add[23:0];
+  assign add_martisa_unshifted = left_operand_add_d[23:0] + right_operand_add_d[23:0];
   always_comb begin
     if (add_martisa_unshifted[24] == 1) begin
       add_martisa  = add_martisa_unshifted[23:1];
-      add_exponent = left_operand_add[31:24] + 1;
+      add_exponent = exponent_add_d + 1;
     end else begin
       add_martisa  = add_martisa_unshifted[22:0];
-      add_exponent = left_operand_add[31:24];
+      add_exponent = exponent_add_d;
     end
   end
-  assign add_left_right = {(left_operand[31] & right_operand[31]), add_exponent, add_martisa};
+  assign add_left_right = {(sign_add_d), add_exponent, add_martisa};
 
   // SUB LEFT-RIGHT
-  assign sub_left_right_martisa_unshifted = left_operand_add[23:0] - right_operand_add[23:0];
+  assign sub_left_right_martisa_unshifted = left_operand_add_d[23:0] - right_operand_add_d[23:0];
   always_comb begin
     if (sub_left_right_martisa_unshifted[23] == 0) begin
-      sub_left_right_martisa  = sub_left_right_martisa_unshifted[22:0];
-      sub_left_right_exponent = left_operand_add[31:24] - 1;
+      sub_left_right_martisa  = {sub_left_right_martisa_unshifted[21:0], 1'b0};  // some rounding?
+      sub_left_right_exponent = exponent_add_d - 1;
     end else begin
-      sub_left_right_martisa  = sub_left_right_martisa_unshifted[23:1];
-      sub_left_right_exponent = left_operand_add[31:24];
+      sub_left_right_martisa  = sub_left_right_martisa_unshifted[22:0];
+      sub_left_right_exponent = exponent_add_d;
     end
   end
-  assign sub_left_right = {
-    (left_operand[31] & right_operand[31]), sub_left_right_exponent, sub_left_right_martisa
-  };
+  assign sub_left_right = {(sign_add_d), sub_left_right_exponent, sub_left_right_martisa};
 
   // SUB RIGHT-LEFT
-  assign sub_right_left_martisa_unshifted = right_operand_add[23:0] - left_operand_add[23:0];
+  assign sub_right_left_martisa_unshifted = right_operand_add_d[23:0] - left_operand_add_d[23:0];
   always_comb begin
     if (sub_right_left_martisa_unshifted[23] == 0) begin
       sub_right_left_martisa  = sub_right_left_martisa_unshifted[22:0];
-      sub_right_left_exponent = left_operand_add[31:24] - 1;
+      sub_right_left_exponent = exponent_add_d - 1;
     end else begin
       sub_right_left_martisa  = sub_right_left_martisa_unshifted[23:1];
-      sub_right_left_exponent = left_operand_add[31:24];
+      sub_right_left_exponent = exponent_add_d;
     end
   end
-  assign sub_right_left = {
-    (left_operand[31] & right_operand[31]), sub_right_left_exponent, sub_right_left_martisa
-  };
+  assign sub_right_left = {(sign_add_d), sub_right_left_exponent, sub_right_left_martisa};
 
   always_comb begin
     if (left_operand[31] == 0 && right_operand[31] == 0) begin

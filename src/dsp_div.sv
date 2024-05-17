@@ -17,7 +17,6 @@ module dsp_div (
   logic [31:0] right_operand_unsigned;
   logic [31:0] left_operand_unsigned;
 
-  logic signed_division;
   logic [31:0] quo;
   logic [31:0] quo_next;  // intermediate quotient
   logic [32:0] acc;
@@ -45,8 +44,7 @@ module dsp_div (
   always_ff @(posedge clk) begin
     if (rst == 1) begin
       run <= 0;
-      signed_division <= 0;
-      i <= 0;
+      i   <= 0;
     end else begin
       if ((alu_op == ALU_DIVU || alu_op == ALU_REMU) && run == 0) begin
         run <= 1;
