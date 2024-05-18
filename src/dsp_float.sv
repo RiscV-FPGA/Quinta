@@ -9,6 +9,7 @@ module dsp_float (
     output logic [31:0] float_int_res,
     output logic [31:0] float_add_res,
     output logic [31:0] float_sub_res,
+    output logic float_eq_res,
     output logic float_lt_res,
     output logic float_lte_res,
     output logic [31:0] float_mul_res,
@@ -93,38 +94,48 @@ module dsp_float (
   logic [23:0] float_int_martisa_shifted;
   logic [23:0] float_int_martisa_shifted_unsigned;
 
-  assign float_int_exponent = left_operand[30:23];
+  assign float_int_exponent = left_operand_dd[30:23];
   assign float_int_shift = float_int_exponent - 127;
-  assign float_int_martisa = {1'b1, left_operand[22:0]};
+  assign float_int_martisa = {1'b1, left_operand_dd[22:0]};
   assign float_int_martisa_shifted = float_int_martisa >> (23 - float_int_shift);
   assign float_int_martisa_shifted_unsigned = ~float_int_martisa_shifted + 1;
 
-  always_ff @(posedge clk) begin
-    if (left_operand[31] == 1) begin
-      float_int_res <= {8'b11111111, float_int_martisa_shifted_unsigned};
+  always_comb begin
+    if (left_operand_dd[31] == 1) begin
+      float_int_res = {8'b11111111, float_int_martisa_shifted_unsigned};
     end else begin
-      float_int_res <= {8'b00000000, float_int_martisa_shifted};
+      float_int_res = {8'b00000000, float_int_martisa_shifted};
     end
   end
 
-  // Float LESS THAN & LESS THAN EQUAL
+  // Float LESS THAN & LESS THAN EQUAL & EQUAL
   always_comb begin
     if (left_operand[31] == 0 && right_operand[31] == 0) begin
       float_lt_res  = left_operand[30:0] < right_operand[30:0];
       float_lte_res = left_operand[30:0] <= right_operand[30:0];
+      float_eq_res  = left_operand[30:0] == right_operand[30:0];
     end else if (left_operand[31] == 1 && right_operand[31] == 0) begin
-      float_lt_res  = 0;
-      float_lte_res = left_operand[30:0] <= right_operand[30:0];
-    end else if (left_operand[31] == 0 && right_operand[31] == 1) begin
       if (left_operand[30:0] == 0 && right_operand[31] == 0) begin
         float_lt_res = 0;  // negative and possitive zero
+        float_eq_res = 1;
       end else begin
         float_lt_res = 1;
+        float_eq_res = 0;
       end
-      float_lte_res = left_operand[30:0] <= right_operand[30:0];
+      float_lte_res = 1;
+    end else if (left_operand[31] == 0 && right_operand[31] == 1) begin
+      if (left_operand[30:0] == 0 && right_operand[31] == 0) begin
+        float_lte_res = 1;  // negative and possitive zero
+        float_eq_res  = 1;
+      end else begin
+        float_lte_res = 0;
+        float_eq_res  = 0;
+      end
+      float_lt_res = 0;
     end else begin
       float_lt_res  = right_operand[30:0] < left_operand[30:0];
       float_lte_res = right_operand[30:0] <= left_operand[30:0];
+      float_eq_res  = left_operand[30:0] == right_operand[30:0];
     end
   end
 

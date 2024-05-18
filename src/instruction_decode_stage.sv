@@ -48,9 +48,6 @@ module instruction_decode_stage (
     end
   end
 
-  logic reg_read_float_t;
-  assign reg_read_float_t = control.reg_read_float;
-
   assign rs1 = instruction.block3;
   assign rs2 = instruction.block4;
 

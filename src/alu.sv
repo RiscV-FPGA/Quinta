@@ -22,6 +22,7 @@ module alu (
   logic [31:0] float_int_res;
   logic [31:0] float_add_res;
   logic [31:0] float_sub_res;
+  logic        float_eq_res;
   logic        float_lt_res;
   logic        float_lte_res;
   logic [31:0] float_mul_res;
@@ -87,6 +88,12 @@ module alu (
 
       ALU_F_SUB: alu_res = float_sub_res;
 
+      ALU_F_EQ: alu_res = {31'b0, float_eq_res};
+
+      ALU_F_LT: alu_res = {31'b0, float_lt_res};
+
+      ALU_F_LTEQ: alu_res = {31'b0, float_lte_res};
+
       default: begin
         alu_res = left_operand + right_operand;
       end
@@ -99,8 +106,11 @@ module alu (
   || alu_op == ALU_REM || alu_op == ALU_REMU) ? 1'b1 : 1'b0; // long statement be careful :)
 
   assign alu_float_32 = (alu_op == ALU_F_INT_FLOAT) ? 1'b1 : 1'b0;
-  assign alu_float_2 = (alu_op == ALU_F_ADD || alu_op == ALU_F_SUB) ? 1'b1 : 1'b0;
-  assign alu_float_1 = (alu_op == ALU_F_FLOAT_INT) ? 1'b1 : 1'b0;
+  assign alu_float_2 = (alu_op == ALU_F_ADD || alu_op == ALU_F_SUB
+  || alu_op == ALU_F_FLOAT_INT) ? 1'b1 : 1'b0;
+  // assign alu_float_1 = (alu_op == ALU_F_FLOAT_INT) ? 1'b1 : 1'b0;
+  assign alu_float_1 = 1'b0;
+
 
   dsp_mul dsp_mul_inst (  // MUL START
       .clk(clk),
@@ -132,6 +142,7 @@ module alu (
       .float_int_res(float_int_res),
       .float_add_res(float_add_res),
       .float_sub_res(float_sub_res),
+      .float_eq_res(float_eq_res),
       .float_lt_res(float_lt_res),
       .float_lte_res(float_lte_res),
       .float_mul_res(float_mul_res),

@@ -9,14 +9,12 @@ The project will be built for the Nexys A7-100T FPGA.
 - [x] execute_stage
 - [x] mem_stage
 - [x] wb_stage
-
 - [x] decompressor
 - [x] instruction_memory
 - [x] control
 - [x] data_memory
 - [x] imm_gen
 - [x] registers
-
 - [x] Branches
 - [x] Forwarding
 - [x] Hazard
@@ -72,17 +70,17 @@ The project will be built for the Nexys A7-100T FPGA.
 
 ## Phase3 instructions
 
-- [ ] INSTR_FLW
-- [ ] INSTR_FSW
+- [x] INSTR_FLW
+- [x] INSTR_FSW
 - [x] INSTR_FADD_S
 - [x] INSTR_FSUB_S
 - [ ] INSTR_FMUL_S
 - [ ] INSTR_FDIV_S
 - [ ] INSTR_FSQRT_S
 - [x] INSTR_FMV_X_W
-- [ ] INSTR_FEQ_S
-- [ ] INSTR_FLT_S
-- [ ] INSTR_FLE_S
+- [x] INSTR_FEQ_S
+- [x] INSTR_FLT_S
+- [x] INSTR_FLE_S
 - [x] INSTR_FMV_W_X
 
 ![Block Diagram](/doc/overview_riscV.png)

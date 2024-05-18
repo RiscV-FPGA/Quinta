@@ -38,9 +38,9 @@ module forwarding_unit (
   assign mem_forward_float = control_mem.mem_read == MEM_NO_OP && control_mem.reg_write_float && reg_read_float == 1; // verilog_lint:
 
   assign wb_forward_alu_res = control_wb.mem_read == MEM_NO_OP && control_wb.reg_write && reg_read_float == 0; // verilog_lint:
-  assign wb_forward_alu_res_float = control_wb.mem_read == MEM_NO_OP && control_wb.reg_write && reg_read_float == 1; // verilog_lint:
+  assign wb_forward_alu_res_float = control_wb.mem_read == MEM_NO_OP && control_wb.reg_write_float && reg_read_float == 1; // verilog_lint:
   assign wb_forward_mem_res =  control_wb.mem_read != MEM_NO_OP && control_wb.reg_write && reg_read_float == 0; // verilog_lint:
-  assign wb_forward_mem_res_float = control_wb.mem_read != MEM_NO_OP && control_wb.reg_write && reg_read_float == 1; // verilog_lint:
+  assign wb_forward_mem_res_float = control_wb.mem_read != MEM_NO_OP && control_wb.reg_write_float && reg_read_float == 1; // verilog_lint:
 
   always_comb begin
     if (mem_rs_1 && mem_forward) begin

@@ -318,22 +318,26 @@ logic reg_write
         control.reg_read_float = 1;
       end
       INSTR_FLW: begin  //5
-
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.mem_read = MEM_FULL_WORD;
+        control.reg_write_float = 1;
       end
       INSTR_FSW: begin  //5
-
+        control.alu_op = ALU_ADD;
+        control.alu_src = 1;
+        control.reg_read_float = 1;
+        control.mem_write = MEM_FULL_WORD;
       end
       INSTR_FADD_S: begin  //5
         control.alu_op = ALU_F_ADD;
         control.reg_write_float = 1;
         control.reg_read_float = 1;
-
       end
       INSTR_FSUB_S: begin  //5
         control.alu_op = ALU_F_SUB;
         control.reg_write_float = 1;
         control.reg_read_float = 1;
-
       end
       INSTR_FMUL_S: begin  //5
 
@@ -346,13 +350,19 @@ logic reg_write
       end
 
       INSTR_FEQ_S: begin  //5
-
+        control.alu_op = ALU_F_EQ;
+        control.reg_write = 1;
+        control.reg_read_float = 1;
       end
       INSTR_FLT_S: begin  //5
-
+        control.alu_op = ALU_F_LT;
+        control.reg_write = 1;
+        control.reg_read_float = 1;
       end
       INSTR_FLE_S: begin  //5
-
+        control.alu_op = ALU_F_LTEQ;
+        control.reg_write = 1;
+        control.reg_read_float = 1;
       end
       INSTR_HALT: begin
         // control == 0 :)
