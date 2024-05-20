@@ -17,6 +17,14 @@ module tb_dsp_float;
 
   wire [31:0] int_float_res;
   wire [31:0] float_int_res;
+  wire [31:0] float_add_res;
+  wire [31:0] float_sub_res;
+  wire float_eq_res;
+  wire float_lt_res;
+  wire float_lte_res;
+  wire [31:0] float_mul_res;
+  wire [31:0] float_div_res;
+  wire [31:0] float_sqrt_res;
 
 
   dsp_float dsp_float_inst (
@@ -26,12 +34,19 @@ module tb_dsp_float;
       .left_operand(left_operand),
       .right_operand(right_operand),
       .int_float_res(int_float_res),
-      .float_int_res(float_int_res)
+      .float_int_res(float_int_res),
+      .float_add_res(float_add_res),
+      .float_sub_res(float_sub_res),
+      .float_eq_res(float_eq_res),
+      .float_lt_res(float_lt_res),
+      .float_lte_res(float_lte_res),
+      .float_mul_res(float_mul_res),
+      .float_div_res(float_div_res),
+      .float_sqrt_res(float_sqrt_res)
   );
 
   always #(clk_period / 2) clk = ~clk;
   always #clk_period cycle++;
-
 
 
   initial begin
@@ -43,7 +58,7 @@ module tb_dsp_float;
     rst = 0;
     #(clk_period * 2);
 
-    left_operand = 10;
+    left_operand = 32'b01000001001000000000000000000000;
 
     #(clk_period * 2);
 
