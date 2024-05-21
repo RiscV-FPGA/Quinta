@@ -1,3 +1,4 @@
+import common_pkg::*;
 
 module dsp_float (
     input logic clk,
@@ -21,13 +22,6 @@ module dsp_float (
   logic [31:0] left_operand_dd;
   logic [31:0] right_operand_d;
   logic [31:0] right_operand_dd;
-
-  always_ff @(posedge clk) begin
-    left_operand_d   <= left_operand;
-    left_operand_dd  <= left_operand_d;
-    right_operand_d  <= right_operand;
-    right_operand_dd <= right_operand_d;
-  end
 
   logic run;
   logic [7:0] i;  // iteration counter
@@ -144,12 +138,12 @@ module dsp_float (
   logic [30:0] sub_left_right;
   logic [30:0] sub_right_left;
 
-  logic [23:0] right_operand_add;
-  logic [23:0] left_operand_add;
-  logic [ 7:0] exponent_add;
-  logic [23:0] right_operand_add_d;
-  logic [23:0] left_operand_add_d;
-  logic [ 7:0] exponent_add_d;
+  logic [23:0] right_matrissa_shifted;
+  logic [23:0] left_matrissa_shifted;
+  logic [ 7:0] exponent_shifted;
+  logic [23:0] right_matrissa_shifted_d;
+  logic [23:0] left_matrissa_shifted_d;
+  logic [ 7:0] exponent_shifted_d;
 
   logic [24:0] add_martisa_unshifted;
   logic [22:0] add_martisa;
@@ -165,55 +159,55 @@ module dsp_float (
 
   always_ff @(posedge clk) begin
     if (left_operand[30:23] > right_operand[30:23]) begin
-      right_operand_add <= {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]); // verilog_lint:
-      exponent_add <= left_operand[30:23];
-      left_operand_add <= {1'b1, left_operand[22:0]};
+      right_matrissa_shifted <= {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]); // verilog_lint:
+      exponent_shifted <= left_operand[30:23];
+      left_matrissa_shifted <= {1'b1, left_operand[22:0]};
     end else begin
-      left_operand_add <= {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]); // verilog_lint:
-      exponent_add <= right_operand[30:23];
-      right_operand_add <= {1'b1, right_operand[22:0]};
+      left_matrissa_shifted <= {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]); // verilog_lint:
+      exponent_shifted <= right_operand[30:23];
+      right_matrissa_shifted <= {1'b1, right_operand[22:0]};
     end
 
-    right_operand_add_d <= right_operand_add;
-    left_operand_add_d  <= left_operand_add;
-    exponent_add_d      <= exponent_add;
+    right_matrissa_shifted_d <= right_matrissa_shifted;
+    left_matrissa_shifted_d  <= left_matrissa_shifted;
+    exponent_shifted_d       <= exponent_shifted;
   end
 
   // ADD
-  assign add_martisa_unshifted = left_operand_add_d[23:0] + right_operand_add_d[23:0];
+  assign add_martisa_unshifted = left_matrissa_shifted_d + right_matrissa_shifted_d;
   always_comb begin
     if (add_martisa_unshifted[24] == 1) begin
       add_martisa  = add_martisa_unshifted[23:1];
-      add_exponent = exponent_add_d + 1;
+      add_exponent = exponent_shifted_d + 1;
     end else begin
       add_martisa  = add_martisa_unshifted[22:0];
-      add_exponent = exponent_add_d;
+      add_exponent = exponent_shifted_d;
     end
   end
   assign add_left_right = {(left_operand_dd[31] & right_operand_dd[31]), add_exponent, add_martisa};
 
   // SUB LEFT-RIGHT
-  assign sub_left_right_martisa_unshifted = left_operand_add_d[23:0] - right_operand_add_d[23:0];
+  assign sub_left_right_martisa_unshifted = left_matrissa_shifted_d - right_matrissa_shifted_d;
   always_comb begin
     if (sub_left_right_martisa_unshifted[23] == 0) begin
       sub_left_right_martisa  = {sub_left_right_martisa_unshifted[21:0], 1'b0};  // some rounding?
-      sub_left_right_exponent = exponent_add_d - 1;
+      sub_left_right_exponent = exponent_shifted_d - 1;
     end else begin
       sub_left_right_martisa  = sub_left_right_martisa_unshifted[22:0];
-      sub_left_right_exponent = exponent_add_d;
+      sub_left_right_exponent = exponent_shifted_d;
     end
   end
   assign sub_left_right = {sub_left_right_exponent, sub_left_right_martisa};
 
   // SUB RIGHT-LEFT
-  assign sub_right_left_martisa_unshifted = right_operand_add_d[23:0] - left_operand_add_d[23:0];
+  assign sub_right_left_martisa_unshifted = right_matrissa_shifted_d - left_matrissa_shifted_d;
   always_comb begin
     if (sub_right_left_martisa_unshifted[23] == 0) begin
       sub_right_left_martisa  = {sub_right_left_martisa_unshifted[21:0], 1'b0};
-      sub_right_left_exponent = exponent_add_d - 1;
+      sub_right_left_exponent = exponent_shifted_d - 1;
     end else begin
       sub_right_left_martisa  = sub_right_left_martisa_unshifted[22:0];
-      sub_right_left_exponent = exponent_add_d;
+      sub_right_left_exponent = exponent_shifted_d;
     end
   end
   assign sub_right_left = {sub_right_left_exponent, sub_right_left_martisa};
@@ -248,8 +242,62 @@ module dsp_float (
         float_sub_res = {1'b0, sub_right_left};  //  A-B=B-A (A<B)
       end
     end
+  end
 
+  logic        mul_sign;
+  logic        mul_sign_d;
+  logic        mul_sign_dd;
+  logic        mul_sign_ddd;
 
+  logic [ 7:0] mul_exponent_unshifted;
+  logic [ 7:0] mul_exponent_unshifted_d;
+  logic [ 7:0] mul_exponent_unshifted_dd;
+  logic [ 7:0] mul_exponent_unshifted_ddd;
+  logic [ 7:0] mul_exponent;
+
+  logic [47:0] mul_martisa_unshifted;
+  logic [24:0] mul_martisa_unshifted_d;
+  logic [24:0] mul_martisa_unshifted_dd;
+  logic [24:0] mul_martisa_unshifted_ddd;
+  logic [22:0] mul_martisa;
+
+  assign mul_martisa_unshifted = $unsigned(
+      {1'b1, left_operand_dd[22:0]}
+  ) * $unsigned(
+      {1'b1, right_operand_dd[22:0]}
+  );
+  assign mul_sign = left_operand_dd[31] ^ right_operand_dd[31];
+  assign mul_exponent_unshifted = left_operand_dd[30:23] + right_operand_dd[30:23] - 127;
+
+  always_comb begin
+    if (mul_martisa_unshifted_ddd[24] == 1) begin
+      mul_martisa  = mul_martisa_unshifted_ddd[23:1];
+      mul_exponent = mul_exponent_unshifted_ddd + 1;
+    end else begin
+      mul_martisa  = mul_martisa_unshifted_ddd[22:0];
+      mul_exponent = mul_exponent_unshifted_ddd;
+    end
+  end
+  assign float_mul_res = {mul_sign_ddd, mul_exponent, mul_martisa};
+
+  always_ff @(posedge clk) begin
+    left_operand_d <= left_operand;
+    left_operand_dd <= left_operand_d;
+
+    right_operand_d <= right_operand;
+    right_operand_dd <= right_operand_d;
+
+    mul_sign_d <= mul_sign;
+    mul_sign_dd <= mul_sign_d;
+    mul_sign_ddd <= mul_sign_dd;
+
+    mul_exponent_unshifted_d <= mul_exponent_unshifted;
+    mul_exponent_unshifted_dd <= mul_exponent_unshifted_d;
+    mul_exponent_unshifted_ddd <= mul_exponent_unshifted_dd;
+
+    mul_martisa_unshifted_d <= mul_martisa_unshifted[47:23];
+    mul_martisa_unshifted_dd <= mul_martisa_unshifted_d;
+    mul_martisa_unshifted_ddd <= mul_martisa_unshifted_dd;
   end
 
 endmodule

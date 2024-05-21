@@ -340,15 +340,20 @@ logic reg_write
         control.reg_read_float = 1;
       end
       INSTR_FMUL_S: begin  //5
-
+        control.alu_op = ALU_F_MUL;
+        control.reg_write_float = 1;
+        control.reg_read_float = 1;
       end
       INSTR_FDIV_S: begin  //5
-
+        control.alu_op = ALU_F_DIV;
+        control.reg_write_float = 1;
+        control.reg_read_float = 1;
       end
       INSTR_FSQRT_S: begin  //5
-
+        control.alu_op = ALU_F_SQRT;
+        control.reg_write_float = 1;
+        control.reg_read_float = 1;
       end
-
       INSTR_FEQ_S: begin  //5
         control.alu_op = ALU_F_EQ;
         control.reg_write = 1;
