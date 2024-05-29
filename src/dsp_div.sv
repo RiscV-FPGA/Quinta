@@ -20,7 +20,6 @@ module dsp_div (
   logic [31:0] quo;
   logic [31:0] quo_next;  // intermediate quotient
   logic [32:0] acc;
-  logic [32:0] acc_sub;
   logic [32:0] acc_next;  // accumulator (1 bit wider)
   logic [7:0] i;  // iteration counter
 

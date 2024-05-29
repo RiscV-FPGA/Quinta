@@ -133,7 +133,7 @@ module dsp_float (
     end
   end
 
-  // FLOAT ADD
+  // FLOAT ADD & SUB
   logic [31:0] add_left_right;
   logic [30:0] sub_left_right;
   logic [30:0] sub_right_left;
@@ -144,6 +144,9 @@ module dsp_float (
   logic [23:0] right_matrissa_shifted_d;
   logic [23:0] left_matrissa_shifted_d;
   logic [ 7:0] exponent_shifted_d;
+  logic [23:0] right_matrissa_shifted_dd;
+  logic [23:0] left_matrissa_shifted_dd;
+  logic [ 7:0] exponent_shifted_dd;
 
   logic [24:0] add_martisa_unshifted;
   logic [22:0] add_martisa;
@@ -157,57 +160,63 @@ module dsp_float (
   logic [22:0] sub_right_left_martisa;
   logic [ 7:0] sub_right_left_exponent;
 
-  always_ff @(posedge clk) begin
+  always_comb begin
     if (left_operand[30:23] > right_operand[30:23]) begin
-      right_matrissa_shifted <= {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]); // verilog_lint:
-      exponent_shifted <= left_operand[30:23];
-      left_matrissa_shifted <= {1'b1, left_operand[22:0]};
+      right_matrissa_shifted = {1'b1,right_operand[22:0]} >> (left_operand[30:23] - right_operand[30:23]); // verilog_lint:
+      exponent_shifted = left_operand[30:23];
+      left_matrissa_shifted = {1'b1, left_operand[22:0]};
     end else begin
-      left_matrissa_shifted <= {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]); // verilog_lint:
-      exponent_shifted <= right_operand[30:23];
-      right_matrissa_shifted <= {1'b1, right_operand[22:0]};
+      left_matrissa_shifted = {1'b1,left_operand[22:0]} >> (right_operand[30:23] - left_operand[30:23]); // verilog_lint:
+      exponent_shifted = right_operand[30:23];
+      right_matrissa_shifted = {1'b1, right_operand[22:0]};
     end
 
-    right_matrissa_shifted_d <= right_matrissa_shifted;
-    left_matrissa_shifted_d  <= left_matrissa_shifted;
-    exponent_shifted_d       <= exponent_shifted;
+  end
+
+  always_ff @(posedge clk) begin
+    right_matrissa_shifted_d  <= right_matrissa_shifted;
+    left_matrissa_shifted_d   <= left_matrissa_shifted;
+    exponent_shifted_d        <= exponent_shifted;
+    right_matrissa_shifted_dd <= right_matrissa_shifted_d;
+    left_matrissa_shifted_dd  <= left_matrissa_shifted_d;
+    exponent_shifted_dd       <= exponent_shifted_d;
   end
 
   // ADD
-  assign add_martisa_unshifted = left_matrissa_shifted_d + right_matrissa_shifted_d;
+  assign add_martisa_unshifted = left_matrissa_shifted_dd + right_matrissa_shifted_dd;
   always_comb begin
     if (add_martisa_unshifted[24] == 1) begin
       add_martisa  = add_martisa_unshifted[23:1];
-      add_exponent = exponent_shifted_d + 1;
+      add_exponent = exponent_shifted_dd + 1;
     end else begin
       add_martisa  = add_martisa_unshifted[22:0];
-      add_exponent = exponent_shifted_d;
+      add_exponent = exponent_shifted_dd;
     end
   end
   assign add_left_right = {(left_operand_dd[31] & right_operand_dd[31]), add_exponent, add_martisa};
 
   // SUB LEFT-RIGHT
-  assign sub_left_right_martisa_unshifted = left_matrissa_shifted_d - right_matrissa_shifted_d;
+  assign sub_left_right_martisa_unshifted = left_matrissa_shifted_dd - right_matrissa_shifted_dd;
   always_comb begin
     if (sub_left_right_martisa_unshifted[23] == 0) begin
       sub_left_right_martisa  = {sub_left_right_martisa_unshifted[21:0], 1'b0};  // some rounding?
-      sub_left_right_exponent = exponent_shifted_d - 1;
+      sub_left_right_exponent = exponent_shifted_dd - 1;
     end else begin
       sub_left_right_martisa  = sub_left_right_martisa_unshifted[22:0];
-      sub_left_right_exponent = exponent_shifted_d;
+      sub_left_right_exponent = exponent_shifted_dd;
     end
   end
   assign sub_left_right = {sub_left_right_exponent, sub_left_right_martisa};
 
   // SUB RIGHT-LEFT
-  assign sub_right_left_martisa_unshifted = right_matrissa_shifted_d - left_matrissa_shifted_d;
+  assign sub_right_left_martisa_unshifted = right_matrissa_shifted_dd - left_matrissa_shifted_dd;
   always_comb begin
     if (sub_right_left_martisa_unshifted[23] == 0) begin
       sub_right_left_martisa  = {sub_right_left_martisa_unshifted[21:0], 1'b0};
-      sub_right_left_exponent = exponent_shifted_d - 1;
+      sub_right_left_exponent = exponent_shifted_dd - 1;
     end else begin
       sub_right_left_martisa  = sub_right_left_martisa_unshifted[22:0];
-      sub_right_left_exponent = exponent_shifted_d;
+      sub_right_left_exponent = exponent_shifted_dd;
     end
   end
   assign sub_right_left = {sub_right_left_exponent, sub_right_left_martisa};
@@ -244,6 +253,7 @@ module dsp_float (
     end
   end
 
+  // FLOAT MUL
   logic        mul_sign;
   logic        mul_sign_d;
   logic        mul_sign_dd;
@@ -262,9 +272,9 @@ module dsp_float (
   logic [22:0] mul_martisa;
 
   assign mul_martisa_unshifted = $unsigned(
-      {1'b1, left_operand_dd[22:0]}
+      {1'b1, left_matrissa_shifted_dd[22:0]}
   ) * $unsigned(
-      {1'b1, right_operand_dd[22:0]}
+      {1'b1, right_matrissa_shifted_dd[22:0]}
   );
   assign mul_sign = left_operand_dd[31] ^ right_operand_dd[31];
   assign mul_exponent_unshifted = left_operand_dd[30:23] + right_operand_dd[30:23] - 127;
@@ -299,5 +309,75 @@ module dsp_float (
     mul_martisa_unshifted_dd <= mul_martisa_unshifted_d;
     mul_martisa_unshifted_ddd <= mul_martisa_unshifted_dd;
   end
+
+  // FLOAT DIV
+  logic        div_sign;
+  logic [ 7:0] div_exponent_unshifted;
+  logic [ 7:0] div_exponent;
+  logic [22:0] div_mantissa_unshifted;
+  logic [22:0] div_mantissa;
+
+  logic [22:0] right_mantissa_div;
+  logic [22:0] quo;
+  logic [22:0] quo_next;  // intermediate quotient
+  logic [23:0] acc;
+  logic [23:0] acc_next;  // accumulator (1 bit wider)
+  logic [ 7:0] i_div;  // iteration counter
+  logic        run_div;
+
+  // division unsigned algorithm iteration
+  always_comb begin
+    if (acc >= {1'b0, right_mantissa_div}) begin
+      acc_next = (acc - right_mantissa_div) << 1;
+      acc_next[0] = quo[22];
+      quo_next = quo << 1;
+      quo_next[0] = 1'b1;
+    end else begin
+      acc_next = acc << 1;
+      acc_next[0] = quo[22];
+      quo_next = quo << 1;
+    end
+  end
+
+  // calculation control
+  always_ff @(posedge clk) begin
+    if (rst == 1) begin
+      run_div <= 0;
+      i_div   <= 0;
+    end else begin
+      if ((alu_op == ALU_F_DIV) && run_div == 0) begin
+        run_div <= 1;
+        i_div <= 0;
+        right_mantissa_div <= right_operand[22:0];
+        acc <= {{23{1'b0}}, left_operand[22]};
+        quo <= {left_operand[21:0], 1'b0};
+
+        div_sign <= left_operand[31] ^ right_operand[31];
+        div_exponent_unshifted <= left_operand_dd[30:23] - right_operand_dd[30:23] + 127;
+
+      end else begin
+        if (i_div == 23 - 1) begin  //done
+          run_div <= 0;
+          i_div   <= 0;
+        end else begin  // next iteration
+          i_div <= i_div + 1;
+          acc   <= acc_next;
+          quo   <= quo_next;
+        end
+      end
+    end
+  end
+  assign div_mantissa_unshifted = quo_next;
+
+  always_comb begin
+    if (div_mantissa_unshifted[22] == 0) begin
+      div_mantissa = {div_mantissa_unshifted[21:0], 1'b0};  // some rounding?
+      div_exponent = div_exponent_unshifted - 1;
+    end else begin
+      div_mantissa = div_mantissa_unshifted[22:0];
+      div_exponent = div_exponent_unshifted;
+    end
+  end
+  assign float_div_res = {div_sign, div_exponent, div_mantissa};
 
 endmodule

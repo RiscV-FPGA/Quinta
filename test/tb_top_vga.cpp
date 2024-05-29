@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
   delay_clk(top, m_trace, 1);
 
   // open instruction file and send it over uart
-  open_send_file(top, m_trace, "src/instruction_mem_temp.mem");
+  open_send_file(top, m_trace, "script/instruction_mem_temp.txt");
   delay_clk(top, m_trace, 200);
 
   // main gtk end

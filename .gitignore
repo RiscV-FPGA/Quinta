@@ -24,3 +24,6 @@ instruction_mem_raw.mem
 src/instruction_mem.mem
 vga_one.mem
 vga_zero.mem
+AssembleRisc
+script/instruction_mem_temp.txt
+script/assembly.s
