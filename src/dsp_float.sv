@@ -44,7 +44,15 @@ module dsp_float (
   assign mantissa_long = {left_operand_unsigned_d, 23'b00000000_00000000_0000000};
   assign mantissa_long_shifted = mantissa_long >> shift_point;
   assign mantissa = mantissa_long_shifted[22:0];
-  assign int_float_res = {sign, shift_point_biased[7:0], mantissa};
+
+  always_comb begin
+    if (left_operand_unsigned_d == 0) begin
+      int_float_res = 32'h00_00_00_00;
+    end else begin
+      int_float_res = {sign, shift_point_biased[7:0], mantissa};
+    end
+  end
+
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
@@ -272,9 +280,9 @@ module dsp_float (
   logic [22:0] mul_martisa;
 
   assign mul_martisa_unshifted = $unsigned(
-      {1'b1, left_matrissa_shifted_dd[22:0]}
+      {1'b1, left_operand_dd[22:0]}
   ) * $unsigned(
-      {1'b1, right_matrissa_shifted_dd[22:0]}
+      {1'b1, right_operand_dd[22:0]}
   );
   assign mul_sign = left_operand_dd[31] ^ right_operand_dd[31];
   assign mul_exponent_unshifted = left_operand_dd[30:23] + right_operand_dd[30:23] - 127;
