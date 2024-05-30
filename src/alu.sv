@@ -33,11 +33,13 @@ module alu (
   logic [ 7:0] bubble_2;
   logic [ 7:0] bubble_6;
   logic [ 7:0] bubble_32;
+  logic [ 7:0] bubble_36;
 
   logic        alu_bubble_1;
   logic        alu_bubble_2;
   logic        alu_bubble_6;
   logic        alu_bubble_32;
+  logic        alu_bubble_36;
 
   always_comb begin
     case (alu_op)
@@ -113,9 +115,9 @@ module alu (
 
   // long statement be careful :)
   assign alu_bubble_32 = (alu_op == ALU_DIV || alu_op == ALU_DIVU
-  || alu_op == ALU_REM || alu_op == ALU_REMU || alu_op == ALU_F_INT_FLOAT) ? 1'b1 : 1'b0;
+  || alu_op == ALU_REM || alu_op == ALU_REMU|| alu_op == ALU_F_INT_FLOAT) ? 1'b1 : 1'b0;
 
-
+  assign alu_bubble_36 = (alu_op == ALU_F_DIV) ? 1'b1 : 1'b0;
 
   dsp_mul dsp_mul_inst (  // MUL START
       .clk(clk),
@@ -172,6 +174,8 @@ module alu (
         bubble_6 <= 1;
       end else if (alu_bubble_32 && bubble_32 == 0) begin
         bubble_32 <= 1;
+      end else if (alu_bubble_36 && bubble_36 == 0) begin
+        bubble_36 <= 1;
       end
 
       if (bubble_1 == 1) begin
@@ -197,6 +201,12 @@ module alu (
       end else if (bubble_32 > 0) begin
         bubble_32 <= bubble_32 + 1;
       end
+
+      if (bubble_36 == 36) begin
+        bubble_36 <= 0;
+      end else if (bubble_36 > 0) begin
+        bubble_36 <= bubble_36 + 1;
+      end
     end
   end
 
@@ -208,6 +218,8 @@ module alu (
     end else if ((alu_bubble_6 && bubble_6 == 0) || (bubble_6 > 0 && bubble_6 < 6)) begin
       insert_bubble = 1;
     end else if ((alu_bubble_32 && bubble_32 == 0) || (bubble_32 > 0 && bubble_32 < 32)) begin
+      insert_bubble = 1;
+    end else if ((alu_bubble_36 && bubble_36 == 0) || (bubble_36 > 0 && bubble_36 < 36)) begin
       insert_bubble = 1;
     end else begin
       insert_bubble = 0;

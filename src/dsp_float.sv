@@ -23,8 +23,8 @@ module dsp_float (
   logic [31:0] right_operand_d;
   logic [31:0] right_operand_dd;
 
-  logic run;
-  logic [7:0] i;  // iteration counter
+  logic int_float_run;
+  logic [7:0] int_float_i;  // iteration counter
   logic sign;
 
   logic [31:0] left_operand_unsigned_d;
@@ -56,13 +56,14 @@ module dsp_float (
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
-      run  <= 0;
-      i    <= 0;
+      int_float_run  <= 0;
+      int_float_i    <= 0;
       sign <= 0;
     end else begin
-      if ((alu_op == ALU_F_INT_FLOAT) && run == 0) begin
-        run <= 1;
-        i   <= 0;
+      if ((alu_op == ALU_F_INT_FLOAT) && int_float_run == 0) begin
+        int_float_run <= 1;
+        int_float_i   <= 0;
+        shift_point   <= 0;
         if (left_operand[31] == 1) begin
           sign <= 1;
           left_operand_unsigned_d <= left_operand_unsigned;
@@ -74,14 +75,14 @@ module dsp_float (
         end
       end else begin
         sign <= sign;
-        if (i == 32 - 1) begin  //done
-          run <= 0;
-          i   <= 0;
+        if (int_float_i == 32 - 1) begin  //done
+          int_float_run <= 0;
+          int_float_i   <= 0;
         end else begin  // next iteration
-          i <= i + 1;
+          int_float_i <= int_float_i + 1;
           left_operand_shift <= left_operand_shift >> 1;
           if (left_operand_shift[0] == 1) begin
-            shift_point <= i;
+            shift_point <= int_float_i;
           end else begin
             shift_point <= shift_point;
           end
@@ -319,24 +320,112 @@ module dsp_float (
   end
 
   // FLOAT DIV
+  logic [ 7:0] div_i;  // iteration counter
+  logic        div_run;
+
+  logic [23:0] div_right_mantissa_unshifted;
+  logic [23:0] div_left_mantissa_unshifted;
+  logic [23:0] div_right_mantissa_shifted;
+  logic [23:0] div_left_mantissa_shifted;
   logic        div_sign;
   logic [ 7:0] div_exponent_unshifted;
   logic [ 7:0] div_exponent;
-  logic [22:0] div_mantissa_unshifted;
+
+  logic [ 7:0] div_right_shift_point;
+  logic [ 7:0] div_left_shift_point;
+  logic [ 7:0] div_mantissa_shift_point;
+
+  logic [23:0] quo;
+  logic [23:0] quo_next;  // intermediate quotient
+  logic [24:0] acc;
+  logic [24:0] acc_next;  // accumulator (1 bit wider)
+
+  //logic [ 7:0] div_exponent;
+  logic [23:0] div_mantissa_unshifted;
   logic [22:0] div_mantissa;
 
-  logic [22:0] right_mantissa_div;
-  logic [22:0] quo;
-  logic [22:0] quo_next;  // intermediate quotient
-  logic [23:0] acc;
-  logic [23:0] acc_next;  // accumulator (1 bit wider)
-  logic [ 7:0] i_div;  // iteration counter
-  logic        run_div;
+
+
+
+  always_ff @(posedge clk) begin
+    if (rst == 1) begin
+      div_run <= 0;
+      div_i   <= 0;
+    end else begin
+      if ((alu_op == ALU_F_DIV) && div_run == 0) begin
+        div_run <= 1;
+        div_i <= 0;
+        div_right_shift_point <= 0;
+        div_left_shift_point <= 0;
+        div_mantissa_shift_point <= 0;
+
+        div_right_mantissa_unshifted <= {1'b1, right_operand[22:0]};
+        div_left_mantissa_unshifted <= {1'b1, left_operand[22:0]};
+        div_sign <= left_operand[31] ^ right_operand[31];
+        div_exponent_unshifted <= left_operand[30:23] - right_operand[30:23] + 127;
+
+      end else begin
+        if (div_i == 36 - 1) begin  //done
+          div_run <= 0;
+          div_i   <= 0;
+        end else begin  // next iteration
+          div_i <= div_i + 1;
+
+          if (div_i < 6) begin
+            if (div_right_mantissa_unshifted[23-div_i*4-3] == 1) begin
+              div_right_shift_point <= 23 - div_i * 4 - 3;
+            end else if (div_right_mantissa_unshifted[23-div_i*4-2] == 1) begin
+              div_right_shift_point <= 23 - div_i * 4 - 2;
+            end else if (div_right_mantissa_unshifted[23-div_i*4-1] == 1) begin
+              div_right_shift_point <= 23 - div_i * 4 - 1;
+            end else if (div_right_mantissa_unshifted[23-div_i*4-0] == 1) begin
+              div_right_shift_point <= 23 - div_i * 4 - 0;
+            end else begin
+              div_right_shift_point <= div_right_shift_point;
+            end
+
+            if (div_left_mantissa_unshifted[23-div_i*4-3] == 1) begin
+              div_left_shift_point <= 23 - div_i * 4 - 3;
+            end else if (div_left_mantissa_unshifted[23-div_i*4-2] == 1) begin
+              div_left_shift_point <= 23 - div_i * 4 - 2;
+            end else if (div_left_mantissa_unshifted[23-div_i*4-1] == 1) begin
+              div_left_shift_point <= 23 - div_i * 4 - 1;
+            end else if (div_left_mantissa_unshifted[23-div_i*4-0] == 1) begin
+              div_left_shift_point <= 23 - div_i * 4 - 0;
+            end else begin
+              div_left_shift_point <= div_left_shift_point;
+            end
+          end else if (div_i == 6) begin
+            acc <= {{24{1'b0}}, div_left_mantissa_shifted[23]};
+            quo <= {div_left_mantissa_shifted[22:0], 1'b0};
+          end else if (div_i < 30) begin
+            acc <= acc_next;
+            quo <= quo_next;
+          end else begin
+            if (div_mantissa_unshifted[div_i*4-30*4+3] == 1) begin
+              div_mantissa_shift_point <= 24 - (div_i * 4 - 30 * 4 + 3);
+            end else if (div_mantissa_unshifted[div_i*4-30*4+2] == 1) begin
+              div_mantissa_shift_point <= 24 - (div_i * 4 - 30 * 4 + 2);
+            end else if (div_mantissa_unshifted[div_i*4-30*4+1] == 1) begin
+              div_mantissa_shift_point <= 24 - (div_i * 4 - 30 * 4 + 1);
+            end else if (div_mantissa_unshifted[div_i*4-30*4+0] == 1) begin
+              div_mantissa_shift_point <= 24 - (div_i * 4 - 30 * 4 + 0);
+            end else begin
+              div_mantissa_shift_point <= div_mantissa_shift_point;
+            end
+          end
+        end
+      end
+    end
+  end
+
+  assign div_right_mantissa_shifted = div_right_mantissa_unshifted >> div_right_shift_point;
+  assign div_left_mantissa_shifted  = div_left_mantissa_unshifted >> div_left_shift_point;
 
   // division unsigned algorithm iteration
   always_comb begin
-    if (acc >= {1'b0, right_mantissa_div}) begin
-      acc_next = (acc - right_mantissa_div) << 1;
+    if (acc >= {1'b0, div_right_mantissa_shifted}) begin
+      acc_next = (acc - div_right_mantissa_shifted) << 1;
       acc_next[0] = quo[22];
       quo_next = quo << 1;
       quo_next[0] = 1'b1;
@@ -347,45 +436,19 @@ module dsp_float (
     end
   end
 
-  // calculation control
-  always_ff @(posedge clk) begin
-    if (rst == 1) begin
-      run_div <= 0;
-      i_div   <= 0;
-    end else begin
-      if ((alu_op == ALU_F_DIV) && run_div == 0) begin
-        run_div <= 1;
-        i_div <= 0;
-        right_mantissa_div <= right_operand[22:0];
-        acc <= {{23{1'b0}}, left_operand[22]};
-        quo <= {left_operand[21:0], 1'b0};
+  assign div_mantissa_unshifted = quo_next[23:0];
 
-        div_sign <= left_operand[31] ^ right_operand[31];
-        div_exponent_unshifted <= left_operand_dd[30:23] - right_operand_dd[30:23] + 127;
-
-      end else begin
-        if (i_div == 23 - 1) begin  //done
-          run_div <= 0;
-          i_div   <= 0;
-        end else begin  // next iteration
-          i_div <= i_div + 1;
-          acc   <= acc_next;
-          quo   <= quo_next;
-        end
-      end
-    end
-  end
-  assign div_mantissa_unshifted = quo_next;
+  assign div_mantissa = div_mantissa_unshifted[23:1] << div_mantissa_shift_point;
 
   always_comb begin
-    if (div_mantissa_unshifted[22] == 0) begin
-      div_mantissa = {div_mantissa_unshifted[21:0], 1'b0};  // some rounding?
+    if (div_right_mantissa_unshifted > div_left_mantissa_unshifted) begin
       div_exponent = div_exponent_unshifted - 1;
     end else begin
-      div_mantissa = div_mantissa_unshifted[22:0];
       div_exponent = div_exponent_unshifted;
     end
   end
+
   assign float_div_res = {div_sign, div_exponent, div_mantissa};
+
 
 endmodule

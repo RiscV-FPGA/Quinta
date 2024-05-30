@@ -74,8 +74,8 @@ The project will be built for the Nexys A7-100T FPGA.
 - [x] INSTR_FSW
 - [x] INSTR_FADD_S
 - [x] INSTR_FSUB_S
-- [ ] INSTR_FMUL_S
-- [ ] INSTR_FDIV_S
+- [x] INSTR_FMUL_S
+- [x] INSTR_FDIV_S
 - [ ] INSTR_FSQRT_S
 - [x] INSTR_FMV_X_W
 - [x] INSTR_FEQ_S
@@ -85,13 +85,6 @@ The project will be built for the Nexys A7-100T FPGA.
 
 ![Block Diagram](/doc/overview_riscV.png)
 (todo: add beq comparition)
-
-## Instructions with problem in RIPES
-
-c.or
-c.xor
-c.lw
-c.sw
 
 ## Git stats
 
