@@ -333,19 +333,15 @@ module dsp_float (
 
   logic [ 7:0] div_right_shift_point;
   logic [ 7:0] div_left_shift_point;
-  logic [ 7:0] div_mantissa_shift_point;
 
   logic [23:0] quo;
   logic [23:0] quo_next;  // intermediate quotient
   logic [24:0] acc;
   logic [24:0] acc_next;  // accumulator (1 bit wider)
 
-  //logic [ 7:0] div_exponent;
   logic [23:0] div_mantissa_unshifted;
+  logic [ 7:0] div_mantissa_shift_point;
   logic [22:0] div_mantissa;
-
-
-
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
@@ -449,6 +445,86 @@ module dsp_float (
   end
 
   assign float_div_res = {div_sign, div_exponent, div_mantissa};
+
+  // SQUARE ROOT
+  logic [24 : 0] root_x;
+  logic [24 : 0] root_x_next;
+  logic [24 : 0] root_q;
+  logic [24 : 0] root_q_next;
+  logic [26 : 0] root_acc;
+  logic [26 : 0] root_acc_next;  // acc(2  wider)
+  logic [26 : 0] root_sign_test_reg;  // sign test (2  wider)
+
+  logic [7 : 0] root_i;
+  logic root_run;
+
+  logic [7:0] root_exponent;
+  logic [22:0] root_mantissa;
+  logic [31:0] float_sqrt_res_last;
+
+
+  logic [24:0] root_mantissa_operand_unshifted;
+  logic [24:0] root_mantissa_operand_shifted;
+
+  assign root_mantissa_operand_unshifted = {2'b01, left_operand[22:0]};
+  assign root_mantissa_operand_shifted   = {2'b01, left_operand[22:0]} << 1;
+
+
+  always_comb begin
+    root_sign_test_reg = root_acc - {root_q, 2'b01};
+    if (root_sign_test_reg[25+1] == 0) begin
+      {root_acc_next, root_x_next} = {root_sign_test_reg[25-1 : 0], root_x, 2'b0};
+      root_q_next = {root_q[25-2 : 0], 1'b1};
+    end else begin
+      {root_acc_next, root_x_next} = {root_acc[25-1 : 0], root_x, 2'b0};
+      root_q_next = root_q << 1;
+    end
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst == 1) begin
+      root_run <= 0;
+      root_i   <= 0;
+    end else begin
+      if ((alu_op == ALU_F_SQRT) && root_run == 0) begin
+        root_run      <= 1;
+        root_i        <= 0;
+
+        root_exponent <= ((left_operand[30:23] - 127) >> 1) + 127;
+
+        if (left_operand[23] == 0) begin
+          // uneven exponent multiply martissa by 2
+          root_q   <= 0;
+          root_acc <= {{25{1'b0}}, root_mantissa_operand_shifted[24:23]};
+          root_x   <= {root_mantissa_operand_shifted[22:0], 2'b0};
+        end else begin
+          root_q   <= 0;
+          root_acc <= {{25{1'b0}}, root_mantissa_operand_unshifted[24:23]};
+          root_x   <= {root_mantissa_operand_unshifted[22:0], 2'b0};
+        end
+
+      end else begin
+        if (root_i == 24 + 1) begin
+          root_run <= 0;
+        end else if (root_i == 24 - 1) begin
+          root_i <= root_i + 1;
+          root_mantissa <= root_q_next[22:0];
+        end else if (root_i == 24) begin
+          root_i <= root_i + 1;
+          float_sqrt_res_last <= {1'b0, root_exponent, root_mantissa};
+        end else begin
+          root_i   <= root_i + 1;
+          root_x   <= root_x_next;
+          root_q   <= root_q_next;
+          root_acc <= root_acc_next;
+        end
+      end
+    end
+  end
+
+  //assign root_mantissa  = root_q_next[22:0];
+  //assign float_sqrt_res = {1'b0, root_exponent, root_mantissa_d};
+  assign float_sqrt_res = float_sqrt_res_last;
 
 
 endmodule

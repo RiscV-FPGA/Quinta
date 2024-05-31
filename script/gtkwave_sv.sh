@@ -30,7 +30,9 @@ done
 #cp Masimulator/mem.txt src/instruction_mem.mem
 
 echo "$BOLD Running $UNDERLINE_1 and $UNDERLINE_tb_1 $RESET"
-venv/bin/python src/mem_to_bytes.py
+
+venv/bin/python AssembleRisc/src/main.py -i script/assembly.s
+venv/bin/python script/mem_to_bytes.py
 
 #        --sv--       ------libs----- ---src-- ------tb-----
 iverilog -g2012 -o $1 -l src/lib/*.sv src/*.sv test/tb_$1.sv

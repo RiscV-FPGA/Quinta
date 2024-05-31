@@ -27,3 +27,5 @@ vga_zero.mem
 AssembleRisc
 script/instruction_mem_temp.txt
 script/assembly.s
+src/root.sv
+test/tb_root.sv

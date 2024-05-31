@@ -32,12 +32,14 @@ module alu (
   logic [ 7:0] bubble_1;
   logic [ 7:0] bubble_2;
   logic [ 7:0] bubble_6;
+  logic [ 7:0] bubble_26;
   logic [ 7:0] bubble_32;
   logic [ 7:0] bubble_36;
 
   logic        alu_bubble_1;
   logic        alu_bubble_2;
   logic        alu_bubble_6;
+  logic        alu_bubble_26;
   logic        alu_bubble_32;
   logic        alu_bubble_36;
 
@@ -113,6 +115,8 @@ module alu (
 
   assign alu_bubble_6 = (alu_op == ALU_MUL || alu_op == ALU_MULH||alu_op == ALU_F_MUL)? 1'b1 : 1'b0;
 
+  assign alu_bubble_26 = (alu_op == ALU_F_SQRT) ? 1'b1 : 1'b0;
+
   // long statement be careful :)
   assign alu_bubble_32 = (alu_op == ALU_DIV || alu_op == ALU_DIVU
   || alu_op == ALU_REM || alu_op == ALU_REMU|| alu_op == ALU_F_INT_FLOAT) ? 1'b1 : 1'b0;
@@ -163,7 +167,9 @@ module alu (
       bubble_2  <= 0;
       bubble_2  <= 0;
       bubble_6  <= 0;
+      bubble_26 <= 0;
       bubble_32 <= 0;
+      bubble_36 <= 0;
 
     end else begin
       if (alu_bubble_1 && bubble_1 == 0) begin
@@ -172,6 +178,8 @@ module alu (
         bubble_2 <= 1;
       end else if (alu_bubble_6 && bubble_6 == 0) begin
         bubble_6 <= 1;
+      end else if (alu_bubble_26 && bubble_26 == 0) begin
+        bubble_26 <= 1;
       end else if (alu_bubble_32 && bubble_32 == 0) begin
         bubble_32 <= 1;
       end else if (alu_bubble_36 && bubble_36 == 0) begin
@@ -196,6 +204,12 @@ module alu (
         bubble_6 <= bubble_6 + 1;
       end
 
+      if (bubble_26 == 26) begin
+        bubble_26 <= 0;
+      end else if (bubble_26 > 0) begin
+        bubble_26 <= bubble_26 + 1;
+      end
+
       if (bubble_32 == 32) begin
         bubble_32 <= 0;
       end else if (bubble_32 > 0) begin
@@ -216,6 +230,8 @@ module alu (
     end else if ((alu_bubble_2 && bubble_2 == 0) || (bubble_2 > 0 && bubble_2 < 2)) begin
       insert_bubble = 1;
     end else if ((alu_bubble_6 && bubble_6 == 0) || (bubble_6 > 0 && bubble_6 < 6)) begin
+      insert_bubble = 1;
+    end else if ((alu_bubble_26 && bubble_26 == 0) || (bubble_26 > 0 && bubble_26 < 26)) begin
       insert_bubble = 1;
     end else if ((alu_bubble_32 && bubble_32 == 0) || (bubble_32 > 0 && bubble_32 < 32)) begin
       insert_bubble = 1;
