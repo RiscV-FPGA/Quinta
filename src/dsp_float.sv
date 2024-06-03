@@ -461,6 +461,13 @@ module dsp_float (
   logic [7:0] root_exponent;
   logic [22:0] root_mantissa;
   logic [31:0] float_sqrt_res_last;
+  logic [31:0] float_sqrt_res_last_d;
+  logic [31:0] float_sqrt_res_last_dd;
+  logic [31:0] float_sqrt_res_last_ddd;
+  logic [31:0] float_sqrt_res_last_dddd;
+  logic [31:0] float_sqrt_res_last_ddddd;
+  logic [31:0] float_sqrt_res_last_dddddd;
+
 
 
   logic [24:0] root_mantissa_operand_unshifted;
@@ -504,7 +511,7 @@ module dsp_float (
         end
 
       end else begin
-        if (root_i == 24 + 1) begin
+        if (root_i == 32 - 1) begin
           root_run <= 0;
         end else if (root_i == 24 - 1) begin
           root_i <= root_i + 1;
@@ -520,11 +527,18 @@ module dsp_float (
         end
       end
     end
+    float_sqrt_res_last_d  <= float_sqrt_res_last;
+    float_sqrt_res_last_dd <= float_sqrt_res_last_d;
+    float_sqrt_res_last_ddd <= float_sqrt_res_last_dd;
+    float_sqrt_res_last_dddd <= float_sqrt_res_last_ddd;
+    float_sqrt_res_last_ddddd <= float_sqrt_res_last_dddd;
+    float_sqrt_res_last_dddddd <= float_sqrt_res_last_ddddd;
+
   end
 
   //assign root_mantissa  = root_q_next[22:0];
   //assign float_sqrt_res = {1'b0, root_exponent, root_mantissa_d};
-  assign float_sqrt_res = float_sqrt_res_last;
+  assign float_sqrt_res = float_sqrt_res_last_dddddd;
 
 
 endmodule

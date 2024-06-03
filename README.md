@@ -83,6 +83,20 @@ The project will be built for the Nexys A7-100T FPGA.
 - [x] INSTR_FLE_S
 - [x] INSTR_FMV_W_X
 
+## Tests
+
+- [x] Test1
+- [x] Test2
+- [x] Test3
+- [x] Test4
+- [x] Test5
+- [x] Test6
+- [] Test7
+- [] Test8
+- [x] Test9
+- [x] Test10
+- [x] Test11
+
 ![Block Diagram](/doc/overview_riscV.png)
 (todo: add beq comparition)
 
