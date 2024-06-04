@@ -32,6 +32,7 @@ module memory_stage (
       .byte_address(alu_res_in),
       .write_enable(mem_data_valid),
       .write_data(mem_data_internal_in),
+      .mem_op(control.mem_write),
       .read_data(mem_data_internal_out)
   );
 

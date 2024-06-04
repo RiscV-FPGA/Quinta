@@ -1,21 +1,21 @@
 import common_pkg::*;
 
 module dsp_float (
-    input logic clk,
-    input logic rst,
-    input alu_op_t alu_op,
-    input logic [31:0] left_operand,
-    input logic [31:0] right_operand,
-    output logic [31:0] int_float_res,
-    output logic [31:0] float_int_res,
-    output logic [31:0] float_add_res,
-    output logic [31:0] float_sub_res,
-    output logic float_eq_res,
-    output logic float_lt_res,
-    output logic float_lte_res,
-    output logic [31:0] float_mul_res,
-    output logic [31:0] float_div_res,
-    output logic [31:0] float_sqrt_res
+    input  logic           clk,
+    input  logic           rst,
+    input  alu_op_t        alu_op,
+    input  logic    [31:0] left_operand,
+    input  logic    [31:0] right_operand,
+    output logic    [31:0] int_float_res,
+    output logic    [31:0] float_int_res,
+    output logic    [31:0] float_add_res,
+    output logic    [31:0] float_sub_res,
+    output logic           float_eq_res,
+    output logic           float_lt_res,
+    output logic           float_lte_res,
+    output logic    [31:0] float_mul_res,
+    output logic    [31:0] float_div_res,
+    output logic    [31:0] float_sqrt_res
 );
 
   logic [31:0] left_operand_d;
@@ -23,16 +23,16 @@ module dsp_float (
   logic [31:0] right_operand_d;
   logic [31:0] right_operand_dd;
 
-  logic int_float_run;
-  logic [7:0] int_float_i;  // iteration counter
-  logic sign;
+  logic        int_float_run;
+  logic [ 7:0] int_float_i;  // iteration counter
+  logic        sign;
 
   logic [31:0] left_operand_unsigned_d;
   logic [31:0] left_operand_shift;
   logic [31:0] left_operand_shift_next;
 
-  logic [7:0] shift_point;
-  logic [7:0] shift_point_biased;
+  logic [ 7:0] shift_point;
+  logic [ 7:0] shift_point_biased;
   logic [31:0] left_operand_unsigned;
   logic [54:0] mantissa_long;
   logic [54:0] mantissa_long_shifted;
@@ -52,7 +52,6 @@ module dsp_float (
       int_float_res = {sign, shift_point_biased[7:0], mantissa};
     end
   end
-
 
   always_ff @(posedge clk) begin
     if (rst == 1) begin
@@ -179,7 +178,6 @@ module dsp_float (
       exponent_shifted = right_operand[30:23];
       right_matrissa_shifted = {1'b1, right_operand[22:0]};
     end
-
   end
 
   always_ff @(posedge clk) begin
@@ -468,14 +466,11 @@ module dsp_float (
   logic [31:0] float_sqrt_res_last_ddddd;
   logic [31:0] float_sqrt_res_last_dddddd;
 
-
-
   logic [24:0] root_mantissa_operand_unshifted;
   logic [24:0] root_mantissa_operand_shifted;
 
   assign root_mantissa_operand_unshifted = {2'b01, left_operand[22:0]};
   assign root_mantissa_operand_shifted   = {2'b01, left_operand[22:0]} << 1;
-
 
   always_comb begin
     root_sign_test_reg = root_acc - {root_q, 2'b01};
@@ -527,13 +522,12 @@ module dsp_float (
         end
       end
     end
-    float_sqrt_res_last_d  <= float_sqrt_res_last;
+    float_sqrt_res_last_d <= float_sqrt_res_last;
     float_sqrt_res_last_dd <= float_sqrt_res_last_d;
     float_sqrt_res_last_ddd <= float_sqrt_res_last_dd;
     float_sqrt_res_last_dddd <= float_sqrt_res_last_ddd;
     float_sqrt_res_last_ddddd <= float_sqrt_res_last_dddd;
     float_sqrt_res_last_dddddd <= float_sqrt_res_last_ddddd;
-
   end
 
   //assign root_mantissa  = root_q_next[22:0];

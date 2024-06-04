@@ -1,29 +1,30 @@
 module vga #(
     parameter logic TB_MODE = 0
 ) (
-    input  logic        clk,                   // pixel clock
-    input  logic        rst,                   // sim reset
-    input  logic [31:0] reg_mem_data,
-    input  logic [ 4:0] reg_mem_addr,
-    input  logic        reg_mem_enable,
-    input  logic [31:0] float_reg_mem_data,
-    input  logic [ 4:0] float_reg_mem_addr,
-    input  logic        float_reg_mem_enable,
-    input  logic [31:0] instr_mem_data,
-    input  logic [31:0] instr_mem_addr,
-    input  logic        instr_mem_enable,
-    input  logic [31:0] data_mem_data,
-    input  logic [31:0] data_mem_addr,
-    input  logic        data_mem_enable,
-    output logic        vga_vsync,
-    output logic        vga_hsync,
-    output logic [ 3:0] vga_r,
-    output logic [ 3:0] vga_g,
-    output logic [ 3:0] vga_b,
+    input  logic           clk,                   // pixel clock
+    input  logic           rst,                   // sim reset
+    input  mem_op_t        mem_op,
+    input  logic    [31:0] reg_mem_data,
+    input  logic    [ 4:0] reg_mem_addr,
+    input  logic           reg_mem_enable,
+    input  logic    [31:0] float_reg_mem_data,
+    input  logic    [ 4:0] float_reg_mem_addr,
+    input  logic           float_reg_mem_enable,
+    input  logic    [31:0] instr_mem_data,
+    input  logic    [31:0] instr_mem_addr,
+    input  logic           instr_mem_enable,
+    input  logic    [31:0] data_mem_data,
+    input  logic    [31:0] data_mem_addr,
+    input  logic           data_mem_enable,
+    output logic           vga_vsync,
+    output logic           vga_hsync,
+    output logic    [ 3:0] vga_r,
+    output logic    [ 3:0] vga_g,
+    output logic    [ 3:0] vga_b,
     // FOR TB ONLY
-    output logic [31:0] sdl_sx,                // horizontal SDL position
-    output logic [31:0] sdl_sy,                // vertical SDL position
-    output logic        sdl_de                 // data enable (low in blanking interval)
+    output logic    [31:0] sdl_sx,                // horizontal SDL position
+    output logic    [31:0] sdl_sy,                // vertical SDL position
+    output logic           sdl_de                 // data enable (low in blanking interval)
 );
 
   // -----------------SYNC------------------------
@@ -89,6 +90,7 @@ module vga #(
 
   vga_ram vga_ram_inst (
       .clk(clk),
+      .mem_op(mem_op),
       .read_address(ram_y_address),
       .reg_mem_data(reg_mem_data),
       .reg_mem_addr(reg_mem_addr),

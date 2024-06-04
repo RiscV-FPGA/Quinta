@@ -260,6 +260,7 @@ module top_build (
   ) vga_inst (
       .clk(sys_clk),
       .rst(rst),
+      .mem_op(control_mem.mem_write),
       .reg_mem_data(wb_data_wb),
       .reg_mem_addr(control_wb.write_back_id),
       .reg_mem_enable(control_wb.reg_write),
