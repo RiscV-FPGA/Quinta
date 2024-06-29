@@ -2,6 +2,9 @@
 
 The project will be built for the Nexys A7-100T FPGA.
 
+![Block Diagram](/doc/overview_riscV.png)
+(todo: add beq comparition)
+
 ## General
 
 - [x] fetch_stage
@@ -91,14 +94,11 @@ The project will be built for the Nexys A7-100T FPGA.
 - [x] Test4
 - [x] Test5
 - [x] Test6
-- [] Test7
-- [] Test8
+- [x] Test7
+- [x] Test8
 - [x] Test9
 - [x] Test10
 - [x] Test11
-
-![Block Diagram](/doc/overview_riscV.png)
-(todo: add beq comparition)
 
 ## Git stats
 
