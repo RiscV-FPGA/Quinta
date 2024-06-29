@@ -65,15 +65,15 @@ logic reg_write
         control.alu_src    = 1;
         control.reg_write  = 1;
         control.alu_bypass = 1;
-
       end
+
       INSTR_AUIPC: begin  // 4
         control.alu_src = 1;
         control.alu_pc = 1;
         control.reg_write = 1;
         control.alu_op = ALU_ADD;
-
       end
+
       INSTR_JAL: begin  // 4
         control.alu_src = 1;
         control.alu_pc = 1;
@@ -81,8 +81,8 @@ logic reg_write
         control.alu_jump = 1;
         control.wb_pc = 1;
         control.alu_op = ALU_ADD;
-
       end
+
       INSTR_JALR: begin  // 4
         control.alu_src = 1;
         //control.alu_pc = 1;
@@ -90,239 +90,258 @@ logic reg_write
         control.alu_jump = 1;
         control.wb_pc = 1;
         control.alu_op = ALU_ADD;
-
       end
+
       INSTR_BEQ: begin  // branch
         control.is_branch = 1;
         control.alu_op = ALU_EQUAL;
-
       end
+
       INSTR_BNE: begin  // branch
         control.is_branch = 1;
         control.alu_op = ALU_EQUAL;
         control.alu_inv_res = 1;
-
       end
+
       INSTR_BLT: begin  // branch
         control.is_branch = 1;
         control.alu_op = ALU_LESS_THAN_SIGNED;
-
       end
+
       INSTR_BGE: begin  // branch
         control.is_branch = 1;
         control.alu_op = ALU_LESS_THAN_SIGNED;
         control.alu_inv_res = 1;
-
       end
+
       INSTR_BLTU: begin  // branch
         control.is_branch = 1;
         control.alu_op = ALU_LESS_THAN_UNSIGNED;
-
       end
+
       INSTR_BGEU: begin  // branch
         control.is_branch = 1;
         control.alu_op = ALU_LESS_THAN_UNSIGNED;
         control.alu_inv_res = 1;
-
       end
+
       INSTR_LB: begin  // 4
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_read = MEM_BYTE;
         control.reg_write = 1;
-
       end
+
       INSTR_LH: begin  // 4
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_read = MEM_HALF_WORD;
         control.reg_write = 1;
-
       end
+
       INSTR_LW: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_read = MEM_FULL_WORD;
         control.reg_write = 1;
-
       end
+
       INSTR_LBU: begin  // 4
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_read = MEM_BYTE_U;
         control.reg_write = 1;
-
       end
+
       INSTR_LHU: begin  // 4
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_read = MEM_HALF_WORD_U;
         control.reg_write = 1;
-
       end
+
       INSTR_SB: begin  // 4
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_write = MEM_BYTE;
-
       end
+
       INSTR_SH: begin  // 4
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_write = MEM_HALF_WORD;
-
       end
+
       INSTR_SW: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_write = MEM_FULL_WORD;
-
       end
+
       INSTR_ADDI: begin
         control.alu_op = ALU_ADD;
         control.alu_src = 1;  // imm to alu
         control.reg_write = 1;
-
       end
+
       INSTR_SLTI: begin
         control.alu_op = ALU_LESS_THAN_SIGNED;
         control.alu_src = 1;
         control.reg_write = 1;
-
       end
+
       INSTR_SLTIU: begin
         control.alu_op = ALU_LESS_THAN_UNSIGNED;
         control.alu_src = 1;
         control.reg_write = 1;
-
       end
+
       INSTR_XORI: begin
         control.alu_op = ALU_XOR;
         control.alu_src = 1;  // imm to alu
         control.reg_write = 1;
-
       end
+
       INSTR_ORI: begin
         control.alu_op = ALU_OR;
         control.alu_src = 1;  // imm to alu
         control.reg_write = 1;
-
       end
+
       INSTR_ANDI: begin
         control.alu_op = ALU_AND;
         control.alu_src = 1;  // imm to alu
         control.reg_write = 1;
-
       end
+
       INSTR_SLLI: begin
         control.alu_op = ALU_SHIFT_LEFT;
         control.reg_write = 1;
         control.alu_src = 1;
-
       end
+
       INSTR_SRLI: begin
         control.alu_op = ALU_SHIFT_RIGHT;
         control.reg_write = 1;
         control.alu_src = 1;
-
       end
+
       INSTR_SRAI: begin
         control.alu_op = ALU_SHIFT_RIGHT_AR_IMM;
         control.reg_write = 1;
         control.alu_src = 1;
-
       end
+
       INSTR_ADD: begin
         control.alu_op = ALU_ADD;
         control.reg_write = 1;
-
       end
+
       INSTR_SUB: begin
         control.alu_op = ALU_SUB;
         control.reg_write = 1;
-
       end
+
       INSTR_SLL: begin
         control.alu_op = ALU_SHIFT_LEFT;
         control.reg_write = 1;
-
       end
+
       INSTR_SLT: begin
         control.alu_op = ALU_LESS_THAN_SIGNED;
         control.reg_write = 1;
-
       end
+
       INSTR_SLTU: begin
         control.alu_op = ALU_LESS_THAN_UNSIGNED;
         control.reg_write = 1;
-
       end
+
       INSTR_XOR: begin
         control.alu_op = ALU_XOR;
         control.reg_write = 1;
-
       end
+
       INSTR_SRL: begin  // shift right
         control.alu_op = ALU_SHIFT_RIGHT;
         control.reg_write = 1;
-
       end
+
       INSTR_SRA: begin
         control.alu_op = ALU_SHIFT_RIGHT_AR;
         control.reg_write = 1;
-
       end
+
       INSTR_OR: begin
         control.alu_op = ALU_OR;
         control.reg_write = 1;
-
       end
+
       INSTR_AND: begin
         control.alu_op = ALU_AND;
         control.reg_write = 1;
-
       end
+
       INSTR_MUL: begin  //4
         control.alu_op = ALU_MUL;
         control.reg_write = 1;
       end
+
       INSTR_MULH: begin  //4
         control.alu_op = ALU_MULH;
         control.reg_write = 1;
       end
+
       INSTR_DIV: begin  //4
         control.alu_op = ALU_DIV;
         control.reg_write = 1;
       end
+
       INSTR_DIVU: begin  //4
         control.alu_op = ALU_DIVU;
         control.reg_write = 1;
-
       end
+
       INSTR_REM: begin  //4
         control.alu_op = ALU_REM;
         control.reg_write = 1;
-
       end
+
       INSTR_REMU: begin  //4
         control.alu_op = ALU_REMU;
         control.reg_write = 1;
       end
-      INSTR_FMV_W_X: begin  //5
+
+
+      INSTR_FMV_W_X: begin  //5 (added my self)
+        control.alu_op = ALU_ADD_0;
+        control.reg_write_float = 1;
+      end
+
+      INSTR_FMV_W_X: begin  //5 (added my self)
+        control.alu_op = ALU_ADD_0;
+        control.reg_write = 1;
+        control.reg_read_float = 1;
+      end
+
+      INSTR_FCVT_S_W: begin  //5 (added my self)
         control.alu_op = ALU_F_INT_FLOAT;
         control.reg_write_float = 1;
       end
-      INSTR_FMV_X_W: begin  //5
+
+      INSTR_FCVT_W_S: begin  //5 (added my self)
         control.alu_op = ALU_F_FLOAT_INT;
         control.reg_write = 1;
         control.reg_read_float = 1;
       end
+
       INSTR_FLW: begin  //5
         control.alu_op = ALU_ADD;
         control.alu_src = 1;
         control.mem_read = MEM_FULL_WORD;
         control.reg_write_float = 1;
       end
+
       INSTR_FSW: begin  //5
         control.alu_op = ALU_ADD;
         control.alu_src = 1;

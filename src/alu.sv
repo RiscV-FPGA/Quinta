@@ -102,6 +102,8 @@ module alu (
 
       ALU_F_SQRT: alu_res = float_sqrt_res;
 
+      ALU_ADD_0: alu_res = left_operand; // bypass for float to int without conversion
+
       default: begin
         alu_res = left_operand + right_operand;
       end

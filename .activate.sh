@@ -71,14 +71,8 @@ XILINX_PATH="$ "/usr/local/Xilinx/Vivado/$VIVADO_VERSION""
 #
 # Useful aliases
 #
-#alias clean="git clean -xdie $VENV_NAME"
-#alias vunit='python3 $(git rev-parse --show-toplevel)/run.py -v '
 alias build='vivado -notrace -mode batch -source $(git rev-parse --show-toplevel)/script/build.tcl'
-alias build_uart='vivado -notrace -mode batch -source $(git rev-parse --show-toplevel)/script/build_uart.tcl'
-
 alias clean_vivado='sh script/clean_vivado_files.sh'
-alias sim_vivado='sh script/sim_vivado.sh'
-#alias gtkwave_vhdl='python3 $(git rev-parse --show-toplevel)/run.py --gtkwave-fmt vcd --gui'
 alias gtkwave_sv='sh script/gtkwave_sv.sh'
 alias sim_vga='sh script/vga_verilator.sh'
 alias send_uart='zsh script/send_over_uart.sh'
@@ -86,8 +80,8 @@ alias send_uart='zsh script/send_over_uart.sh'
 
 echo -e '
 Welcome to RiscV Quinta project!
-   To run a test in a waveform viewer write: gtkwave_sv verilog_module_name
-   To create and launch the Vivado project write: build
+   To run tests use: gtkwave_sv, verilog_module_name, sim_vga
+   To build the Vivado project use: build
 '
 
 echo "READY!"
